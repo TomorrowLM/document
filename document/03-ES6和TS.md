@@ -6284,6 +6284,37 @@ const a = async () => {
 a()
 ````
 
+### 捕获promise内部报错
+
+```
+const a = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(c);
+      resolve(1)
+    } catch (e) {      
+      reject(e)
+    }
+  })
+}
+const b = async () => {
+  try {
+    a()//promise里面报错不会反应到外面
+    //方案一：catch捕获
+    a().catch(e=>{
+      console.log(e);
+    })
+    //方案二：await抛出异常,会被try...catch块捕获
+    await a()
+  } catch (e) {
+    console.log(e);
+  }
+}
+b()
+```
+
+
+
 ### 问题
 
 - vascript_forEach中使用异步函数执行顺序问题，错误原因+解决思路

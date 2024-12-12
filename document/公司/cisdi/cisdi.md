@@ -925,7 +925,11 @@ this.getPageRef().clearValidate();
 
 #### table
 
+##### 自定义配置
+
 - this.gridOptions.border = false 放在组件的created里
+- this.getWidgetRef('QueryTable34769').widget.options.customToolbarConfig.list  工具栏
+- this.getWidgetRef('QueryTable34769').widget.options.actionColumnConfig.list  操作栏
 
 ##### 获取/设置table值
 
@@ -976,6 +980,150 @@ this.buildGridOptions = () => {};  created里先加上这一句
 ##### 刷新table
 
 this.vxeIndex++
+
+##### 自定义组件
+
+```
+<template> 
+  <div 
+    v-if="!widget.options.hidden" 
+    class="form-component-container" 
+    :class="{ 
+      'is-disabled': widget.options.disabled 
+    }" 
+  > 
+    <form-item-widget 
+      :designer="designer" 
+      :widget="widget" 
+      :rules="rules" 
+      :design-state="designState" 
+      :parent-widget="parentWidget" 
+      :parent-list="parentList" 
+      :index-of-parent-list="indexOfParentList" 
+    > 
+      <div class="flex flex-row items-center justify-between"> 
+        <el-date-picker 
+          v-model="fieldModel" 
+          class="flex-1" 
+          :align="widget.options.labelAlign" 
+          type="date" 
+          placeholder="选择日期" 
+          :picker-options="pickerOptions" 
+          :value-format="widget.options.valueFormat" 
+          :format="widget.options.format" 
+          @change="handleChange" 
+          > 
+        </el-date-picker> 
+      </div> 
+    </form-item-widget> 
+ 
+ 
+  </div> 
+</template> 
+ 
+<script lang="ts"> 
+import emitter from 'emitter' 
+import { fieldMixin } from 'mixin' 
+import _ from 'lodash' 
+ 
+export default { 
+  name: 'EapDateRangeWidget', 
+  mixins: [emitter, fieldMixin], 
+  inject: [ 
+    // widget 列表 
+    'refList', 
+    // 页面配置 
+    'pageConfig', 
+    // 页面级配置项 
+    'globalOptionData', 
+    // 全局模型数据 
+    'globalModel' 
+  ], 
+  props: { 
+    // 当前组件配置 
+    widget: Object, 
+    // 父组件配置 
+    parentWidget: Object, 
+    // widgetList 列表 
+    parentList: Array, 
+    // 所处下表 
+    indexOfParentList: Number, 
+    // 设计器实例 
+    designer: Object, 
+    // 设计/预览标记 
+    designState: { 
+      type: Boolean, 
+      default: false 
+    }, 
+  }, 
+  data() { 
+    return { 
+      oldFieldValue: null, 
+      fieldModel: null, 
+      rules: [], 
+      show: false, 
+ 
+      confirmButtonOptions: { 
+        type: 'primary', 
+        size: 'medium', 
+      }, 
+      pickerOptions:{} 
+    } 
+  }, 
+  created () { 
+    // 初始化 fieldmodel 字段 
+    this.initFieldModel() 
+    // 初始化注册事件 
+    this.initEventHandler() 
+ 
+    // 注册到 widgetRefList 中 
+    this.registerToRefList() 
+    // 生成 rules 规则，需配合 data.rules 一起使用 
+    this.buildFieldRules() 
+    // 执行组件绑定的 onCreated 事件 
+    this.handleOnCreated() 
+  }, 
+  mounted () { 
+    this.initData() 
+    // 执行组件绑定的 onMounted 事件 
+    this.handleOnMounted() 
+  }, 
+  beforeDestroy () { 
+    // 移除当前表单在 widgetRefList 的注册 
+    this.unregisterFromRefList() 
+  }, 
+  methods: { 
+    initData() { 
+      this.fieldModel = this.widget.fieldModel 
+      console.log('enter customComponent: ', '欢迎使用自定义组件～') 
+    }, 
+    handleChange(value) { 
+      console.log(this.widget,value,this.oldFieldValue) 
+      this.syncUpdatePageModel(value) 
+      // 通知 schema 中的 onChange 回调 
+      this.emitFieldDataChange(value, this.oldFieldValue) 
+    }, 
+    handleClick(e) { 
+      // 执行组件绑定的 onClick 事件 
+      this.handleOnWidgetClickEvent(e) 
+    }, 
+  } 
+} 
+</script> 
+ 
+<style scoped> 
+.form-component-container { 
+} 
+ 
+.form-component__title { 
+  font-size: 0.2rem; 
+  font-weight: 700; 
+  margin-bottom: 0.1rem; 
+} 
+</style> 
+```
+
+
 
 ### 方法
 
@@ -1240,7 +1388,8 @@ this.runApi('1808667697571053568', {"collection":0,"menuId": 1}).then(res=>{
 ```
 const form = new formData();
 form.append('file', file); 
-const res = await this.uploadFile({formData: form}) //uploadFile是自带的函数
+const res = await this.uploadFile(file) //uploadFile是自带的函数
+//const res = await this.uploadFile({formData: form}) //uploadFile是自带的函数
 ```
 
 #### 文件上传加入中间件
@@ -1387,6 +1536,14 @@ this.commitFormData()
 
 
 ### 流程
+
+#### 注意
+
+```
+this.getWidgetRef('id').setValue(newForm.id); //新增后发起流程需要设置id
+```
+
+
 
 #### 手动发起流程前提
 

@@ -1,29 +1,51 @@
 ## Table of contents
   + [document-note](#document-note)
   + [document-tec](#document-tec)
+  + [公司](#公司)
+  + [后端](#后端)
 ## document-note
   + **简历**
     + [电子信息简历](document/document-note/简历/电子信息简历.md)
     + [简历](document/document-note/简历/简历.md)
+    + [简历1](document/document-note/简历/简历1.md)
+    + [简历2](document/document-note/简历/简历2.md)
   + **配置文件**
     + **github**
       + [TomorrowLM](document/document-note/配置文件/github/TomorrowLM.md)
       + [theme](document/document-note/配置文件/github/theme.md)
+    + **typora-themes**
+      + **SeeYue**
+        + [README](document/document-note/配置文件/typora-themes/SeeYue/README.md)
+        + [封面模板1](document/document-note/配置文件/typora-themes/SeeYue/封面模板1.md)
+        + [封面模板2](document/document-note/配置文件/typora-themes/SeeYue/封面模板2.md)
+        + [已添加 Icon 网站](document/document-note/配置文件/typora-themes/SeeYue/已添加 Icon 网站.md)
+        + [必看](document/document-note/配置文件/typora-themes/SeeYue/必看.md)
+        + [测试文档](document/document-note/配置文件/typora-themes/SeeYue/测试文档.md)
+      + **old-themes**
+        + [Readme](document/document-note/配置文件/typora-themes/old-themes/Readme.md)
+      + **typora-theme-redefine-main**
+        + [README](document/document-note/配置文件/typora-themes/typora-theme-redefine-main/README.md)
+        + [README_zh-CN](document/document-note/配置文件/typora-themes/typora-theme-redefine-main/README_zh-CN.md)
 ## document-tec
-  + **Vue**
-    + [1](document/document-tec/Vue/1.md)
-    + [10](document/document-tec/Vue/10.md)
-    + [11](document/document-tec/Vue/11.md)
-    + [2](document/document-tec/Vue/2.md)
-    + [3](document/document-tec/Vue/3.md)
-    + [4](document/document-tec/Vue/4.md)
-    + [5](document/document-tec/Vue/5.md)
-    + [6](document/document-tec/Vue/6.md)
-    + [7](document/document-tec/Vue/7.md)
-    + [8](document/document-tec/Vue/8.md)
-    + [9](document/document-tec/Vue/9.md)
-  + **后端**
-    + [mysql](document/document-tec/后端/mysql.md)
+  + **Vue3**
+    + [1](document/document-tec/Vue3/1.md)
+    + [10](document/document-tec/Vue3/10.md)
+    + [11](document/document-tec/Vue3/11.md)
+    + [2](document/document-tec/Vue3/2.md)
+    + [3](document/document-tec/Vue3/3.md)
+    + [4](document/document-tec/Vue3/4.md)
+    + [5](document/document-tec/Vue3/5.md)
+    + [6](document/document-tec/Vue3/6.md)
+    + [7](document/document-tec/Vue3/7.md)
+    + [8](document/document-tec/Vue3/8.md)
+    + [9](document/document-tec/Vue3/9.md)
+## 公司
+  + **cisdi**
+    + [cisdi](document/公司/cisdi/cisdi.md)
+    + [安装](document/公司/cisdi/安装.md)
+## 后端
+  + [java](document/后端/java.md)
+  + [mysql](document/后端/mysql.md)
 + [00-原理和源码](document/00-原理和源码.md)
 + [01-项目构建](document/01-项目构建.md)
 + [02-总结](document/02-总结.md)
@@ -33,8 +55,8 @@
 + [07-微信](document/07-微信.md)
 + [08-app](document/08-app.md)
 + [09-图形构建](document/09-图形构建.md)
-+ [java](document/java.md)
-+ [learn-tip](document/learn-tip.md)
++ [code](document/code.md)
++ [note](document/note.md)
 + [嵌入式](document/嵌入式.md)
 + [操作系统](document/操作系统.md)
 + [计算机](document/计算机.md)

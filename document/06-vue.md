@@ -1850,38 +1850,100 @@ Bus；Vuex；provide / inject API、`$attrs/$listeners`
 
 Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等 。 在这个过程中也会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。 
 
+## 总结与建议
 
-```vue
-beforeCreate	
-Vue实例被创建之前执行，组件的el（Vue实例挂载的元素节点，简单来说el的作用就是将当前vue组件生成的实例插入到页面元素中）和data，computed，methods都未被初始化，调用不了
-new Vue({
-    el: '#app'
-})
+理解Vue的生命周期钩子函数对于开发复杂的Vue应用至关重要。通过在不同的生命周期阶段执行特定的操作，可以更好地管理组件的状态和行为。建议在实际开发中，根据具体需求，选择合适的生命周期钩子函数来处理相应的逻辑，以提高代码的可维护性和性能。
 
-created			     
-Vue 实例被创建完成后执行，此时可以访问到 data、computed、methods 等属性。
+**进一步建议**:
 
-beforeMount		
-Vue 实例挂载到 DOM 前执行，template模板已经编译完成，但是还没有挂载到页面上，而只是放在内存中。在该钩子中可以修改模板内容。
+1. **合理选择生命周期钩子函数**：根据操作的需求选择合适的生命周期钩子函数，不要在一个钩子函数中处理过多逻辑。
+2. **避免内存泄漏**：在`beforeDestroy`和`destroyed`钩子中进行清理工作，确保没有未清理的事件监听或计时器。
+3. **利用`mounted`进行DOM操作**：如果需要操作DOM，最好在`mounted`阶段进行，以确保DOM已经生成。
 
-mounted			
-Vue 实例挂载到 DOM 后执行。可以在 mounted 内部使用 vm.$nextTick。如果我们想要通过插件操作页面上的DOM节点，最早可以在和这个阶段中进行
-
-beforeUpdate	组件更新之前
-updated			组件更新完毕	
-更新前/后：当data变化时，会触发beforeUpdate和updated方法。
-
-beforeDestroy	组件销毁前
-destroyed		组件销毁后
-销毁前/后：在执行destroy方法后，对data的改变不会再触发周期函数，说明此时vue实例已经解除了事件监听以及和dom的绑定，但是dom结构依然存在。
-
-activated	keep-alive 组件激活时调用。
-deactivated	keep-alive 组件停用时调用。
-```
+箭头函数
 
 不要在生命周期函数或者回调上使用箭头函数， 因为箭头函数并没有 `this` ,this指向调用它的VUE实例
 
  比如 `created: () => console.log(this.a)` 或 `vm.$watch('a', newValue => this.myMethod())` 
+
+## beforeCreate
+
+> 在此阶段，`this`指向的Vue实例还没有任何响应式数据，所以不能访问`data`、`computed`、`methods`等属性。
+
+在**beforeCreate**阶段，Vue实例刚刚被初始化，实例的属性如`data`和`methods`还没有被设置。这是生命周期的第一个钩子函数，**通常用于初始化非响应式属性或执行一些同步操作。**
+
+- 初始化非响应式属性
+- 执行同步操作
+
+## created
+
+> 在此阶段，可以访问并操作`data`中的数据，进行数据获取或初始化操作。
+
+**created**阶段，Vue实例已经创建完成，`data`、`computed`、`methods`等属性已经初始化。可以在这一步进行数据的获取和初始化。
+
+- 数据获取
+- 初始化数据
+
+## beforeMount
+
+> 此阶段适合进行一些在挂载前的准备工作，如调整虚拟DOM的结构等。
+
+在**beforeMount**阶段，Vue实例已经编译了模板，放在内存中。但还未挂载到DOM树上。这是操作DOM的最后一个机会，但此时DOM还未真正生成。
+
+- 准备挂载操作
+- 操作虚拟DOM
+
+## mounted
+
+> 在此阶段，可以安全地操作DOM元素，进行如第三方库初始化等需要DOM存在的操作。可以在 mounted 内部使用 vm.$nextTick
+
+**mounted**阶段，Vue实例已经被挂载到真实DOM树上，可以进行DOM操作。
+
+- 操作真实DOM
+- 启动第三方库
+
+## beforeUpdate
+
+> 此阶段适合进行一些在数据更新前的准备工作，如保存快照等。
+
+在**beforeUpdate**阶段，当响应式数据更新时，组件重新渲染前触发。可以在此阶段对新的数据进行一些处理。
+
+- 处理即将更新的数据
+- 在重新渲染前执行逻辑
+
+## updated
+
+> 在此阶段，可以确保所有数据和DOM都已经是最新状态，适合进行一些与最新数据或DOM相关的操作。
+
+**updated**阶段，组件更新并重新渲染后触发。这是操作最新DOM结构的机会。
+
+- 操作最新DOM
+- 检查更新结果
+
+## beforeDestroy
+
+> 此阶段适合进行各种清理操作，以确保不会有内存泄漏或其他副作用。
+
+在**beforeDestroy**阶段，实例即将被销毁。在此阶段可以执行清理工作，如清除计时器、事件监听等。
+
+- 清理工作
+- 停止计时器
+
+## destroyed
+
+> 在此阶段，实例已经完全销毁，所有关联的资源都被释放。
+
+**destroyed**阶段，实例已经销毁，所有绑定的事件监听和子实例都被清理。此时不能再访问实例中的数据和方法。
+
+- 最后的清理工作
+- 确保实例完全销毁
+
+## activated	
+
+activated	keep-alive 组件激活时调用。
+deactivated	keep-alive 组件停用时调用。
+
+
 
 # vue-router路由
 
@@ -2507,6 +2569,33 @@ router.beforeEach((to, from, next) => {
     // 在导航离开渲染该组件的对应路由时调用
     // 与 `beforeRouteUpdate` 一样，它可以访问组件实例 `this`
   },
+```
+
+## vue2 组件内监听路由
+
+```
+<template>
+  <div>
+    <!-- 组件模板内容 -->
+  </div>
+</template>
+ 
+<script>
+export default {
+  name: 'MyComponent',
+  watch: {
+    // 监听路由对象$route的变化
+    '$route': {
+      handler: function (to, from) {
+        // 路由发生变化时的处理逻辑
+        console.log('Route changed from', from.path, 'to', to.path);
+      },
+      // 如果需要在页面刷新时也能监听到路由变化，需要加上这个选项
+      immediate: true
+    }
+  }
+}
+</script>
 ```
 
 

@@ -136,308 +136,9 @@ https://blog.csdn.net/qq_44918090/article/details/132190274
 
 MinGW（Minimalist GNU for Windows） 是一个用于 Windows 平台的开发工具集，它提供了一组 GNU 工具和库，可以用于编译和构建本地的 Windows 应用程序。MinGW 的目标是在 Windows 环境下提供类似于 Unix/Linux 环境下的开发工具，使开发者能够轻松地在 Windows 上编写和编译 C、C++ 等程序。
 
-# 终端
-
-windows下好用的终端: consolez, [babun](https://github.com/babun/babun) +cmder,wsl
-
-
-
-## WSL
-
-### terminal下载
-
-https://blog.csdn.net/weixin_42595232/article/details/106012575?spm=1001.2014.3001.5506
-
-修改配置文件
-
-```
-"startingDirectory": "."
-```
-
-![01-10](https://img-blog.csdnimg.cn/20200509095325779.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU5NTIzMg==,size_16,color_FFFFFF,t_70) 
-
-### ubuntu
-
-https://blog.csdn.net/lmz_lmz/article/details/88341807
-
-- 管理员权限运行powershell并运行下面的命令：
-
-  ```
-  Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
-  ```
-
-  或者控制面板->程序和功能->启用或关闭Windows功能->勾选 适用于Linux的Windows子系统和虚拟机平台
-
-- 重启电脑
-
-- 打开应用商城搜索“WSL”，可根据自己需求选择安装一个或多个Linux系统：ubuntu
-
-- 安装完成后可在开始菜单里找到快捷方式并启动，第一次运行需要等待安装并设置用户名、密码。
-
-- 访问WSL的根目录:
-
-  C:\Users\EDZ\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs
-
-### zsh
-
-查看系统中的shell
-
-```bash
-cat /etc/shells
-or 
-echo $SHELL
-```
-
-安装zsh
-
-```
-sudo apt install zsh
-//验证下安装是否成功
-$ zsh --version
-```
-
-安装oh-my-zsh
-
-https://www.jianshu.com/p/30388763cf63
-
-```
-sh -c "$(curl -fsSL https://gitee.com/shmhlsy/oh-my-zsh-install.sh/raw/master/install.sh)"
-```
-
-设置默认shell
-
-```bash
-chsh -s $(which zsh)
-//chsh -s 其实修改的就是/etc/passwd 文件中和我们所登录的用户名相对应的那一行
-or 
-chsh -s /usr/bin/zsh  
-
-//设置完成后使用下列命令检查是否设置成功
-echo $SHELL
-```
-
-### zsh插件
-
-http://www.easyremember.cn/post/f326ed13.html
-
-在根目录/home/用户名下的.zshrc文件中可以添加插件
-
-- z 是跳转目录，他会记得你进入过的目录
-  先`cd /usr/share/fonts/`
-  下一次直接`z fonts`即可
-
-- web-search
-  这个插件允许你直接从终端打开浏览器进行搜索
-  比如`baidu 随意随缘`
-
-- extract
-  万能解压，不管什么压缩文件包括zip,rar,tar
-  输入`x 文件名`即可调用正确工具进行解压（前提是已经安装好工具）
-
-- git-open
-
-  [git-open](https://github.com/paulirish/git-open)插件可以在你git项目下打开远程仓库浏览项目。
-
-  ```
-  git open
-  ```
-
-```
-plugins=(
-	git
-	z
-	git-open
-	zsh-autosuggestions
-	zsh-syntax-highlighting
-	web-search
-	extract
-)
-```
-
-终端执行 source .zshrc，加载扩展。
-
-```
-//以下是当source .zshrc执行时，一些扩展没有添加，从而命令行执行
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-git clone https://gitee.com/phpxxo/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
-
-git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open
-```
-
-3.将命令行翻墙脚本放在.zshrc文件中
-
-```
-alias proxy="export all_proxy=socks5://127.0.0.1:1089"
-alias unproxy="unset all_proxy"
-```
-
-### 命令
-
-| 代码 2.1: 开启补全系统              |
-| ----------------------------------- |
-| `% autoload -U compinit % compinit` |
-
-| 代码 2.3: 开启纠错功能 |
-| ---------------------- |
-| `% setopt correctall`  |
-
-| 代码 2.4: 开启高级命令提示符功能        |
-| --------------------------------------- |
-| `% autoload -U promptinit % promptinit` |
-
-
-
-```powershell
-autoload -U zsh-newuser-install
-zsh-newuser-install -f
-```
-
-### nvm
-
-https://blog.csdn.net/gandongusa/article/details/123010941
-
-Gitee极速下载网址：**https://gitee.com/mirrors**
-
-```
-git clone https://gitee.com/mirrors/nvm.git .nvm
-```
-
-进入 **.nvm**目录后，通过 **bash install.sh** 命令安装并更新nvm。
-
-上述命令也同时会添加NVM_DIR环境变量至 **.bashrc**中，通过 **source ~/.bashrc**使命令生效，后面还会用到此处进行相关配置。
-
-**或者**
-
-https://docs.microsoft.com/zh-cn/windows/dev-environment/javascript/nodejs-on-wsl
-
-```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-再输入nvm
-```
-
-设置国内镜像
-
-```
-export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
-```
-
-查看可供安装的版本
-
-```
-nvm ls-remote
-node ls-remote --lts
-```
-
-安装一个nodejs版本
-
-```
-nvm install --lts 安装Node.js的长期支持环境（最新）
-nvm install v12.16.1
-```
-
-查看本地安装的版本
-
-```
-nvm ls
-```
-
-- 在.zshrc中添加
-
-  ```
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-  ```
-
-### tip
-
-原文链接：https://blog.csdn.net/henryhu712/article/details/85217165
-
-- 插件权限
-
-  ```
-  chmod 755  /root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-  ```
-
-- vscode
-
-  ```
-  "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\wsl.exe",
-  ```
-
-- 22.04版本安装要更新wsl,管理员打开powershell `wsl --update`
-
-- 安装zsh后原来安装的nvm及npm都失效了,查看原来的配置nvm的信息还在
-
-  ```
-  解决方法：
-  在 ~/.zshrc 中再次添加原nvm在 ~/.bashrc 中的配置(搜索export可找到nvm配置)，并 source ~/.zshrc 即可
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-  ```
-
-## git-bash
-
-添加zsh
-
-https://blog.csdn.net/Layouwen/article/details/125924286
-
-```
-//~/.zshrc
-# Path to your oh-my-zsh installation.
-export ZSH="/c/Users/李明/.oh-my-zsh"
-plugins=(
-  git
-  zsh-autosuggestions
-  autojump
-  zsh-syntax-highlighting
-	git-open
-)
-#source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh 
-source $ZSH/oh-my-zsh.sh
-```
-
-
-
-```
-//~/.bashrc
-# Launch Zsh
-if [ -t 1 ]; then
-exec zsh
-fi
-
-```
-
-
-
-## cmdr
-
-Tab       自动路径补全
-Ctrl+T    建立新页签
-Ctrl+W    关闭页签
-Ctrl+Tab  切换页签
-Alt+F4    关闭所有页签
-Alt+Shift+1 开启cmd.exe
-Alt+Shift+2 开启powershell.exe
-Alt+Shift+3 开启powershell.exe (系统管理员权限)
-Ctrl+1      快速切换到第1个页签
-Ctrl+n      快速切换到第n个页签( n值无上限)
-Alt + enter 切换到全屏状态
-Ctr+r       历史命令搜索
-Win+Alt+P   开启工具选项视窗
-
 
 
 # 工具
-
-
-## vscode
-
-按F1或ctrl+shift+P键入`Live Sass: Watch Sass`以开始实时编译，或者按键入`Live Sass: Stop Watching Sass`以停止实时编译。
 
 ## Typora
 
@@ -858,13 +559,31 @@ $$
 
 ## npm
 
-set
+```
+registry=https://registry.npm.taobao.org/
+registry=https://registry.npmmirror.com/
+disturl=https://mirrors.huaweicloud.com/nodejs/
+electron_mirror=https://npmmirror.com/mirrors/electron/
+strict-ssl=false
+python=D:/software/java/pyenv-win-master/pyenv-win/versions/3.9.13/python.exe
+msvs_version=2022
+VCINSTALLDIR=C:/Program Files/Microsoft Visual Studio/2022/Community/VC
+msbuild-path=C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe
+```
 
-- npm config set python D:/software/java/pyenv-win-master/pyenv-win/versions/3.9.1/python.exe
-- npm config set VCINSTALLDIR  ”C:/Program Files/Microsoft Visual Studio/2022/Community/VC“
-- npm config set msbuild-path "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe"   
 
-npm config get python
+
+- set
+
+  - npm config set python D:/software/java/pyenv-win-master/pyenv-win/versions/3.9.1/python.exe
+
+  - npm config set VCINSTALLDIR  ”C:/Program Files/Microsoft Visual Studio/2022/Community/VC“
+
+  - npm config set msbuild-path "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/MSBuild.exe"   
+
+
+- get
+  - npm config get python
 
 ## window
 
