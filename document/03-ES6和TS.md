@@ -5151,26 +5151,54 @@ class DistributedEdit extends mix(Loggable, Serializable) {
 
 ## 修饰器(TS)
 
-### 类的修饰
+### 简介
+
+装饰器是JavaScript中一种强大的功能，它允许你在类声明、方法、访问器、属性或参数声明前使用。装饰器通过@符号加函数名的形式来使用，可以用来修改类的行为或者添加额外的功能。
+
+### 装饰器的类型
+
+- **类装饰器**：应用于类构造函数，用于观察、修改或替换类定义。
+- **属性装饰器**：应用于类的属性，可以在属性被定义时执行代码。
+- **方法装饰器**：应用于类的方法，可以对方法进行修改或增强。
+- **参数装饰器**：应用于方法的参数，通常与方法装饰器一起使用。
+
+#### 属性的修饰
+
+```js
+function readonly(target) {
+  console.log(1);
+  Object.defineProperty(target.prototype, 'name1', {
+    writable: false
+  });
+}
+// function readonly(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//   descriptor.writable = false;
+// }
+
+@readonly
+class Person {
+  name1:string = "Alice";
+  // constructor(){
+  //   this.name1 = "Alice";
+  // }
+}
+
+
+try{
+  const person = new Person();
+  person.name1 = "Bob"; // 尝试修改 name1 属性将不会生效
+  console.log(person.name1); // 输出 Alice
+}catch(e){ 
+  console.log(e);
+}
+```
+
+#### 类的修饰
 
 修饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。这意味着，修饰器能在编译阶段运行代码。
 
 ```ts
-function testable(target) {
-  console.log(target);//[λ: MyTestableClass]
-  target.isTestable = true;
-}
-
-@testable
-class MyTestableClass {}
-
-console.log(MyTestableClass.isTestable) // true
-```
-
-上面代码中，`@testable`就是一个修饰器。它修改了`MyTestableClass`这个类的行为，为它加上了静态属性`isTestable`
-
-```ts
-如果觉得一个参数不够用，可以在修饰器外面再封装一层函数。
+//如果觉得一个参数不够用，可以在修饰器外面再封装一层函数。
 
 function testable(isTestable) {
   return function(target) {
@@ -5180,47 +5208,49 @@ function testable(isTestable) {
 
 @testable(true)
 class MyTestableClass {}
-MyTestableClass.isTestable // true
+console.log(MyTestableClass.isTestable) // true
 
 @testable(false)
 class MyClass {}
-MyClass.isTestable // false
+console.log(MyClass.isTestable)  // false
 ```
 
-### 方法的修饰
+上面代码中，`@testable`就是一个修饰器。它修改了`MyTestableClass`这个类的行为，为它加上了静态属性`isTestable`
 
-修饰器不仅可以修饰类，还可以修饰类的属性。
+#### 方法的修饰
 
-```javascript
-class Person {
-  @readonly
-  name() { return `${this.first} ${this.last}` }
-}
-```
+```js
+function logDecorator(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  if (!descriptor) {
+    descriptor = Object.getOwnPropertyDescriptor(target, propertyKey) || {};
+  }
 
-上面代码中，修饰器`readonly`用来修饰“类”的`name`方法。
+  console.log(target);
+  console.log(propertyKey);
+  console.log(descriptor);
 
-此时，修饰器函数一共可以接受三个参数，第一个参数是所要修饰的目标对象，第二个参数是所要修饰的属性名，第三个参数是该属性的描述对象。
-
-```javascript
-function readonly(target, name, descriptor){
-  // descriptor对象原来的值如下
-  // {
-  //   value: specifiedFunction,
-  //   enumerable: false,
-  //   configurable: true,
-  //   writable: true
-  // };
-  descriptor.writable = false;
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`调用方法：${propertyKey}，参数：${args}`);
+    return originalMethod.apply(this, args);
+  };
   return descriptor;
 }
 
-readonly(Person.prototype, 'name', descriptor);
-// 类似于
-Object.defineProperty(Person.prototype, 'name', descriptor);
+class MyClass {
+  constructor() { }
+  
+  @logDecorator
+  myMethod(x: number, y: number) {
+    return x + y;
+  }
+}
+
+const myClass = new MyClass();
+myClass.myMethod(1, 2); // 输出：调用方法：myMethod，参数：1,2
 ```
 
-上面代码说明，修饰器（readonly）会修改属性的描述对象（descriptor），然后被修改的描述对象再用来定义属性。
+
 
 ### 为什么修饰器不能用于函数？
 

@@ -1,3 +1,5 @@
+- 
+
 - https://dev-platform.cisdigital.cn/layout/interactiveanalyze/JHSFX/SJMXNEW/#/dataModel
 
   admin/Qwer1357
@@ -19,7 +21,7 @@ qbeeOpenApi.turn2MenuByCodeOrId({
 2022年我参与了武钢三热轧和板坯的前端开发，部署以及上线的修复。我基于公司的基本vue架构以及业务上，将整体的layout布局，以及路由，面包屑，store状态树，socket的基本功能进行了开发，又在吴亮负责人的帮助下，进行的项目打包的配置，成功将测试版部署到线上，有利于产品测试的验收。后期随着业务的推进以及人员的扩大，我相继封装了一些公共组件提供给前端，并尽所能提供一些技术的支持给到他们。团队上，和产品一起研讨需求，开发上和后端定义好接口参数，进行页面的渲染，及时响应测试所提出的bug。后期也是在前端张焕长的带领下，将开发更加的规范。回顾2022，我学会了从0到1搭建部署一个项目，组件的封装如何具有可维护性等等
 
 
-Abcd123
+
 
 工业互联网业务开发。实时数字采集基于electron进行框架的搭建，完成点位采集业务功能以及后期优化迭代，实现用户采集授权，以及监听采集授权时间响应不同的业务场景，完成基于docsify的用户手册并嵌入到数采中。云创项目，将实验室官网嵌入云创官网中，通过父子页面通信实现用户登录一体化，无感化，以及页面和功能的新增和优化。
 
@@ -813,6 +815,16 @@ admin
   
 - **客户端后台eap-operate**
 
+
+
+## 缺点
+
+- 没有版本记录，不能回退
+- 代码离散，相关逻辑无法准确定位
+- 平台封装，问题排查不易
+- 有时不能完全渲染
+- 自定绑定api模型，无法在接口成功后执行事件
+
 ## sdk
 
 ### sdk
@@ -930,6 +942,11 @@ this.getPageRef().clearValidate();
 - this.gridOptions.border = false 放在组件的created里
 - this.getWidgetRef('QueryTable34769').widget.options.customToolbarConfig.list  工具栏
 - this.getWidgetRef('QueryTable34769').widget.options.actionColumnConfig.list  操作栏
+- 自定义表头和数据
+
+  this.buildGridOptions = () => {};  created里先加上这一句
+
+  然后改gridOptions属性，参照vxe-table的配置表格
 
 ##### 获取/设置table值
 
@@ -960,11 +977,7 @@ table.$refs.xGrid.getCheckboxRecords()
 $table.$refs.xGrid.insert(params.params)
 ```
 
-##### 自定义表头和数据
 
-this.buildGridOptions = () => {};  created里先加上这一句
-
-然后改gridOptions属性，参照vxe-table的配置表格
 
 ##### table校验触发
 
@@ -1522,7 +1535,7 @@ const widgetName ='input52829';
 // 获取组件实例
 const input = this.getWidgetRef('widgetName');
 // 获取组件值
-const value=input.getValue();
+const value=input.getValue() || this.getpageRef().pageDataModel[widgetName];
 // 设置组件值
 input.setValue('设置数值');
 ```
