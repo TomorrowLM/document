@@ -32,7 +32,7 @@ vue2修改数组没有在页面显示，要$set赋值才行
 
 computed里面的响应式变量如果初始化没有创建，那么后续就不会绑定
 
-
+ width: v-bind('`${props.size}px`');
 
 - 大量修改响应式，页面没有显示
 
@@ -1442,6 +1442,15 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 
 ### 动态组件
 
+```
+<component :is="currentTab"></component>
+```
+
+`:is` 的值可以是以下几种：
+
+- 被注册的组件名
+- 导入的组件对象
+
 ### **keep-alive**
 
 keep-alive是vue中的内置组件，能在组件切换过程中将状态保留在内存中，防止重复渲染DOM
@@ -1815,7 +1824,7 @@ export default {
 
 - 父子通信：
 
-父向子传递数据是通过 props，子向父是通过 events（`$emit`）；通过父链 / 子链也可以通信（`$parent` / `$children`）；ref 也可以访问组件实例；provide / inject API；`$attrs/$listeners`
+父向子传递数据是通过 props，子向父是通过 events（`$emit`）；通过父链 / 子链也可以通信（`$parent` / `$children`）；
 
 - 兄弟通信：
 
@@ -1824,6 +1833,78 @@ Bus；Vuex
 - 跨级通信：
 
 Bus；Vuex；provide / inject API、`$attrs/$listeners`
+
+## 高级组件
+
+provide / inject API；`$attrs/$listeners`
+
+- （1）$props：当前组件接收到的 props 对象。Vue 实例代理了对其 props 对象属性的访问。
+
+- （2）$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。
+
+- （3）$listeners：包含了父作用域中(不含 .native 修饰器的)v-on事件监听器。他可以通过 v-on="listeners"传入内部组件
+
+  `$listeners` 对象在 Vue 3 中已被移除。事件监听器现在是 `$attrs` 的一部分
+
+
+
+### 透传 Attributes
+
+[透传 Attributes](https://cn.vuejs.org/guide/components/attrs.html) 是指由父组件传入，且没有被子组件声明为 props 或是组件自定义事件的 attributes 和事件处理函数
+
+#### Attributes 继承
+
+“透传 attribute”指的是传递给一个组件，却没有被该组件声明为 props 或 emits 的 attribute 或者 v-on 事件监听器。最常见的例子就是 class、style 和 id。
+
+当一个组件以单个元素为根作渲染时，透传的 attribute 会自动被添加到根元素上。举例来说，假如我们有一个 <MyButton> 组件，它的模板长这样：
+
+<!-- <MyButton> 的模板 -->
+<button>click me</button>
+一个父组件使用了这个组件，并且传入了 class：
+
+<MyButton class="large" />
+最后渲染出的 DOM 结果是：
+
+<button class="large">click me</button>
+ 这里，<MyButton> 并没有将 class 声明为一个它所接受的 prop，所以 class 被视作透传 attribute，自动透传到了 <MyButton> 的根元素上。
+
+
+
+#### 禁用 Attributes 继承 
+
+vue2：如果你**不想要**一个组件自动地继承 attribute，你可以在组件选项中设置 `inheritAttrs: false`。
+
+vue3：
+
+```
+defineOptions({
+  inheritAttrs: false
+})
+```
+
+
+
+#### 对 class 和 style 的合并
+
+如果一个子组件的根元素已经有了 class 或 style attribute，它会和从父组件上继承的值合并。如果我们将之前的 <MyButton> 组件的模板改成这样：
+
+<!-- <MyButton> 的模板 -->
+<button class="btn">click me</button>
+ 则最后渲染出的 DOM 结果会变成：
+
+<button class="btn large">click me</button>
+
+#### v-on 监听器继承
+
+同样的规则也适用于 v-on 事件监听器
+
+```
+<MyButton @click="onClick" />
+```
+
+click 监听器会被添加到 <MyButton> 的根元素，即那个原生的 <button> 元素之上。当原生的 <button> 被点击，会触发父组件的 onClick 方法。同样的，如果原生 button 元素自身也通过 v-on 绑定了一个事件监听器，则这个监听器和从父组件继承的监听器都会被触发。
+
+
 
 ## 组件懒加载
 
@@ -2184,6 +2265,17 @@ export default [
     <router-view></router-view>
   </keep-alive>
 </transition>
+```
+
+#### 插槽
+
+```
+    <router-view v-slot="{ Component, route }">
+      {{ route.fullPath }}
+      <transition name="router-fade" mode="out-in">
+        <component :is="Component" :key="route.fullPath" />
+      </transition>
+    </router-view>
 ```
 
 
@@ -4101,28 +4193,69 @@ export default {
 
 ### [组合式 API](https://cn.vuejs.org/guide/introduction.html#composition-api)
 
-通过组合式 API，我们可以使用导入的 API 函数来描述组件逻辑。在单文件组件中，组合式 API 通常会与 [`script setup`](https://cn.vuejs.org/api/sfc-script-setup.html) 搭配使用。这个 `setup` attribute 是一个标识，告诉 Vue 需要在编译时进行一些处理，让我们可以更简洁地使用组合式 API。比如，`<script setup>` 中的导入和顶层变量/函数都能够在模板中直接使用。
+组合式 API 是 Vue 3 引入的一种新的 API 风格，可以使用**导入的 API 函数来描述组件逻辑**。它允许你在一个函数中组合多个逻辑关注点。与选项式 API 不同，组合式 API 更加灵活和可重用。以下是组合式 API 的一些关键点：
 
-下面是使用了组合式 API 与 `<script setup>` 改造后和上面的模板完全一样的组件：
+- **使用 `setup` 函数**：组件的逻辑在 `setup` 函数中定义。`setup` 函数在组件实例创建之前调用，因此没有 `this` 上下文。
 
-```
-<script setup>
-import { ref, onMounted } from 'vue'
+- **响应式数据**：使用 `ref` 和 `reactive` 创建响应式数据。
 
-// 响应式状态
-const count = ref(0)
+- **生命周期钩子**：使用 `onMounted`、`onUnmounted` 等函数来处理生命周期事件。
 
-// 用来修改状态、触发更新的函数
-function increment() {
-  count.value++
-}
+- **默认API**
 
-// 生命周期钩子
-onMounted(() => {
-  console.log(`The initial count is ${count.value}.`)
-})
-</script>
-```
+  ```js
+  <script setup>
+  import { ref, onMounted } from 'vue'
+  
+  // 响应式状态
+  const count = ref(0)
+  
+  // 用来修改状态、触发更新的函数
+  function increment() {
+    count.value++
+  }
+  
+  // 生命周期钩子
+  onMounted(() => {
+    console.log(`The initial count is ${count.value}.`)
+  })
+  </script>
+  ```
+
+- **自定义组合式API**：组合逻辑，可以将逻辑提取到独立的函数中，并在多个组件中重用。并且能共用外部定义的响应式变量
+
+  ```js
+  import { ref, onMounted } from 'vue';
+  const globalData = ref({})
+  export function useQbeeOpenApi() {
+    const data = ref(null);
+    const error = ref(null);
+    const loading = ref(false);
+  
+    const fetchData = async () => {
+      loading.value = true;
+      try {
+        const response = await fetch('https://api.example.com/data');
+        data.value = await response.json();
+      } catch (err) {
+        error.value = err;
+      } finally {
+        loading.value = false;
+      }
+    };
+  
+    onMounted(() => {
+      fetchData();
+    });
+  
+    return {
+      data,
+      error,
+      loading,
+      fetchData,
+    };
+  }
+  ```
 
 ### [setup函数/钩子](https://cn.vuejs.org/api/composition-api-setup.html#basic-usage)
 

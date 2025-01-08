@@ -136,7 +136,13 @@ https://blog.csdn.net/qq_44918090/article/details/132190274
 
 MinGW（Minimalist GNU for Windows） 是一个用于 Windows 平台的开发工具集，它提供了一组 GNU 工具和库，可以用于编译和构建本地的 Windows 应用程序。MinGW 的目标是在 Windows 环境下提供类似于 Unix/Linux 环境下的开发工具，使开发者能够轻松地在 Windows 上编写和编译 C、C++ 等程序。
 
+### typora
 
+插件
+
+- https://blog.csdn.net/qq_57450444/article/details/139249046
+
+  https://github.com/obgnail/typora_plugin
 
 # 工具
 

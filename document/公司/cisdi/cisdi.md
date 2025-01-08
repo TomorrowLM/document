@@ -979,7 +979,7 @@ $table.$refs.xGrid.insert(params.params)
 
 
 
-##### table校验触发
+##### table触发校验
 
   const errMap = await this.getWidgetRef(pageRef.curTable).$refs.xGrid.validate().catch(errMap => errMap) 
   if (!errMap){ }
@@ -1464,6 +1464,16 @@ const params=pageRef.getFormData()
 
 
 ### 表单
+
+#### 注意
+
+**表单只能绑定实体模型,api模型不行**
+
+表单回显没有数据，
+
+- openPage/openDialog：loadData设置true
+- 需要绑定id主键
+- 模型添加搜索sql：id="${id}"
 
 #### 循环获取表单
 

@@ -2450,7 +2450,7 @@ for (let val in a) {
 }
 ```
 
-##### **for...in**
+##### for...in
 
 `for...in`循环遍历对象自身的和**继承**的可枚举属性（不含Symbol属性）。
 
@@ -3158,52 +3158,49 @@ Object.defineProperty(obj, prop, descriptor)
 ```
 
 - **参数**
-  obj要定义属性的对象。
   
-- prop要定义或修改的属性的名称或 Symbol 。
-
-- descriptor要定义或修改的属性描述符。
-
-  对象里目前存在的属性描述符有两种主要形式：***数据描述符*和*存取描述符***。*数据描述符*是一个具有值的属性，该值可以是可写的，也可以是不可写的。*存取描述符*是由 getter 函数和 setter 函数所描述的属性。一个描述符只能是这两者其中之一；**不能同时是两者**。
-
-  - value
-    与属性关联的值。可以是任何有效的JavaScript值（数字，对象，函数等）。
-    默认为 undefined
-
-  - configurable 该属性是否可被删除/被改变。默认为 false
-    
-  - enumerable 该属性在循环中是否会被枚举。默认为 false
-    
-    `enumerable` 定义了对象的属性是否可以在 [`for...in`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in) 循环和 [`Object.keys()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys) 中被枚举。
+  - obj要定义属性的对象。
   
-    ```js
-    var o = {};
-    Object.defineProperty(o, "a", { value : 1, enumerable: true });
-    Object.defineProperty(o, "b", { value : 2, enumerable: false });
-    Object.defineProperty(o, "c", { value : 3 }); // enumerable 默认为 false
-    o.d = 4; // 如果使用直接赋值的方式创建对象的属性，则 enumerable 为 true
-    Object.defineProperty(o, Symbol.for('e'), {
-      value: 5,
-      enumerable: true
-    });
-    Object.defineProperty(o, Symbol.for('f'), {
-      value: 6,
-      enumerable: false
-    });
-    for (var i in o) {
-      console.log(i);
-    }
-    // a,d
-    Object.keys(o); // ['a', 'd']
-    ```
+  - prop要定义或修改的属性的名称或Symbol 。
+  
+  - descriptor要定义或修改的属性描述符。对象里目前存在的属性描述符有两种主要形式：
+  
+    - 数据描述符
+  
+      - value 设置属性默认值。默认为 undefined
+  
+      - configurable 该属性是否可被删除/被改变。默认为 false
+  
+      - writable 该属性是否可写。默认为 false
+  
+      - enumerable 该属性在循环中是否会被枚举。默认为 false
+  
+        `enumerable` 定义了对象的属性是否可以在 [`for...in`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in) 循环和 [`Object.keys()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys) 中被枚举。
+  
+        ```
+        for (let key in obj){
+          Object.defineProperty(target,key,{
+            value: obj[key],
+            writable:true,
+            enumerable: ture
+          })
+        }
+        for (key in target){
+        	console.log(key);//遍历target中的属性值并打印，此时结果为空
+        }
+        ```
+  
+    - 存取描述符：是由 getter 函数和 setter 函数所描述的属性。
+  
+  
+      - get 获取属性值时所调用的函数。默认为 undefined
+  
+  
+      - set 该属性的更新操作所调用的函数。默认为 undefined
+  
     
-
-
-- writable 该属性是否可写。默认为 false
-
-- get 获取属性值时所调用的函数。默认为 undefined
-
-- set 该属性的更新操作所调用的函数。默认为 undefined
+  
+  
 
 ###### hasOwnProperty
 
@@ -5149,7 +5146,7 @@ class DistributedEdit extends mix(Loggable, Serializable) {
 - 类的内部所有定义的方法，都是不可枚举的
 - 类没有自身属性，所有方法都定义在类的`prototype`属性上面。而类创造的实例，有自身属性，这是类中constructor赋值给实例的，相当于调用了类中的constructor方法，并返回给实例对象。
 
-## 修饰器(TS)
+## 装饰器(TS)
 
 ### 简介
 
@@ -9462,6 +9459,23 @@ type guest = {
 }
 //type 报错
 ```
+
+### InstanceType 
+
+InstanceType 是一个内置的工具类型，用于获取一个类的实例类型。
+
+```
+class MyClass {
+  x = 0;
+  y = 0;
+}
+ 
+type Instance = InstanceType<typeof MyClass>; // MyClass的实例类型
+ 
+let instance: Instance = new MyClass(); // 这是正确的
+```
+
+
 
 # 编程题
 
