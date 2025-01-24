@@ -31,15 +31,22 @@ admin/Dsep@cisdi2022$
 
 admin/Abcd1234
 
-**项目2：水土云平台**
+- fe-qbee
 
-业务描述：业务迭代
+  ![image-20240809103216147](../../img/公司/image-20240809103216147.png)
 
-- 登录二次邮箱验证
-- 工业互联网平台模块UI优化
-- 审批流程组件，选择树组件封装
+  - fe-eb-auth 轻蜂平台-登录sso
+  - fe-qbee-config-manage 轻蜂配置管理
 
-技术栈：微前端，vue2，vue3，electron
+  - fe-platforms 权限待办
+    - fe-eb-usercenter 文件上传
+    - fe-vue-contacts 通讯录
+
+- dsep
+
+  ![image-20240809103006983](../../img/公司/image-20240809103006983.png)
+
+
 
 
 
@@ -823,6 +830,8 @@ admin
 - 代码离散，相关逻辑无法准确定位
 - 平台封装，问题排查不易
 - 有时不能完全渲染
+  - 给高度（且高度要足够高，eg: 500），先隐藏，再显示
+
 - 自定绑定api模型，无法在接口成功后执行事件
 
 ## sdk
@@ -1422,6 +1431,10 @@ this.handleFileUpload = async  (res, file, fileList) =>{
 ### 实体
 
 ### sql
+
+#### table绑定sql模型搜索条件入参没有带过来
+
+去模型配置里面点一下保存，虽然里面有相应sql代码但是没有执行需要保存
 
 #### sql查询条件配置
 

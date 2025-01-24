@@ -16,21 +16,21 @@ date: 25-September-2020
 
 
 
-# 11
 
-### 问题
+
+# 问题
 
 https://blog.csdn.net/weixin_45578532/article/details/133785684
 
-vue3 ref修改没有在页面显示
+vue3 ref 修改没有在页面显示
 
 
 
-vue2修改数组没有在页面显示，要$set赋值才行
+vue2 修改数组没有在页面显示，要$set 赋值才行
 
 
 
-computed里面的响应式变量如果初始化没有创建，那么后续就不会绑定
+computed 里面的响应式变量如果初始化没有创建，那么后续就不会绑定
 
  width: v-bind('`${props.size}px`');
 
@@ -40,23 +40,28 @@ computed里面的响应式变量如果初始化没有创建，那么后续就不
 
   https://worktile.com/kb/p/3552006
 
-- vue3使用vant ref拿不到
+- vue3 使用 vant ref 拿不到
 
 - 异步处理和响应式
 
-- created访问接口（采用settimeout），onmouted能拿到数据吗，会异步吗
+- created 访问接口（采用 settimeout），onmouted 能拿到数据吗，会异步吗
+
+- https://blog.csdn.net/weixin_45578532/article/details/133785684
+
+  vue3 ref 修改没有在页面显示
+
 
 # 基本概念
 
 ## 标签数据
 
-- {{msg}} , msg也可以是js表达式，但只能包含**单个**表达式
+- {{msg}} , msg 也可以是 js 表达式，但只能包含 **单个** 表达式
 
-  > 一个表达式会产生一个值,它可以放在任何需要一个值的地方
-  > 语句可以理解成一个行为.循环语句和if语句就是典型的语句
-  > 需要语句的地方,你可以使用一个表达式来代替.这样的语句称之为表达式语句
+  > 一个表达式会产生一个值, 它可以放在任何需要一个值的地方
+  > 语句可以理解成一个行为.循环语句和 if 语句就是典型的语句
+  > 需要语句的地方, 你可以使用一个表达式来代替.这样的语句称之为表达式语句
 
-- v-model="msg"建立双向绑定 	
+- v-model = "msg" 建立双向绑定 	
 
   ```html
   <input type="text" v-model="name">
@@ -68,13 +73,13 @@ computed里面的响应式变量如果初始化没有创建，那么后续就不
   <input type="text" :value="name" @input="name = $event.target.value">
   ```
 
-- v-once指令： 执行一次性地插值，当数据改变时，插值处的内容不会更新 
+- v-once 指令： 执行一次性地插值，当数据改变时，插值处的内容不会更新 
 
   ```
   <span v-once>这个将不会改变: {{ msg }}</span>
   ```
 
-- 编译html元素  {{msg}} 	v-html	
+- 编译 html 元素  {{msg}} 	v-html	
 
 - v-text
 
@@ -115,22 +120,22 @@ json:{
 <strong :class="[条件?'className':'className',条件?'className':'className',]">
   ```
 
-- 组件内部引入第三方的css文件只在当前组件生效的办法
+- 组件内部引入第三方的 css 文件只在当前组件生效的办法
 
-  <style src="" scoped></style>
+  <style src="" scoped> </style>
 
-- vue样式穿透 ::v-deep   https://www.jb51.net/article/188038.htm
+- vue 样式穿透 :: v-deep   https://www.jb51.net/article/188038.htm
 
-  修改vantUI样式，直接在 <style lang="scss" scoped> .... </style> 中编写的话只会影响当前组件内的样式，但如果去掉scoped话又会影响全局样式。
+  修改 vantUI 样式，直接在 <style lang="scss" scoped> .... </style> 中编写的话只会影响当前组件内的样式，但如果去掉 scoped 话又会影响全局样式。
 
   如果你希望 scoped 样式中的一个选择器能够作用得“更深”，例如影响子组件，你可以使用 >>> 操作符：
 
-  <style scoped> .a >>> .b { /* ... */ } </style> 上述代码将会编译成：.a[data-v-f3f3eg9] .b { /* … */ }
-可以使用 /deep/ 或 ::v-deep 操作符取而代之——两者都是 >>> 的别名，同样可以正常工作。
+  <style scoped> .a >>> .b { /* ... */ } </style> 上述代码将会编译成：.a [data-v-f3f3eg9] .b { /* … */ }
+可以使用 /deep/ 或 :: v-deep 操作符取而代之——两者都是 >>> 的别名，同样可以正常工作。
 
 ## 指令
 
-### v-for和虚拟DOM
+### v-for 和虚拟 DOM
 
 ```js
 v-for="(val,index) in array"
@@ -138,39 +143,39 @@ v-for="(val,index) in array"
 //每次更改数组数据，全部的数据都会重新渲染，添加key值，从而只渲染更改的数据.这是因为每一个列表渲染的元素加上了唯一标识符，编译器通过标识符渲染指定列表，高效渲染虚拟DOM树
 ```
 
- 打个🌰。把F元素插入到A B C D E中。 
+ 打个 🌰。把 F 元素插入到 A B C D E 中。 
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LTRkNzg2M2I2MTI0YzVjYjkuanBn?x-oss-process=image/format,png)
 
 
 
-其实是这么插的：新的dom和旧的dom比较， 第一个原来是A，更新之后还是A，所以就不变，第二个是B，更新之后还是B，所以还是不变，第三个是C，更新之后变成了F。  然后后面的都变化了 
+其实是这么插的：新的 dom 和旧的 dom 比较， 第一个原来是 A，更新之后还是 A，所以就不变，第二个是 B，更新之后还是 B，所以还是不变，第三个是 C，更新之后变成了 F。  然后后面的都变化了 
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LWM3N2I2YWQ4MWZkNDM1YzMuanBn?x-oss-process=image/format,png)
 
-但是如果给每一个列表渲染的元素加上了唯一标识符。列表更新之后，编译器通过标识符知道第一个元素是A。第三个是C，就不会更新成F。就像下图。
+但是如果给每一个列表渲染的元素加上了唯一标识符。列表更新之后，编译器通过标识符知道第一个元素是 A。第三个是 C，就不会更新成 F。就像下图。
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LTk2MGYyZDg1NmI1ZWM5YzMuanBn?x-oss-process=image/format,png)
 
-vue和react的虚拟DOM的Diff算法大致相同
+vue 和 react 的虚拟 DOM 的 Diff 算法大致相同
 
 <img src="https://upload-images.jianshu.io/upload_images/3973616-cbe6ef9bad920f51.png?imageMogr2/auto-orient/strip|imageView2/2/w/576/format/webp" alt="img" style="zoom:50%;" />
 
-- 如果dom树有三层，在没加ID的情况下。
+- 如果 dom 树有三层，在没加 ID 的情况下。
 
   先比较第一层。比较一次
 
   再比较第二层。比较第一层第一个节点和第二层第一个节点，第一层第一个节点和第二层第二个节点，比较第一层第二个节点和第二层两个节点。比较了四次。
 
-  算法复杂度，2的n次方。
+  算法复杂度，2 的 n 次方。
 
-- 如果加上ID。
+- 如果加上 ID。
 
-  比较第一个节点。再比较第二个节点。再比较第三个节点。再比较第四个节点。再比较第五个节点。一直比到第n个节点。
+  比较第一个节点。再比较第二个节点。再比较第三个节点。再比较第四个节点。再比较第五个节点。一直比到第 n 个节点。
 
-  算法复杂度为n。
+  算法复杂度为 n。
 
-### v-if和v-show
+### v-if 和 v-show
 
 https://blog.csdn.net/zg0601/article/details/123632608
 
@@ -193,7 +198,7 @@ v-if 指令用于条件性地渲染一块内容。这块内容只会在指令的
 </template>
 ```
 
-当它们处于同一节点，`v-for` 的优先级比 `v-if` 更高，这意味着 `v-if` 将分别重复运行于每个 `v-for` 循环中。当你只想为*部分*项渲染节点时，这种优先级的机制会十分有用，如下：
+当它们处于同一节点，`v-for` 的优先级比 `v-if` 更高，这意味着 `v-if` 将分别重复运行于每个 `v-for` 循环中。当你只想为 *部分* 项渲染节点时，这种优先级的机制会十分有用，如下：
 
 ```js
 <li v-for="todo in todos" v-if="!todo.isComplete">
@@ -219,23 +224,23 @@ this.$set(this.arr,index,!this.arr[index]);
 
 #### 区别
 
-既然 v-show 和 v-if 这两个指令都可以控制DOM元素的行为，那么它们有什么区别呢？
+既然 v-show 和 v-if 这两个指令都可以控制 DOM 元素的行为，那么它们有什么区别呢？
 
 1、控制手段不同
 
-v-show指令设置隐藏是给绑定的DOM元素添加CSS样式：display:none，但是DOM元素仍然存在；
-v-if指令设置隐藏是将DOM元素整个删除，此时DOM元素不再存在。
+v-show 指令设置隐藏是给绑定的 DOM 元素添加 CSS 样式：display: none，但是 DOM 元素仍然存在；
+v-if 指令设置隐藏是将 DOM 元素整个删除，此时 DOM 元素不再存在。
 2、编译过程不同
 
-v-if  切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件；而 v-show 只是简单的基于CSS切换，不管初始条件是什么，元素总是会被渲染。
+v-if  切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件；而 v-show 只是简单的基于 CSS 切换，不管初始条件是什么，元素总是会被渲染。
 
 3、编译条件不同
 
-v-show是在任何条件下（首次条件是否为真）都被编译，然后被缓存，而且DOM元素保留；
+v-show 是在任何条件下（首次条件是否为真）都被编译，然后被缓存，而且 DOM 元素保留；
 
-v-if 由false变为true时，触发组件的beforeCreate、create、beforeMount、mounter钩子，由true变为false时，触发组件的
+v-if 由 false 变为 true 时，触发组件的 beforeCreate、create、beforeMount、mounter 钩子，由 true 变为 false 时，触发组件的
 
-beforeDestory、destoryed方法。v-if 是真正的条件渲染，它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建；
+beforeDestory、destoryed 方法。v-if 是真正的条件渲染，它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建；
 
 v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做——直到为真时才开始渲染条件块。
 
@@ -245,19 +250,35 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 #### 使用场景
 
-如果需要非常频繁地切换，则使用v-show较好；
+如果需要非常频繁地切换，则使用 v-show 较好；
 
-如果在运行时条件很少改变，则使用v-if较好。
+如果在运行时条件很少改变，则使用 v-if 较好。
 
-### v-cloak
+### v-model 和 v-bind
+
+1、v-bind 是单向绑定，用来绑定属性、样式以及表达式。包括 class、style、src 等
+
+```
+<!-- 绑定单个属性 -->
+<img v-bind:src="imageSrc" alt="Example Image">
+ 
+<!-- 简写 -->
+<img :src="imageSrc" alt="Example Image">
+```
+
+2、v-model 是双向绑定，不只能将 vue 中的数据同步到页面，而且可以将用户数据的数据赋值给 vue 中的属性。
+
+3、v-bind 可以给任何属性赋值，v-model 只能给具备 value 属性的元素进行数据双向绑定。
+
+
 
 ### 自定义指令
 
-	Vue.directive(指令名称,function(参数){
-		this.el	-> 原生DOM元素
+	Vue.directive(指令名称, function(参数){
+		this.el	-> 原生 DOM 元素
 	});
 	
-	<div v-red="参数"></div>
+	<div v-red="参数"> </div>
 
 指令定义函数提供了几个钩子函数（可选）：
 
@@ -269,17 +290,17 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 例子：https://juejin.cn/post/6906028995133833230#heading-5
 
-##  computed和watch
+##  computed 和 watch
 
-多对一：如果一个值依赖多个属性（多对一），用computed肯定是更加方便的
+多对一：如果一个值依赖多个属性（多对一），用 computed 肯定是更加方便的
 
-一对多：如果一个值变化后会引起一系列操作，或者一个值变化会引起一系列值的变化，用watch更加方便一些
+一对多：如果一个值变化后会引起一系列操作，或者一个值变化会引起一系列值的变化，用 watch 更加方便一些
 
-### **计算属性computed**
+### **计算属性 computed**
 
-- computed计算属性，用来计算一个属性的值。
+- computed 计算属性，用来计算一个属性的值。
 
-  **计算属性基于响应式依赖进行缓存。**依赖不变的时候，值不会重新计算，它调用的就是上一次计算缓存的数据，而不是从新计算。因此提高了程序的性能。而methods中方法每调用一次就会重新计算一次，为了进行不必要的资源消耗，选择用计算属性
+  **计算属性基于响应式依赖进行缓存。** 依赖不变的时候，值不会重新计算，它调用的就是上一次计算缓存的数据，而不是从新计算。因此提高了程序的性能。而 methods 中方法每调用一次就会重新计算一次，为了进行不必要的资源消耗，选择用计算属性
 
   这也解释了为什么下面的计算属性永远不会更新，因为 `Date.now()` 并不是一个响应式依赖：
 
@@ -287,11 +308,11 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
   const now = computed(() => Date.now())
   ```
 
-- **不支持异步**，当computed内有异步操作时无效，无法监听数据的变化
-- computed的getter和setter
-  - computed的属性可以读取和设值。因此，在computed中可以分为getter(读取)和setter(设值).
-  - 一般情况下没有setter，computed只预设了getter，只能读取，不能设值。所以，computed默认格式（是不表明getter函数的）
-  - 当赋值给计算属性的时候，将调用setter函数
+- **不支持异步**，当 computed 内有异步操作时无效，无法监听数据的变化
+- computed 的 getter 和 setter
+  - computed 的属性可以读取和设值。因此，在 computed 中可以分为 getter(读取)和 setter(设值).
+  - 一般情况下没有 setter，computed 只预设了 getter，只能读取，不能设值。所以，computed 默认格式（是不表明 getter 函数的）
+  - 当赋值给计算属性的时候，将调用 setter 函数
 
 **计算属性缓存 vs 方法**
 
@@ -342,10 +363,10 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 ###   侦听器 **watch**
 
-watch的意思是监听，当发生变化时，监听并且执行。
+watch 的意思是监听，当发生变化时，监听并且执行。
 
-1. immediat：ture表示让值最初时候watch就执行
-2. deep表示对对象里面的变化进行深度监听
+1. immediat：ture 表示让值最初时候 watch 就执行
+2. deep 表示对对象里面的变化进行深度监听
 3. 不支持缓存，数据变，直接会触发相应的操作
 
 ```js
@@ -369,30 +390,30 @@ watch的意思是监听，当发生变化时，监听并且执行。
 
 - 不支持缓存，数据变，直接会触发相应的操作；
 
-- **watch支持异步**；
+- **watch 支持异步**；
 
 - 监听的函数接收两个参数，第一个参数是最新的值；第二个参数是输入之前的值；
 
 - 当一个属性发生变化时，需要执行对应的操作；一对多；
 
-- 监听数据必须是data中声明过或者父组件传递过来的props中的数据，当数据变化时，触发其他操作，函数有两个参数
+- 监听数据必须是 data 中声明过或者父组件传递过来的 props 中的数据，当数据变化时，触发其他操作，函数有两个参数
   - immediate：组件加载立即触发回调函数执行，
-  - deep: 深度监听，为了发现**对象内部值**的变化，复杂类型的数据时使用，例如数组中的对象内容的改变，注意监听数组的变动不需要这么做。注意：deep无法监听到数组的变动和对象的新增
+  - deep: 深度监听，为了发现 **对象内部值** 的变化，复杂类型的数据时使用，例如数组中的对象内容的改变，注意监听数组的变动不需要这么做。注意：deep 无法监听到数组的变动和对象的新增
 - **不应该使用箭头函数来定义 watcher 函数**，因为箭头函数没有 this，它的 this 会继承它的父级函数，但是它的父级函数是 window，导致箭头函数的 this 指向 window，而不是 Vue 实例
 
 ### 区别
 
-- 功能上：computed是计算属性，watch是监听一个值的变化，然后执行对应的回调。
-- 是否调用缓存：computed中的函数所依赖的属性没有发生变化，那么调用当前的函数的时候会从缓存中读取，而watch在每次监听的值发生变化的时候都会执行回调。
-- 是否调用return：computed中的函数必须要用return返回，watch中的函数不是必须要用return。
-- computed默认第一次加载的时候就开始监听；watch默认第一次加载不做监听，如果需要第一次加载做监听，添加immediate属性，设置为true（immediate:true）
-- 使用场景：computed----当一个属性受多个属性影响的时候，使用computed-----购物车商品结算。watch–当一条数据影响多条数据的时候，使用watch-----搜索框.
+- 功能上：computed 是计算属性，watch 是监听一个值的变化，然后执行对应的回调。
+- 是否调用缓存：computed 中的函数所依赖的属性没有发生变化，那么调用当前的函数的时候会从缓存中读取，而 watch 在每次监听的值发生变化的时候都会执行回调。
+- 是否调用 return：computed 中的函数必须要用 return 返回，watch 中的函数不是必须要用 return。
+- computed 默认第一次加载的时候就开始监听；watch 默认第一次加载不做监听，如果需要第一次加载做监听，添加 immediate 属性，设置为 true（immediate: true）
+- 使用场景：computed----当一个属性受多个属性影响的时候，使用 computed-----购物车商品结算。watch–当一条数据影响多条数据的时候，使用 watch-----搜索框.
 
 
 
 ### tip
 
-vue中，如何解决watch的新值和旧值是一样的
+vue 中，如何解决 watch 的新值和旧值是一样的
 
 ![img](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/08d00c7ce4f24a478f9fc052cf7efbb0~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
 
@@ -467,38 +488,27 @@ Vue.config.keyCodes.ctrl=17;
 - `.shift`
 - `.meta`
 
-### 修饰符
+## 修饰符
 
-#### 修饰符串联
+### 修饰符串联
 
 ```
 <!-- 修饰符可以串联 -->
 <a v-on:click.stop.prevent="doThat"></a>
 ```
 
-#### lazy
-
-在默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步 (除了上述输入法组合文字时)。你可以添加 lazy 修饰符，从而转为在 change 事件_之后_进行同步。
-意思是什么呢，就是说当我们在input输入框输入数据时，v-model绑定的值不会发发生变化，但是当我们停止输入，输入框失去焦点或者按下回车时，v-model绑定的值才会发生变化，即在“change”时而非“input”时更新
-
-#### native
-
-@click.native是给组件绑定原生事件，否则会认为监听的是来自组件自定义的事件
-
-#### trim
-
-用户输入的前后的空格去掉
+### 事件修饰符
 
 #### stop
 
-stop防止事件冒泡  
+stop 防止事件冒泡  
 
 ```vue
 @click.stop="show()"   
 ```
 
 阻止冒泡:  
-a). ev.cancelBubble=true;
+a). ev.cancelBubble = true;
 b). @click.stop	推荐
 c). event.stopPropagation();
 
@@ -509,28 +519,20 @@ c). event.stopPropagation();
 <form v-on:submit.prevent="onSubmit"></form>
 ```
 
+#### self
+
+```
+<!-- 仅当 event.target 是元素本身时才会触发事件处理器 -->
+<!-- 例如：事件处理器不来自子元素 -->
+<div @click.self="doThat">...</div>
+```
+
 #### capture
 
 ```
 <!-- 添加事件监听器时使用事件捕获模式 -->
 <!-- 即内部元素触发的事件先在此处理，然后才交由内部元素进行处理 -->
 <div v-on:click.capture="doThis">...</div>
-```
-
-#### self
-
-```
-<!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
-<!-- 即事件不是从内部元素触发的 -->
-<div v-on:click.self="doThat">...</div>
-```
-
-#### target
-
-```
-<!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
-<!-- 即事件不是从内部元素触发的 -->
-<div v-on:click.self="doThat">...</div>
 ```
 
 #### once
@@ -544,10 +546,37 @@ c). event.stopPropagation();
 
 
 ```html
-<!-- 滚动事件的默认行为 (即滚动行为) 将会立即触发 -->
-<!-- 而不会等待 `onScroll` 完成  -->
-<!-- 这其中包含 `event.preventDefault()` 的情况 -->
-<div v-on:scroll.passive="onScroll">...</div>
+<!-- 滚动事件的默认行为 (scrolling) 将立即发生而非等待 `onScroll` 完成 -->
+<!-- 以防其中包含 `event.preventDefault()` -->
+<div @scroll.passive="onScroll">...</div>
+```
+
+#### native（vue3移除）
+
+@click.native 是给组件绑定原生事件，否则会认为监听的是来自组件自定义的事件
+
+#### lazy
+
+在默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步 (除了上述输入法组合文字时)。你可以添加 lazy 修饰符，从而转为在 change 事件_之后_进行同步。
+意思是什么呢，就是说当我们在 input 输入框输入数据时，v-model 绑定的值不会发发生变化，但是当我们停止输入，输入框失去焦点或者按下回车时，v-model 绑定的值才会发生变化，即在“change”时而非“input”时更新
+
+```
+<!-- 在 "change" 事件后同步更新而不是 "input" -->
+<input v-model.lazy="msg" />
+```
+
+
+
+#### trim
+
+用户输入的前后的空格去掉
+
+#### target
+
+```
+<!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
+<!-- 即事件不是从内部元素触发的 -->
+<div v-on:click.self="doThat">...</div>
 ```
 
 #### exact
@@ -567,17 +596,17 @@ c). event.stopPropagation();
 
 #### sync
 
-日常开发时，我们总会遇到需要父子组件双向绑定的问题，但是考虑到组件的可维护性，vue中是不允许子组件改变父组件传的props值的。那么同时，vue中也提供了一种解决方案.[sync](https://so.csdn.net/so/search?q=sync&spm=1001.2101.3001.7020)修饰符。sync修饰符，与我们平常使用$emit实现子组件向父组件通信没有区别，只不过是写法上方便一些。
+日常开发时，我们总会遇到需要父子组件双向绑定的问题，但是考虑到组件的可维护性，vue 中是不允许子组件改变父组件传的 props 值的。那么同时，vue 中也提供了一种解决方案.[sync](https://so.csdn.net/so/search?q=sync&spm=1001.2101.3001.7020) 修饰符。sync 修饰符，与我们平常使用$emit 实现子组件向父组件通信没有区别，只不过是写法上方便一些。
 
 - $emit
 
-  子组件使用$emit向父组件发送事件：
+  子组件使用$emit 向父组件发送事件：
 
   ```vue
   this.$emit('update:title', newTitle)
   ```
 
-  父组件监听这个事件并更新一个本地的数据title：
+  父组件监听这个事件并更新一个本地的数据 title：
 
   ```vue
   <text-document
@@ -586,14 +615,14 @@ c). event.stopPropagation();
   ></text-document>
   ```
 
-- .sync修饰符
+- .sync 修饰符
 
   只需要修两个地方：
 
-  1. 子组件内触发的事件名称以“update:title”命名
-  2. 父组件v-bind:title 加上.sync修饰符，即 v-bind:title.sync
+  1. 子组件内触发的事件名称以“update: title”命名
+  2. 父组件 v-bind: title 加上.sync 修饰符，即 v-bind: title.sync
 
-  这样父组件就不用再手动绑定@update:title事件了。
+  这样父组件就不用再手动绑定@update: title 事件了。
 
   ```vue
   // 子组件
@@ -628,10 +657,10 @@ Vue 提供了 `transition` 的封装组件，在下列情形中，可以给任�
 
 1. `v-enter`：定义进入过渡的开始状态。在元素被插入之前生效，在元素被插入之后的下一帧移除。
 2. `v-enter-active`：定义进入过渡生效时的状态。在整个进入过渡的阶段中应用，在元素被插入之前生效，在过渡/动画完成之后移除。这个类可以被用来定义进入过渡的过程时间，延迟和曲线函数。
-3. `v-enter-to`：**2.1.8 版及以上**定义进入过渡的结束状态。在元素被插入之后下一帧生效 (与此同时 `v-enter` 被移除)，在过渡/动画完成之后移除。
+3. `v-enter-to`：**2.1.8 版及以上** 定义进入过渡的结束状态。在元素被插入之后下一帧生效 (与此同时 `v-enter` 被移除)，在过渡/动画完成之后移除。
 4. `v-leave`：定义离开过渡的开始状态。在离开过渡被触发时立刻生效，下一帧被移除。
 5. `v-leave-active`：定义离开过渡生效时的状态。在整个离开过渡的阶段中应用，在离开过渡被触发时立刻生效，在过渡/动画完成之后移除。这个类可以被用来定义离开过渡的过程时间，延迟和曲线函数。
-6. `v-leave-to`：**2.1.8 版及以上**定义离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 `v-leave` 被删除)，在过渡/动画完成之后移除。
+6. `v-leave-to`：**2.1.8 版及以上** 定义离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 `v-leave` 被删除)，在过渡/动画完成之后移除。
 
 **实例**
 
@@ -662,7 +691,7 @@ new Vue({
 </style>>
 ```
 
-### 过渡组件transition
+### 过渡组件 transition
 
 https://cn.vuejs.org/v2/api/#transition
 
@@ -701,7 +730,7 @@ https://cn.vuejs.org/v2/api/#transition
 
 #### 用法
 
-`<transition>` 元素作为**单个**元素/组件的过渡效果。`<transition>` 只会把过渡效果应用到其包裹的内容上，而不会额外渲染 DOM 元素，也不会出现在可被检查的组件层级中。
+`<transition>` 元素作为 **单个** 元素/组件的过渡效果。`<transition>` 只会把过渡效果应用到其包裹的内容上，而不会额外渲染 DOM 元素，也不会出现在可被检查的组件层级中。
 
 ```
 <!-- 简单元素 -->
@@ -736,7 +765,7 @@ new Vue({
 
 - **参考**：[过渡：进入，离开和列表](https://cn.vuejs.org/v2/guide/transitions.html)
 
-# 全局API
+# 全局 API
 
 ### Vue.extend
 
@@ -767,24 +796,24 @@ new Profile().$mount('#mount-point')
 
 ### Vue.prototype.$xxx
 
-如果需要设置全局变量，在main.js中，Vue实例化的代码里添加。 不想污染全局作用域。这种情况下，你可以通过在 原型 上定义它们使其在每个Vue实例中可用。
+如果需要设置全局变量，在 main.js 中，Vue 实例化的代码里添加。 不想污染全局作用域。这种情况下，你可以通过在 原型 上定义它们使其在每个 Vue 实例中可用。
 
 ```text
 vue.prototype.$echarts = echarts
 ```
 
-这样`$echarts`就在所有Vue实例中可用了,变量前加上$，是防止被组件中的变量意外覆盖。
+这样 `$echarts` 就在所有 Vue 实例中可用了, 变量前加上$，是防止被组件中的变量意外覆盖。
 
 ### Vue.use( plugin)
 
-> `Vue.use`和`Vue.prototype`没有本质区别，`Vue.use`就是在`Vue.prototype`基础上又封装了一层而已，他们实现的原理都是在`Vue.prototype`上添加了一个方法，**`Vue.prototype`适合于注册Vue生态外的插件，`Vue.use`适合于注册Vue生态内的插件。**
+> `Vue.use` 和 `Vue.prototype` 没有本质区别，`Vue.use` 就是在 `Vue.prototype` 基础上又封装了一层而已，他们实现的原理都是在 `Vue.prototype` 上添加了一个方法，**`Vue.prototype` 适合于注册 Vue 生态外的插件，`Vue.use` 适合于注册 Vue 生态内的插件。**
 >
-> Vue.use主要是执行install方法，而install主要也是执行Vue.prototype方法。所以，其实Vue.use()方法的核心就是Vue.prototype，只不过又封装了一层,更加的灵活，扩展性更好
+> Vue.use 主要是执行 install 方法，而 install 主要也是执行 Vue.prototype 方法。所以，其实 Vue.use()方法的核心就是 Vue.prototype，只不过又封装了一层, 更加的灵活，扩展性更好
 
 - **参数**：
   - `Vue.use({Object | Function}) plugin`
-    - Object ,必须提供 install 方法
-    - Function,它会被作为 install 方法
+    - Object , 必须提供 install 方法
+    - Function, 它会被作为 install 方法
 - **用法：install 方法调用时，会将 Vue 作为参数传入。该方法需要在调用 `new Vue()` 之前被调用。当 install 方法被同一个插件多次调用，插件将只会被安装一次。**
 
 #### demo
@@ -812,7 +841,7 @@ var install = function(Vue) {
 module.exports = install
 ```
 
- main.js导入
+ main.js 导入
 
 ```javascript
 // 测试插件
@@ -828,7 +857,7 @@ this.$Plugin()
 
 #### 饿了么
 
-> 用饿了么UI举例
+> 用饿了么 UI 举例
 
 ```javascript
 import Vue from 'vue'
@@ -917,7 +946,7 @@ https://cn.vuejs.org/v2/guide/mixins.html
 
 与组件的区别
 
-组件：在父组件中引入组件，相当于在父组件中给出一片独立的空间供子组件使用，然后根据props来传值，但本质上两者是相对独立的。
+组件：在父组件中引入组件，相当于在父组件中给出一片独立的空间供子组件使用，然后根据 props 来传值，但本质上两者是相对独立的。
 Mixins：则是在引入组件之后与组件中的对象和方法进行合并，相当于扩展了父组件的对象与方法，可以理解为形成了一个新的组件。
 
 
@@ -925,14 +954,14 @@ Mixins：则是在引入组件之后与组件中的对象和方法进行合并�
 特点
 当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行“合并”。
 
-选项为data ：在发生冲突时以组件数据优先。
-值为函数的选项，如生命周期钩子函数created,mounted等，就会被合并调用，混合对象里的钩子函数在组件里的钩子函数之前调用
-值为对象的选项，例如 methods、components和 directives，将被合并为同一个对象。两个对象键名冲突时，取组件对象的键值对。
+选项为 data ：在发生冲突时以组件数据优先。
+值为函数的选项，如生命周期钩子函数 created, mounted 等，就会被合并调用，混合对象里的钩子函数在组件里的钩子函数之前调用
+值为对象的选项，例如 methods、components 和 directives，将被合并为同一个对象。两个对象键名冲突时，取组件对象的键值对。
 方法和参数在各组件中不共享
 
-# vm实例
+# vm 实例
 
-当一个 Vue 实例被创建时，它将 `data` 对象中的所有的 property 加入到 Vue 的**响应式系统**中。当这些 property 的值发生改变时，视图将会产生“响应”，即匹配更新为新的值。
+当一个 Vue 实例被创建时，它将 `data` 对象中的所有的 property 加入到 Vue 的 **响应式系统** 中。当这些 property 的值发生改变时，视图将会产生“响应”，即匹配更新为新的值。
 
 ```js
 var data = { a: 1 }
@@ -955,7 +984,7 @@ vm.a = 2
 data.a // => 2
 ```
 
-当这些数据改变时，视图会进行重渲染。值得注意的是只有当实例被创建时就已经存在于 `data` 中的 property 才是**响应式**的。也就是说如果你添加一个新的 property，比如：
+当这些数据改变时，视图会进行重渲染。值得注意的是只有当实例被创建时就已经存在于 `data` 中的 property 才是 **响应式** 的。也就是说如果你添加一个新的 property，比如：
 
 ```
 vm.b = 'hi'
@@ -1010,17 +1039,17 @@ vm.$watch('a', function (newValue, oldValue) {
 
 ### vm.$el
 
-获取Vue实例挂载的元素节点
+获取 Vue 实例挂载的元素节点
 
 ### vm.$refs
 
 一个对象，持有注册过 [`ref` attribute](https://cn.vuejs.org/v2/api/#ref) 的所有 DOM 元素和组件实例。
 
-### vm.$parent依赖注入
+### vm.$parent 依赖注入
 
-父实例，如果当前实例有的话。子组件可以通过`this.$parent.fn`(父组件的函数)去调用父组件的函数
+父实例，如果当前实例有的话。子组件可以通过 `this.$parent.fn`(父组件的函数)去调用父组件的函数
 
-当前实例的直接子组件。**需要注意 `$children` 并不保证顺序，也不是响应式的。**如果你发现自己正在尝试使用 `$children` 来进行数据绑定，考虑使用一个数组配合 `v-for` 来生成子组件，并且使用 Array 作为真正的来源。
+当前实例的直接子组件。**需要注意 `$children` 并不保证顺序，也不是响应式的。** 如果你发现自己正在尝试使用 `$children` 来进行数据绑定，考虑使用一个数组配合 `v-for` 来生成子组件，并且使用 Array 作为真正的来源。
 
 ```
 <google-map>
@@ -1032,7 +1061,7 @@ vm.$watch('a', function (newValue, oldValue) {
 
 在这个组件里，所有 `<google-map>` 的后代都需要访问一个 `getMap` 方法，以便知道要跟哪个地图进行交互。不幸的是，使用 `$parent` property 无法很好的扩展到更深层级的嵌套组件上。这也是依赖注入的用武之地，它用到了两个新的实例选项：`provide` 和 `inject`。
 
-`provide` 选项允许我们指定我们想要**提供**给后代组件的数据/方法。在这个例子中，就是 `<google-map>` 内部的 `getMap` 方法：
+`provide` 选项允许我们指定我们想要 **提供** 给后代组件的数据/方法。在这个例子中，就是 `<google-map>` 内部的 `getMap` 方法：
 
 ```
 provide: function () {
@@ -1066,7 +1095,7 @@ vm.$watch( expOrFn, callback, [options] )
 
 vm.$set( target, propertyName/index, value )
 
-🌹调用方法：this.$set( target, key, value )
+🌹 调用方法：this.$set( target, key, value )
 
 🌹 target：要更改的数据源(可以是对象或者数组)
 
@@ -1074,15 +1103,15 @@ vm.$set( target, propertyName/index, value )
 
 🌹 value ：重新赋的值
 
-**当你发现你给对象加了一个属性，在控制台能打印出来，但是却没有更新到视图上时，也许这个时候就需要用到this.$set（）这个方法了**
+**当你发现你给对象加了一个属性，在控制台能打印出来，但是却没有更新到视图上时，也许这个时候就需要用到 this.$set（）这个方法了**
 
 ![img](https://upload-images.jianshu.io/upload_images/17600821-0ab6b6711bdbf0e7.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
 
-给data定义的对象`新增属性`,同时`又要视图实时更新`,除了用`Vue.$set()`方法,也可以通过`Object.assign()`实现
+给 data 定义的对象 `新增属性`, 同时 `又要视图实时更新`, 除了用 `Vue.$set()` 方法, 也可以通过 `Object.assign()` 实现
 
 ### vm.$once
 
-$once有两个参数，第一个参数为字符串类型，用来指定绑定的事件名称，第二个参数设置事件的回调函数
+$once 有两个参数，第一个参数为字符串类型，用来指定绑定的事件名称，第二个参数设置事件的回调函数
 
 自定义事件
 
@@ -1166,13 +1195,13 @@ Vue.nextTick()
   })
 ```
 
-### $nextTick和setTimeout区别（宏任务微任务）
+### $nextTick 和 setTimeout 区别（宏任务微任务）
 
 https://blog.csdn.net/u010565037/article/details/125757087
 
-`nextTick` 在vue 源码中是利用 `Promise.resolve()`实现的。该问题实际就是`Promise`与`setTimeout`的区别，本质是`Event Loop`中微任务与宏任务的区别。
+`nextTick` 在 vue 源码中是利用 `Promise.resolve()` 实现的。该问题实际就是 `Promise` 与 `setTimeout` 的区别，本质是 `Event Loop` 中微任务与宏任务的区别。
 
-`nextTick`:在下次 DOM 更新循环结束之后执行延迟回调。虽然DOM更新了，但是由于v-if此时并没有执行，所以获取不到其中的元素
+`nextTick`: 在下次 DOM 更新循环结束之后执行延迟回调。虽然 DOM 更新了，但是由于 v-if 此时并没有执行，所以获取不到其中的元素
 
 # 组件
 
@@ -1285,7 +1314,7 @@ requireComponent.keys().forEach(fileName => {
 })
 ```
 
-**全局注册的行为必须在根 Vue 实例 (通过 `new Vue`) 创建之前发生**。[这里](https://github.com/chrisvfritz/vue-enterprise-boilerplate/blob/master/src/components/_globals.js)有一个真实项目情景下的示例。
+**全局注册的行为必须在根 Vue 实例 (通过 `new Vue`) 创建之前发生**。[这里](https://github.com/chrisvfritz/vue-enterprise-boilerplate/blob/master/src/components/_globals.js) 有一个真实项目情景下的示例。
 
 ## 内置组件
 
@@ -1333,7 +1362,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 </div>
 ```
 
-一个不带 `name` 的 `<slot>` 出口会带有**隐含的名字default**。
+一个不带 `name` 的 `<slot>` 出口会带有 **隐含的名字 default**。
 
 在向具名插槽提供内容的时候，我们可以在一个 `<template>` 元素上使用 `v-slot` 指令，并以 `v-slot` 的参数的形式提供其名称：
 
@@ -1354,7 +1383,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 
 现在 `<template>` 元素中的所有内容都将会被传入相应的插槽。**任何没有被包裹在带有 `v-slot` 的 `<template>` 中的内容都会被视为默认插槽的内容**。
 
-然而，如果你希望更明确一些，仍然可以在一个 `<template>` 中包裹**默认插槽**的内容：
+然而，如果你希望更明确一些，仍然可以在一个 `<template>` 中包裹 **默认插槽** 的内容：
 
 ```vue
 <base-layout>
@@ -1390,13 +1419,13 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 </div>
 ```
 
-注意 **`v-slot` 只能添加在 `<template>` 上** (只有[一种例外情况](https://v2.cn.vuejs.org/v2/guide/components-slots.html#独占默认插槽的缩写语法))，这一点和已经废弃的 [`slot` attribute](https://v2.cn.vuejs.org/v2/guide/components-slots.html#废弃了的语法) 不同。
+注意 **`v-slot` 只能添加在 `<template>` 上** (只有 [一种例外情况](https://v2.cn.vuejs.org/v2/guide/components-slots.html#独占默认插槽的缩写语法))，这一点和已经废弃的 [`slot` attribute](https://v2.cn.vuejs.org/v2/guide/components-slots.html#废弃了的语法) 不同。
 
 #### **作用域插槽**
 
 > **让父组件插槽内容能够访问子组件中的数据**
 
-我们想在父组件中使用子组件中定义的user变量
+我们想在父组件中使用子组件中定义的 user 变量
 
 ```vue
 <current-user>
@@ -1413,7 +1442,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 </span>
 ```
 
-绑定在 `<slot>` 元素上的 attribute 被称为**插槽 prop**。现在在父级作用域中，我们可以使用带值的 `v-slot` 来定义我们提供的插槽 prop 的名字：
+绑定在 `<slot>` 元素上的 attribute 被称为 **插槽 prop**。现在在父级作用域中，我们可以使用带值的 `v-slot` 来定义我们提供的插槽 prop 的名字：
 
 ```js
 <current-user>
@@ -1453,11 +1482,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 
 ### **keep-alive**
 
-keep-alive是vue中的内置组件，能在组件切换过程中将状态保留在内存中，防止重复渲染DOM
-
-`keep-alive` 包裹动态组件时，会缓存不活动的组件实例，而不是销毁它们
-
-`keep-alive`可以设置以下`props`属性：
+keep-alive 是 vue 中的内置组件，包裹动态组件时，能在组件切换过程中将状态保留在内存中，而不是销毁它们。`<keep-alive>` 和 `<transition>` 相似，是一个抽象组件。它自身不会渲染一个 DOM 元素
 
 - **Props**：
 
@@ -1467,17 +1492,44 @@ keep-alive是vue中的内置组件，能在组件切换过程中将状态保留�
 
 - **用法**：
 
-  和 `<transition>` 相似，`<keep-alive>` 是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在组件的父组件链中。
-
   当组件在 `<keep-alive>` 内被切换，它的 `activated` 和 `deactivated` 这两个生命周期钩子函数将会被对应执行。
 
-  - 页面第一次进入，钩子的触发顺序created-> mounted-> activated
-  - 退出时触发deactivated
-  - 当再次进入（前进或者后退）时，只触发activated。
-  
-- **应用场景：**
+  - 页面第一次进入，钩子的触发顺序 created-> mounted-> activated
+  - 退出时触发 deactivated
+  - 当再次进入（前进或者后退）时，只触发 activated。
 
-  有个员工列表，现在我们点击某条数据，查看员工详情后，再返回到员工列表。这个时候我们就希望这个列表能够保持刚才的状态，这时候就可以使用keep-alive把这个列表所在的组件包裹。
+#### **应用场景**
+
+
+
+缓存路由组件
+
+```
+<router-view v-slot="{ Component, route }">
+  <transition name="fade" mode="out-in">
+    <keep-alive>
+    	<component :is="Component" :key="route.fullPath" />
+    </keep-alive>
+  </transition>
+</router-view>
+```
+
+#### 缺点
+
+- 不会执行create/mounted的事件
+
+  - 获取分页列表
+
+- 路由嵌套了超过两层后，使用[keep-alive](https://so.csdn.net/so/search?q=keep-alive&spm=1001.2101.3001.7020)对路由进行页面的缓存，无法被keep-alive 执行生效。
+
+  https://blog.csdn.net/lc_2014c/article/details/144696600
+
+  - 方案一：多级路由变成两级以下路由层级，
+    - 没有公共的父级组件继承了，
+    - 面包屑不能直接从route.matched里面获取，要自己一层一层封装。
+    - 菜单栏不能直接从route中获取，要自己另外写
+  - 增加字段判断父页面是否从详情页面返回，以决定是否需要刷新页面
+  - 使用插件keep-alive-vue3
 
 ## props
 
@@ -1532,7 +1584,7 @@ props: {
   }
 ```
 
-所有的 prop 都使得其父子 prop 之间形成了一个**单向下行绑定**：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。每次父级组件发生变更时，子组件中所有的 prop 都将会刷新为最新的值。
+所有的 prop 都使得其父子 prop 之间形成了一个 **单向下行绑定**：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。每次父级组件发生变更时，子组件中所有的 prop 都将会刷新为最新的值。
 
 ### [model](https://v2.cn.vuejs.org/v2/api/#model)
 
@@ -1589,14 +1641,14 @@ props: {
   });
   ```
 
-- :key
+- : key
 
   ```vue
-  <div v-if="isUpdate" :key="test || Math.random() || new Data()"></div>
-  this.test++
+  <com :key="key || Math.random() || new Data()"></com>
+  this.key++
   ```
 
-- 调用强制更新方法this.$forceUpdate()会更新视图和数据，强制触发vue的update方法
+- 调用强制更新方法 this.$forceUpdate()会更新视图和数据，强制触发 vue 的 update 方法
 
 - this.$set
 
@@ -1621,7 +1673,7 @@ mounted(){
 
 #### emit
 
-emit用于子组件调用父组件的方法并传递数据；子组件可以使用“\$emit”触发父组件的自定义事件，触发事件后附加参数都会传给监听器回调，语法为“vm.$emit(事件, arg )”。
+emit 用于子组件调用父组件的方法并传递数据；子组件可以使用“\$emit”触发父组件的自定义事件，触发事件后附加参数都会传给监听器回调，语法为“vm.$emit(事件, arg )”。
 
 ```vue
 <div id="box">
@@ -1681,46 +1733,19 @@ var vm = new Vue({
 </script>
 ```
 
-#### sync修饰符
 
-#### 自定义组件的v-model
 
-https://blog.csdn.net/weixin_47232046/article/details/109738816
+#### 双向绑定
 
-一个组件上的 `v-model` 默认会利用名为 `value` 的 prop 和名为 `input` 的事件，但是像单选框、复选框等类型的输入控件可能会将 `value` attribute 用于[不同的目的](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value)。`model` 选项可以用来避免这样的冲突：
+##### sync 修饰符
 
-```
-Vue.component('base-checkbox', {
-  model: {
-    prop: 'checked',
-    event: 'change'
-  },
-  props: {
-    checked: Boolean
-  },
-  template: `
-    <input
-      type="checkbox"
-      v-bind:checked="checked"
-      v-on:change="$emit('change', $event.target.checked)"
-    >
-  `
-})
-```
-
-现在在这个组件上使用 `v-model` 的时候：
-
-```
-<base-checkbox v-model="lovingVue"></base-checkbox>
-```
-
-这里的 `lovingVue` 的值将会传入这个名为 `checked` 的 prop。同时当 `<base-checkbox>` 触发一个 `change` 事件并附带一个新的值的时候，这个 `lovingVue` 的 property 将会被更新。
+> `.sync` 修饰符在 Vue 3 中已经被废弃，取而代之的是使用 `v-model` 进行双向绑定。你可以在父组件中使用 `v-model` 来实现双向绑定。
 
 ### 中央事件总线
 
-> 缺点：A组件触发子组件B的事件时，需要B组件已经渲染出来，如果给B组件v-if,那么A触发后，B组件没有创建，B就不会执行
+> 缺点：A 组件触发子组件 B 的事件时，需要 B 组件已经渲染出来，如果给 B 组件 v-if, 那么 A 触发后，B 组件没有创建，B 就不会执行
 
-**这种方法通过一个空的Vue实例作为中央事件总线（事件中心），用它来触发事件和监听事件,巧妙而轻量地实现了任何组件间的通信，包括父子、兄弟、跨级**。当我们的项目比较大时，可以选择更好的状态管理解决方案vuex。
+**这种方法通过一个空的 Vue 实例作为中央事件总线（事件中心），用它来触发事件和监听事件, 巧妙而轻量地实现了任何组件间的通信，包括父子、兄弟、跨级**。当我们的项目比较大时，可以选择更好的状态管理解决方案 vuex。
 
 ```
 var Event = new Vue();　　　　　　相当于又new了一个vue实例，Event中含有vue的全部方法；
@@ -1778,11 +1803,11 @@ var C={
 
 **允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效**。
 
-一言而蔽之：祖先组件中通过provider来提供变量，然后在子孙组件中通过inject来注入变量。
+一言而蔽之：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
 
 **provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系**。
 
-### `$parent` / `$children`与 `ref`
+### `$parent` / `$children` 与 `ref`
 
 - `ref`：如果在普通的 DOM 元素上使用，引用指向的就是 DOM 元素；如果用在子组件上，引用就指向组件实例
 - `$parent` / `$children`：访问父 / 子实例
@@ -1842,7 +1867,7 @@ provide / inject API；`$attrs/$listeners`
 
 - （2）$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。
 
-- （3）$listeners：包含了父作用域中(不含 .native 修饰器的)v-on事件监听器。他可以通过 v-on="listeners"传入内部组件
+- （3）$listeners：包含了父作用域中(不含 .native 修饰器的)v-on 事件监听器。他可以通过 v-on =" listeners " 传入内部组件
 
   `$listeners` 对象在 Vue 3 中已被移除。事件监听器现在是 `$attrs` 的一部分
 
@@ -1859,20 +1884,20 @@ provide / inject API；`$attrs/$listeners`
 当一个组件以单个元素为根作渲染时，透传的 attribute 会自动被添加到根元素上。举例来说，假如我们有一个 <MyButton> 组件，它的模板长这样：
 
 <!-- <MyButton> 的模板 -->
-<button>click me</button>
+<button> click me </button>
 一个父组件使用了这个组件，并且传入了 class：
 
 <MyButton class="large" />
 最后渲染出的 DOM 结果是：
 
-<button class="large">click me</button>
+<button class="large"> click me </button>
  这里，<MyButton> 并没有将 class 声明为一个它所接受的 prop，所以 class 被视作透传 attribute，自动透传到了 <MyButton> 的根元素上。
 
 
 
 #### 禁用 Attributes 继承 
 
-vue2：如果你**不想要**一个组件自动地继承 attribute，你可以在组件选项中设置 `inheritAttrs: false`。
+vue2：如果你 **不想要** 一个组件自动地继承 attribute，你可以在组件选项中设置 `inheritAttrs: false`。
 
 vue3：
 
@@ -1889,10 +1914,10 @@ defineOptions({
 如果一个子组件的根元素已经有了 class 或 style attribute，它会和从父组件上继承的值合并。如果我们将之前的 <MyButton> 组件的模板改成这样：
 
 <!-- <MyButton> 的模板 -->
-<button class="btn">click me</button>
+<button class="btn"> click me </button>
  则最后渲染出的 DOM 结果会变成：
 
-<button class="btn large">click me</button>
+<button class="btn large"> click me </button>
 
 #### v-on 监听器继承
 
@@ -1916,7 +1941,7 @@ click 监听器会被添加到 <MyButton> 的根元素，即那个原生的 <but
     }
   ```
 
-- const方法
+- const 方法
 
   ```
   const One = ()=>import("./one");
@@ -1927,85 +1952,85 @@ click 监听器会被添加到 <MyButton> 的根元素，即那个原生的 <but
 
 
 
-# vue生命周期
+# vue 生命周期
 
-Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等 。 在这个过程中也会运行一些叫做**生命周期钩子**的函数，这给了用户在不同阶段添加自己的代码的机会。 
+Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等 。 在这个过程中也会运行一些叫做 **生命周期钩子** 的函数，这给了用户在不同阶段添加自己的代码的机会。 
 
 ## 总结与建议
 
-理解Vue的生命周期钩子函数对于开发复杂的Vue应用至关重要。通过在不同的生命周期阶段执行特定的操作，可以更好地管理组件的状态和行为。建议在实际开发中，根据具体需求，选择合适的生命周期钩子函数来处理相应的逻辑，以提高代码的可维护性和性能。
+理解 Vue 的生命周期钩子函数对于开发复杂的 Vue 应用至关重要。通过在不同的生命周期阶段执行特定的操作，可以更好地管理组件的状态和行为。建议在实际开发中，根据具体需求，选择合适的生命周期钩子函数来处理相应的逻辑，以提高代码的可维护性和性能。
 
 **进一步建议**:
 
 1. **合理选择生命周期钩子函数**：根据操作的需求选择合适的生命周期钩子函数，不要在一个钩子函数中处理过多逻辑。
-2. **避免内存泄漏**：在`beforeDestroy`和`destroyed`钩子中进行清理工作，确保没有未清理的事件监听或计时器。
-3. **利用`mounted`进行DOM操作**：如果需要操作DOM，最好在`mounted`阶段进行，以确保DOM已经生成。
+2. **避免内存泄漏**：在 `beforeDestroy` 和 `destroyed` 钩子中进行清理工作，确保没有未清理的事件监听或计时器。
+3. **利用 `mounted` 进行 DOM 操作**：如果需要操作 DOM，最好在 `mounted` 阶段进行，以确保 DOM 已经生成。
 
 箭头函数
 
-不要在生命周期函数或者回调上使用箭头函数， 因为箭头函数并没有 `this` ,this指向调用它的VUE实例
+不要在生命周期函数或者回调上使用箭头函数， 因为箭头函数并没有 `this` , this 指向调用它的 VUE 实例
 
  比如 `created: () => console.log(this.a)` 或 `vm.$watch('a', newValue => this.myMethod())` 
 
 ## beforeCreate
 
-> 在此阶段，`this`指向的Vue实例还没有任何响应式数据，所以不能访问`data`、`computed`、`methods`等属性。
+> 在此阶段，`this` 指向的 Vue 实例还没有任何响应式数据，所以不能访问 `data`、`computed`、`methods` 等属性。
 
-在**beforeCreate**阶段，Vue实例刚刚被初始化，实例的属性如`data`和`methods`还没有被设置。这是生命周期的第一个钩子函数，**通常用于初始化非响应式属性或执行一些同步操作。**
+在 **beforeCreate** 阶段，Vue 实例刚刚被初始化，实例的属性如 `data` 和 `methods` 还没有被设置。这是生命周期的第一个钩子函数，**通常用于初始化非响应式属性或执行一些同步操作。**
 
 - 初始化非响应式属性
 - 执行同步操作
 
 ## created
 
-> 在此阶段，可以访问并操作`data`中的数据，进行数据获取或初始化操作。
+> 在此阶段，可以访问并操作 `data` 中的数据，进行数据获取或初始化操作。
 
-**created**阶段，Vue实例已经创建完成，`data`、`computed`、`methods`等属性已经初始化。可以在这一步进行数据的获取和初始化。
+**created** 阶段，Vue 实例已经创建完成，`data`、`computed`、`methods` 等属性已经初始化。可以在这一步进行数据的获取和初始化。
 
 - 数据获取
 - 初始化数据
 
 ## beforeMount
 
-> 此阶段适合进行一些在挂载前的准备工作，如调整虚拟DOM的结构等。
+> 此阶段适合进行一些在挂载前的准备工作，如调整虚拟 DOM 的结构等。
 
-在**beforeMount**阶段，Vue实例已经编译了模板，放在内存中。但还未挂载到DOM树上。这是操作DOM的最后一个机会，但此时DOM还未真正生成。
+在 **beforeMount** 阶段，Vue 实例已经编译了模板，放在内存中。但还未挂载到 DOM 树上。这是操作 DOM 的最后一个机会，但此时 DOM 还未真正生成。
 
 - 准备挂载操作
-- 操作虚拟DOM
+- 操作虚拟 DOM
 
 ## mounted
 
-> 在此阶段，可以安全地操作DOM元素，进行如第三方库初始化等需要DOM存在的操作。可以在 mounted 内部使用 vm.$nextTick
+> 在此阶段，可以安全地操作 DOM 元素，进行如第三方库初始化等需要 DOM 存在的操作。可以在 mounted 内部使用 vm.$nextTick
 
-**mounted**阶段，Vue实例已经被挂载到真实DOM树上，可以进行DOM操作。
+**mounted** 阶段，Vue 实例已经被挂载到真实 DOM 树上，可以进行 DOM 操作。
 
-- 操作真实DOM
+- 操作真实 DOM
 - 启动第三方库
 
 ## beforeUpdate
 
 > 此阶段适合进行一些在数据更新前的准备工作，如保存快照等。
 
-在**beforeUpdate**阶段，当响应式数据更新时，组件重新渲染前触发。可以在此阶段对新的数据进行一些处理。
+在 **beforeUpdate** 阶段，当响应式数据更新时，组件重新渲染前触发。可以在此阶段对新的数据进行一些处理。
 
 - 处理即将更新的数据
 - 在重新渲染前执行逻辑
 
 ## updated
 
-> 在此阶段，可以确保所有数据和DOM都已经是最新状态，适合进行一些与最新数据或DOM相关的操作。
+> 在此阶段，可以确保所有数据和 DOM 都已经是最新状态，适合进行一些与最新数据或 DOM 相关的操作。
 
-**updated**阶段，组件更新并重新渲染后触发。这是操作最新DOM结构的机会。
+**updated** 阶段，组件更新并重新渲染后触发。这是操作最新 DOM 结构的机会。
 
-- 操作最新DOM
+- 操作最新 DOM
 - 检查更新结果
 
 ## beforeDestroy
 
 > 此阶段适合进行各种清理操作，以确保不会有内存泄漏或其他副作用。
 
-在**beforeDestroy**阶段，实例即将被销毁。在此阶段可以执行清理工作，如清除计时器、事件监听等。
+在 **beforeDestroy** 阶段，实例即将被销毁。在此阶段可以执行清理工作，如清除计时器、事件监听等。
 
 - 清理工作
 - 停止计时器
@@ -2014,7 +2039,7 @@ Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模�
 
 > 在此阶段，实例已经完全销毁，所有关联的资源都被释放。
 
-**destroyed**阶段，实例已经销毁，所有绑定的事件监听和子实例都被清理。此时不能再访问实例中的数据和方法。
+**destroyed** 阶段，实例已经销毁，所有绑定的事件监听和子实例都被清理。此时不能再访问实例中的数据和方法。
 
 - 最后的清理工作
 - 确保实例完全销毁
@@ -2026,11 +2051,11 @@ deactivated	keep-alive 组件停用时调用。
 
 
 
-# vue-router路由
+# vue-router 路由
 
 https://juejin.cn/post/7195540736908869692
 
-## **hash和history**
+## **hash 和 history**
 
 ```js
 const router = new VueRouter({
@@ -2043,37 +2068,37 @@ const router = new VueRouter({
 
 **hash**
 
-hash模式下，它指 # 号之后的所有字符，但是他虽然包含在url中，但是不包含在http请求中，所以**改变hash值不会重新加载页面**，对传给后端的url没有任何影响，因此不会重新加载页面。它每次改变都会触发hashchange事件，可以通过给window加上hashchange事件进行监听。它是单页面的标配。
+hash 模式下，它指 # 号之后的所有字符，但是他虽然包含在 url 中，但是不包含在 http 请求中，所以 **改变 hash 值不会重新加载页面**，对传给后端的 url 没有任何影响，因此不会重新加载页面。它每次改变都会触发 hashchange 事件，可以通过给 window 加上 hashchange 事件进行监听。它是单页面的标配。
 
 **history**
 
-利用了HTML5 History Interface中新增的pushState和replaceState方法。这两个方法应用于浏览器的历史记录栈， **而不会引起页面的刷新** ，在当前已有的 back、forward、go 的基础之上，它们提供了对**历史记录进行修改**的功能。 history模式下有一个问题，就是当页面刷新时，他会实实在在的发送请求，把url给传送过去，因此，如果后端没有做处理的话，就会因找不到资源而报404错误，因此使用history模式时可以跟后端进行配合。
+利用了 HTML5 History Interface 中新增的 pushState 和 replaceState 方法。这两个方法应用于浏览器的历史记录栈， **而不会引起页面的刷新** ，在当前已有的 back、forward、go 的基础之上，它们提供了对 **历史记录进行修改** 的功能。 history 模式下有一个问题，就是当页面刷新时，他会实实在在的发送请求，把 url 给传送过去，因此，如果后端没有做处理的话，就会因找不到资源而报 404 错误，因此使用 history 模式时可以跟后端进行配合。
 
 下面阐述几种 `HTML5` 新增的 `history API` 。**具体如下表：**
 
 | API                                       | 定义                                                         |
 | ----------------------------------------- | ------------------------------------------------------------ |
-| history.pushState(data, title [, url])    | pushState主要用于**往历史记录堆栈顶部添加一条记录**。各参数解析如下：**①data**会在onpopstate事件触发时作为参数传递过去；**②title**为页面标题，当前所有浏览器都会忽略此参数；③**url**为页面地址，可选，缺少时表示为当前页地址 |
-| history.replaceState(data, title [, url]) | 更改当前的历史记录，参数同上； 上面的pushState是添加，这个更改 |
-| history.state                             | 用于存储以上方法的data数据（即state对象），如果当前URL不是通过pushState或者replaceState产生的，那么history.state是null。 |
-| window.onpopstate                         | 响应pushState或者replaceState的调用。                        |
+| history.pushState(data, title [, url])    | pushState 主要用于 **往历史记录堆栈顶部添加一条记录**。各参数解析如下：**①data** 会在 onpopstate 事件触发时作为参数传递过去；**②title** 为页面标题，当前所有浏览器都会忽略此参数；③ **url** 为页面地址，可选，缺少时表示为当前页地址 |
+| history.replaceState(data, title [, url]) | 更改当前的历史记录，参数同上； 上面的 pushState 是添加，这个更改 |
+| history.state                             | 用于存储以上方法的 data 数据（即 state 对象），如果当前 URL 不是通过 pushState 或者 replaceState 产生的，那么 history.state 是 null。 |
+| window.onpopstate                         | 响应 pushState 或者 replaceState 的调用。                        |
 
 ### 总结
 
 **hash**
 
-- url中有#
-- 原理是onhashchange事件
+- url 中有#
+- 原理是 onhashchange 事件
 - **仅 hash 符号之前的内容会被包含在请求中**
-- hash修改的url是同文档的url
-- hash不会修改浏览器历史记录栈
+- hash 修改的 url 是同文档的 url
+- hash 不会修改浏览器历史记录栈
 - 生成二维码、微信分享页面的时候都会自动过滤掉#后面的参数
 
 **history**
 
-- url中没有#，美观
+- url 中没有#，美观
 
-- 原理是popstate事件,浏览历史（即history对象）出现变化时，就会触发popstate事件。history.pushState用于在浏览历史中添加历史记录，history.replaceState修改浏览历史中当前纪录，但是并不触发页面刷新
+- 原理是 popstate 事件, 浏览历史（即 history 对象）出现变化时，就会触发 popstate 事件。history.pushState 用于在浏览历史中添加历史记录，history.replaceState 修改浏览历史中当前纪录，但是并不触发页面刷新
 
   ```
   history.pushState({color:'red'}, 'red', 'red'})
@@ -2087,11 +2112,11 @@ hash模式下，它指 # 号之后的所有字符，但是他虽然包含在url�
 
 - **全路径内容会被包含在请求中**
 
-- history修改的url可以是同域的任意url
+- history 修改的 url 可以是同域的任意 url
 
-- history会修改浏览器历史记录栈
+- history 会修改浏览器历史记录栈
 
-- history模式往往需要后端支持，如果后端nginx没有覆盖路由地址，就会返回404
+- history 模式往往需要后端支持，如果后端 nginx 没有覆盖路由地址，就会返回 404
 
 ## 配置路由
 
@@ -2101,9 +2126,9 @@ hash模式下，它指 # 号之后的所有字符，但是他虽然包含在url�
 
 ### 手动配置路由
 
-直接`vue add router`,或者
+直接 `vue add router`, 或者
 
-1. 下载vue-router模块  
+1. 下载 vue-router 模块  
 
    ```bash
    npm install vue-router
@@ -2167,7 +2192,7 @@ hash模式下，它指 # 号之后的所有字符，但是他虽然包含在url�
    
    ```
 
-3. main.js文件中引入router
+3. main.js 文件中引入 router
 
    ```js
    import Vue from "vue";
@@ -2310,8 +2335,8 @@ router.push({ name: 'user', params: { userId: 123 } })
 
 | 模式                          | 匹配路径            | $route.params                          |
 | ----------------------------- | ------------------- | -------------------------------------- |
-| /user/:username               | /user/evan          | `{ username: 'evan' }`                 |
-| /user/:username/post/:post_id | /user/evan/post/123 | `{ username: 'evan', post_id: '123' }` |
+| /user/: username               | /user/evan          | `{ username: 'evan' }`                 |
+| /user/: username/post/: post_id | /user/evan/post/123 | `{ username: 'evan', post_id: '123' }` |
 
 除了 `$route.params` 外，[API 文档](https://router.vuejs.org/zh/api/#路由对象)
 
@@ -2358,7 +2383,7 @@ const User = {
 }
 ```
 
-当使用一个*通配符*时，`$route.params` 内会自动添加一个名为 `pathMatch` 参数。它包含了 URL 通过*通配符*被匹配的部分：
+当使用一个 *通配符* 时，`$route.params` 内会自动添加一个名为 `pathMatch` 参数。它包含了 URL 通过 *通配符* 被匹配的部分：
 
 ```js
 // 给出一个路由 { path: '/user-*' }
@@ -2370,10 +2395,6 @@ this.$route.params.pathMatch // '/non-existing'
 ```
 
 ### 嵌套路由
-
-<router-view> 是最顶层的出口，渲染最高级路由匹配到的组件。同样地，一个被渲染组件同样可以包含自己的嵌套 <router-view>
-
-嵌套路由的现象：点击了路由跳转之后父路由组件的内容一直呈现；子路由的内容进行切换，地址栏的路径也随之改变。
 
 ```js
 // 嵌套路由
@@ -2391,8 +2412,6 @@ const routes = [
 ];
 ```
 
-
-
 ```vue
 //TravelPage.vue
 <template>
@@ -2407,6 +2426,27 @@ const routes = [
   </div>
 </template>
 ```
+
+#### 注意
+
+扁平化路由`'/travel/china'`，会没有travel父级节点
+
+```
+// 嵌套路由
+const routes = [
+  {
+    path: '/travel', component: TravelPage,
+    children: [
+      { path: '/travel/america', component: TravelAmericaPage },
+    ]
+  },
+  {
+    path: '/travel/china', component: AboutPage
+  }
+];
+```
+
+![image-20250118173440301](img/前端/vue/image-20250118173440301.png)
 
 ### 命名路由
 
@@ -2440,7 +2480,7 @@ router.push({ name: 'user', params: { userId: 123 } })
 
 ### 命名视图
 
-命名视图只需两步：第一在router-view添加name属性，第二在路由中用`components。`
+命名视图只需两步：第一在 router-view 添加 name 属性，第二在路由中用 `components。`
 
 有时候想同时（同级）展示多个视图，而不是嵌套展示，例如创建一个布局，有 `sidebar`（侧导航） 和 `main`（主内容） 两个视图，这个时候命名视图就派上用场了。你可以在界面中拥有多个单独命名的视图，而不是只有一个单独的出口。如果 `router-view` 没有设置名字，那么默认为 `default`。
 
@@ -2506,7 +2546,7 @@ const router = new VueRouter({
 
 #### 别名
 
-“重定向”的意思是，**当用户访问 `/a`时**，URL 将会被替换成 `/b`，然后匹配路由为 `/b`，那么“别名”又是什么呢？
+“重定向”的意思是，**当用户访问 `/a` 时**，URL 将会被替换成 `/b`，然后匹配路由为 `/b`，那么“别名”又是什么呢？
 
 `/a` 的别名是 `/b`，意味着，**当用户访问 `/b` 时**，URL 会保持为 `/b`，但是路由匹配则为 `/a`，就像用户访问 `/a` 一样。
 
@@ -2578,7 +2618,7 @@ const router = new VueRouter({
 
 ## 路由守卫
 
-路由守卫就是路由跳转过程中的一些[钩子函数](https://so.csdn.net/so/search?q=钩子函数&spm=1001.2101.3001.7020) ，在路由跳转的时候，做一些判断或其它的操作。 类似于组件生命周期钩子函数 。
+路由守卫就是路由跳转过程中的一些 [钩子函数](https://so.csdn.net/so/search?q=钩子函数&spm=1001.2101.3001.7020) ，在路由跳转的时候，做一些判断或其它的操作。 类似于组件生命周期钩子函数 。
 
 ### 分类
 
@@ -2590,13 +2630,13 @@ const router = new VueRouter({
 
 - 路由独享守卫
 
-  beforeEnter(to,from,next) 路由对象单个路由配置 ，单个路由进入前触发
+  beforeEnter(to, from, next) 路由对象单个路由配置 ，单个路由进入前触发
 
 - 组件路由守卫(跟 methods: {}等同级别书写，组件路由守卫是写在每个单独的 vue 文件里面的路由守卫)
 
-  beforeRouteEnter(to,from,next) 在组件生命周期beforeCreate阶段触发
-  beforeRouteUpdadte(to,from,next) 当前路由改变时触发
-  beforeRouteLeave(to,from,next) 导航离开该组件的对应路由时触发
+  beforeRouteEnter(to, from, next) 在组件生命周期 beforeCreate 阶段触发
+  beforeRouteUpdadte(to, from, next) 当前路由改变时触发
+  beforeRouteLeave(to, from, next) 导航离开该组件的对应路由时触发
 
 **参数**
 to： 即将要进入的目标路由对象
@@ -2622,7 +2662,7 @@ router.beforeEach((to, from, next) => {
 
 **确保 `next` 函数在任何给定的导航守卫中都被严格调用一次。它可以出现多于一次，但是只能在所有的逻辑路径都不重叠的情况下，否则钩子永远都不会被解析或报错**
 
-以一个简单的例子来解释router.beforeEach
+以一个简单的例子来解释 router.beforeEach
 假设我们现在做一个这样的需求，用户在未登录的时候进入任意页面，我们就让用户跳转到登录页面，在已登录的时候让用户正常跳转到点击的页面。
 
 ```js
@@ -2763,10 +2803,10 @@ router.go(100)
 
 ## 开始
 
-每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的**状态 (state)**。Vuex 和单纯的全局对象有以下两点不同：
+每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的 **状态 (state)**。Vuex 和单纯的全局对象有以下两点不同：
 
 1. Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。
-2. 你不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地**提交 (commit) mutation**。这样使得我们可以方便地跟踪每一个状态的变化，从而让我们能够实现一些工具帮助我们更好地了解我们的应用。
+2. 你不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地 **提交 (commit) mutation**。这样使得我们可以方便地跟踪每一个状态的变化，从而让我们能够实现一些工具帮助我们更好地了解我们的应用。
 
 ```js
 import Vue from 'vue'
@@ -2804,7 +2844,7 @@ methods: {
 
 ### state
 
-由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在[计算属性](https://cn.vuejs.org/guide/computed.html)中返回某个状态
+由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在 [计算属性](https://cn.vuejs.org/guide/computed.html) 中返回某个状态
 
 ```js
 //main.js
@@ -2942,7 +2982,7 @@ const store = new Vuex.Store({
 store.commit('increment')
 ```
 
-你可以向 `store.commit` 传入额外的参数，即 mutation 的**载荷（payload）**：
+你可以向 `store.commit` 传入额外的参数，即 mutation 的 **载荷（payload）**：
 
 ```js
 //两种方式提交
@@ -2963,7 +3003,7 @@ store.commit({
 Action 类似于 mutation，不同在于：
 
 - Action 提交的是 mutation，而不是直接变更状态。
-- Action 可以包含任意**异步操作**(请求在这里操作)。
+- Action 可以包含任意 **异步操作**(请求在这里操作)。
 
 ```js
 const store = new Vuex.Store({
@@ -2983,7 +3023,7 @@ const store = new Vuex.Store({
 })
 ```
 
-Action 函数接受一个与 **store 实例**具有相同方法和属性的 context 对象，因此你可以调用 `context.commit` 提交一个 mutation，或者通过 `context.state` 和 `context.getters` 来获取 state 和 getters。
+Action 函数接受一个与 **store 实例** 具有相同方法和属性的 context 对象，因此你可以调用 `context.commit` 提交一个 mutation，或者通过 `context.state` 和 `context.getters` 来获取 state 和 getters。
 
 ```js
 actions: {
@@ -3020,13 +3060,13 @@ store.dispatch({
 })
 ```
 
-> 可以在 action 内部执行**异步**操作
+> 可以在 action 内部执行 **异步** 操作
 
 ###  Module
 
 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
 
-为了解决以上问题，Vuex 允许我们将 store 分割成**模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割：
+为了解决以上问题，Vuex 允许我们将 store 分割成 **模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割：
 
 ```js
 const moduleA = {
@@ -3053,7 +3093,7 @@ store.state.a // -> moduleA 的状态
 store.state.b // -> moduleB 的状态
 ```
 
-## vuex项目
+## vuex 项目
 
 ```
 ├── index.html
@@ -3312,7 +3352,7 @@ function componentFactory(Component){
 
 ```
 
-由上面可得到data由两部分组成
+由上面可得到 data 由两部分组成
 
 比如原来有个组件：
 
@@ -3361,7 +3401,7 @@ new App().$mounted('#app');
 
 ## 基本
 
-Vue Class Component 是一个可以让你使用Class风格语法编写Vue组件的库
+Vue Class Component 是一个可以让你使用 Class 风格语法编写 Vue 组件的库
 
 ```vue
 <template>
@@ -3394,13 +3434,13 @@ export default class Counter extends Vue {
 </script>
 ```
 
-可以使用通过`@Component`装饰器标注Class, 来用直观和标准的Class语法定义组件的data和方法. 你可以简单地使用Class风格的组件代替组件定义, 因为它等价于普通的使用对象定义的组件.
+可以使用通过 `@Component` 装饰器标注 Class, 来用直观和标准的 Class 语法定义组件的 data 和方法. 你可以简单地使用 Class 风格的组件代替组件定义, 因为它等价于普通的使用对象定义的组件.
 
-通过使用Class风格定义的组件, 你不但要改变语法, 还要利用一些ECMAScript语法特性, 比如Class继承和装饰器. Vue Class Component 也提供了一个[`mixins` 帮助](https://links.jianshu.com/go?to=guide%2Fextend-and-mixins.md%23Mixins) 来继承mixin, 以及一个 [`createDecorator` 方法](https://links.jianshu.com/go?to=guide%2Fcustom-decorators.md)来简单地创建你自己的修饰器.你或许也需要使用  [Vue Property Decorator](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fkaorun343%2Fvue-property-decorator) 提供的 `@Prop` 和 `@Watch` 装饰器.
+通过使用 Class 风格定义的组件, 你不但要改变语法, 还要利用一些 ECMAScript 语法特性, 比如 Class 继承和装饰器. Vue Class Component 也提供了一个 [`mixins` 帮助](https://links.jianshu.com/go?to=guide%2Fextend-and-mixins.md%23Mixins) 来继承 mixin, 以及一个 [`createDecorator` 方法](https://links.jianshu.com/go?to=guide%2Fcustom-decorators.md) 来简单地创建你自己的修饰器.你或许也需要使用  [Vue Property Decorator](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fkaorun343%2Fvue-property-decorator) 提供的 `@Prop` 和 `@Watch` 装饰器.
 
 ### Class 组件
 
-`@Componen`装饰器使你的类成为一个Vue组件:
+`@Componen` 装饰器使你的类成为一个 Vue 组件:
 
 ```js
 import Vue from 'vue'
@@ -3413,7 +3453,7 @@ export default class HelloWorld extends Vue {}
 
 ### Data
 
-使用Class属性来初始化 `data`:
+使用 Class 属性来初始化 `data`:
 
 ```html
 <template>
@@ -3432,9 +3472,9 @@ export default class HelloWorld extends Vue {
 </script>
 ```
 
-The above component renders 上面的组件会在`<div>`中的组件data `message`中渲染`Hello World!`
+The above component renders 上面的组件会在 `<div>` 中的组件 data `message` 中渲染 `Hello World!`
 
-**注意如果初始化的值是 `undefined`,** Class属性将不是响应式的, 意思就是当其发生修改后, 将不会被侦测到:
+**注意如果初始化的值是 `undefined`,** Class 属性将不是响应式的, 意思就是当其发生修改后, 将不会被侦测到:
 
 ```js
 import Vue from 'vue'
@@ -3469,7 +3509,7 @@ export default class HelloWorld extends Vue {
 
 ### Methods
 
-组件 `methods` 将直接定义在Class方法属性中:
+组件 `methods` 将直接定义在 Class 方法属性中:
 
 ```html
 <template>
@@ -3490,9 +3530,9 @@ export default class HelloWorld extends Vue {
 </script>
 ```
 
-### Computed计算属性
+### Computed 计算属性
 
-计算属性可以通过Class属性的 getter / setter 定义:
+计算属性可以通过 Class 属性的 getter / setter 定义:
 
 ```html
 <template>
@@ -3525,7 +3565,7 @@ export default class HelloWorld extends Vue {
 
 ### 额外的钩子
 
-如果你使用Vue的插件, 比如[Vue Router](https://links.jianshu.com/go?to=https%3A%2F%2Frouter.vuejs.org%2F), 你或许需要Class组件来解决它们提供的钩子. 在这个例子中, `Component.registerHooks`允许你注册这些钩子:
+如果你使用 Vue 的插件, 比如 [Vue Router](https://links.jianshu.com/go?to=https%3A%2F%2Frouter.vuejs.org%2F), 你或许需要 Class 组件来解决它们提供的钩子. 在这个例子中, `Component.registerHooks` 允许你注册这些钩子:
 
 ```js
 // class-component-hooks.js
@@ -3539,7 +3579,7 @@ Component.registerHooks([
 ])
 ```
 
-在注册完这些钩子后, 就可以在Class组件中把它们当作Class属性方法来使用:
+在注册完这些钩子后, 就可以在 Class 组件中把它们当作 Class 属性方法来使用:
 
 ```js
 import Vue from 'vue'
@@ -3585,7 +3625,7 @@ new Vue({
 
 #### 扩展
 
-你可以扩展一个存在的Class组件, 类似于原生的Class继承. 想象你有下面的名为Super的Class组件:
+你可以扩展一个存在的 Class 组件, 类似于原生的 Class 继承. 想象你有下面的名为 Super 的 Class 组件:
 
 ```js
 // super.js
@@ -3599,7 +3639,7 @@ export default class Super extends Vue {
 }
 ```
 
-你可以扩展他, 通过使用原生的Class继承语法:
+你可以扩展他, 通过使用原生的 Class 继承语法:
 
 ```js
 import Super from './super'
@@ -3614,13 +3654,13 @@ export default class HelloWorld extends Super {
 }
 ```
 
-注意 名为Super的Class组件必须是一个Class组件. 换句话说, 它需要继承作为原本的`Vue`构造器以及被 `@Component` 装饰器装饰.
+注意 名为 Super 的 Class 组件必须是一个 Class 组件. 换句话说, 它需要继承作为原本的 `Vue` 构造器以及被 `@Component` 装饰器装饰.
 
 #### Mixins
 
-Vue Class Component 提供 `mixins` 助手函数来在Class风格中使用 [mixins](https://links.jianshu.com/go?to=https%3A%2F%2Fvuejs.org%2Fv2%2Fguide%2Fmixins.html). 通过使用`mixins`助手, TypeScript 可以推断mixin类型以及在组件类型中继承它们.
+Vue Class Component 提供 `mixins` 助手函数来在 Class 风格中使用 [mixins](https://links.jianshu.com/go?to=https%3A%2F%2Fvuejs.org%2Fv2%2Fguide%2Fmixins.html). 通过使用 `mixins` 助手, TypeScript 可以推断 mixin 类型以及在组件类型中继承它们.
 
-例子中定义了名为`Hello` 和 `World` 的 mixins :
+例子中定义了名为 `Hello` 和 `World` 的 mixins :
 
 ```js
 // mixins.js
@@ -3639,7 +3679,7 @@ export class World extends Vue {
 }
 ```
 
-在Class组件中使用它们:
+在 Class 组件中使用它们:
 
 ```js
 import Component, { mixins } from 'vue-class-component'
@@ -3655,7 +3695,7 @@ export class HelloWorld extends mixins(Hello, World) {
 }
 ```
 
-和名为Super的Class组件一样, 所有的mixins 必须被定义为一个 Class 组件.
+和名为 Super 的 Class 组件一样, 所有的 mixins 必须被定义为一个 Class 组件.
 
 ## 装饰器
 
@@ -3669,11 +3709,11 @@ vue-property-decorator 是在 `vue-class-component` 上增强了更多的结合 
 
 ### Prop
 
-**@Prop(options: (PropOptions | Constructor[] | Constructor) = {})**
+**@Prop(options: (PropOptions | Constructor [] | Constructor) = {})**
 
-`@Prop`装饰器接收一个参数，这个参数可以有三种写法：
+`@Prop` 装饰器接收一个参数，这个参数可以有三种写法：
 
-- `Constructor`，例如`String，Number，Boolean`等，指定 `prop` 的类型；
+- `Constructor`，例如 `String，Number，Boolean` 等，指定 `prop` 的类型；
 - `Constructor[]`，指定 `prop` 的可选类型；
 - `PropOptions{}`，可以使用以下选项：`type，default，required，validator`
 
@@ -3709,11 +3749,11 @@ export default {
 
 ### **PropSync**
 
-`@PropSync`装饰器与`@prop`用法类似，二者的区别在于：
+`@PropSync` 装饰器与 `@prop` 用法类似，二者的区别在于：
 
 - `@PropSync` 装饰器接收两个参数：
   -  `propName: string` 表示父组件传递过来的属性名；
-  -  `options: Constructor | Constructor[] | PropOptions` 与`@Prop`的第一个参数一致；
+  -  `options: Constructor | Constructor[] | PropOptions` 与 `@Prop` 的第一个参数一致；
 
 - `@PropSync` 会生成一个新的计算属性。
 
@@ -3747,24 +3787,24 @@ export default {
 
 **注意： @PropSync 需要配合父组件的 .sync 修饰符使用**
 
-<comp :propA.sync="bar"></comp>
+<comp :propA.sync="bar"> </comp>
 会被扩展为：
 
-<comp :propA="bar" @update:propA="val => bar = val"></comp>
-当子组件需要更新 propA的值时，它需要显式地触发一个更新事件：
+<comp :propA="bar" @update:propA="val => bar = val "> </comp>
+当子组件需要更新 propA 的值时，它需要显式地触发一个更新事件：
 
-this.$emit('update:propA', newValue)
+this.$emit('update: propA', newValue)
 
 ### **Model**
 
 https://blog.csdn.net/weixin_47232046/article/details/109738816
 
-**@Model(event?: string, options: (PropOptions | Constructor[] | Constructor) = {})**
+**@Model(event?: string, options: (PropOptions | Constructor [] | Constructor) = {})**
 
-`@Model`装饰器允许我们在一个组件上自定义`v-model`，接收两个参数：
+`@Model` 装饰器允许我们在一个组件上自定义 `v-model`，接收两个参数：
 
 - `event: string` 事件名。
-- `options: Constructor | Constructor[] | PropOptions` 与`@Prop`的第一个参数一致。
+- `options: Constructor | Constructor[] | PropOptions` 与 `@Prop` 的第一个参数一致。
 
 ```js
 import { Vue, Component, Model } from 'vue-property-decorator'
@@ -3788,7 +3828,7 @@ export default {
 }
 ```
 
-上面例子中指定的是`change`事件，所以我们还需要在`template`中加上相应的事件：
+上面例子中指定的是 `change` 事件，所以我们还需要在 `template` 中加上相应的事件：
 
 ```html
  <template>
@@ -3807,7 +3847,7 @@ export default {
 `@Watch` 装饰器接收两个参数：
 
 - `path: string` 被侦听的属性名；
-- options可以包含两个属性 ：
+- options 可以包含两个属性 ：
   `immediate?:boolean` 侦听开始之后是否立即调用该回调函数； `deep?:boolean` 被侦听的对象的属性被改变时，是否调用该回调函数；
 
 ```js
@@ -3869,9 +3909,9 @@ methods: {
 
 **@Emit(event?: string)**
 
-- `@Emit` 装饰器接收一个可选参数，该参数是`$Emit`的第一个参数，充当事件名。如果没有提供这个参数，`$Emit`会将回调函数名的`camelCase`转为`kebab-case`，并将其作为事件名；
-- `@Emit`会将回调函数的返回值作为第二个参数，如果返回值是一个`Promise`对象，`$emit`会在`Promise`对象被标记为`resolved`之后触发；
-- `@Emit`的回调函数的参数，会放在其返回值之后，一起被`$emit`当做参数使用。
+- `@Emit` 装饰器接收一个可选参数，该参数是 `$Emit` 的第一个参数，充当事件名。如果没有提供这个参数，`$Emit` 会将回调函数名的 `camelCase` 转为 `kebab-case`，并将其作为事件名；
+- `@Emit` 会将回调函数的返回值作为第二个参数，如果返回值是一个 `Promise` 对象，`$emit` 会在 `Promise` 对象被标记为 `resolved` 之后触发；
+- `@Emit` 的回调函数的参数，会放在其返回值之后，一起被 `$emit` 当做参数使用。
 
 ```js
 import { Vue, Component, Emit } from 'vue-property-decorator'
@@ -3993,7 +4033,7 @@ Vue Class Component 提供 `createDecorator` 帮助创建自定义装饰器. `cr
 - `key`: 装饰器所需要的属性或方法的键.
 - `parameterIndex`: 如果自定义装饰器用于参数，则装饰参数的索引.
 
-下面例子是创建一个 `Log` 装饰器, 当修饰器方法被调用时, 打印log信息, 包括方法名和参数:
+下面例子是创建一个 `Log` 装饰器, 当修饰器方法被调用时, 打印 log 信息, 包括方法名和参数:
 
 ```js
 // decorators.js
@@ -4032,7 +4072,7 @@ class MyComp extends Vue {
 }
 ```
 
-在上面代码中, 当 `hello` 被调用, 并传入 `42`, 将会打印处下面的log:
+在上面代码中, 当 `hello` 被调用, 并传入 `42`, 将会打印处下面的 log:
 
 ```undefined
 Invoked: hello( 42 )
@@ -4040,9 +4080,9 @@ Invoked: hello( 42 )
 
 ## Tip
 
-### 在属性中初始化`this`的值
+### 在属性中初始化 `this` 的值
 
-如果你在类的属性中定义一个箭头函数, 箭头函数中访问 `this` 时, 将无法获取实例. 这是因为当初始化Class属性时, `this`仅仅时Vue实例的代理:
+如果你在类的属性中定义一个箭头函数, 箭头函数中访问 `this` 时, 将无法获取实例. 这是因为当初始化 Class 属性时, `this` 仅仅时 Vue 实例的代理:
 
 ```js
 import Vue from 'vue'
@@ -4061,7 +4101,7 @@ export default class MyComp extends Vue {
 }
 ```
 
-### 通常使用生命周期函数代替constructor
+### 通常使用生命周期函数代替 constructor
 
 由于原始构造函数被调用来收集初始组件数据, 建议不要自己声明 `constructor`:
 
@@ -4086,9 +4126,9 @@ export default class Posts extends Vue {
 }
 ```
 
-**上面的代码打算在组件初始化的时候用fetch来获取post列表, 但是fetch将会被调用两次, 因为Vue Class Component的运作**
+**上面的代码打算在组件初始化的时候用 fetch 来获取 post 列表, 但是 fetch 将会被调用两次, 因为 Vue Class Component 的运作**
 
-所以推荐写在生命周期函数里, 比如用`created` 代替 `constructor`:
+所以推荐写在生命周期函数里, 比如用 `created` 代替 `constructor`:
 
 ```js
 import Vue from 'vue'
@@ -4109,40 +4149,40 @@ export default class Posts extends Vue {
 }
 ```
 
-# Vue3快速上手
+# Vue3 快速上手
 
-## Vue3带来了什么
+## Vue3 带来了什么
 
 ### 性能的提升
 
-- 打包大小减少41%
+- 打包大小减少 41%
 
-- 初次渲染快55%, 更新渲染快133%
+- 初次渲染快 55%, 更新渲染快 133%
 
-- 内存减少54%
+- 内存减少 54%
 
   ......
 
 ### 源码的升级
 
-- 使用Proxy代替defineProperty实现响应式
+- 使用 Proxy 代替 defineProperty 实现响应式
 
-- 重写虚拟DOM的实现和Tree-Shaking
+- 重写虚拟 DOM 的实现和 Tree-Shaking
 
   ......
 
-### 拥抱TypeScript
+### 拥抱 TypeScript
 
-- Vue3可以更好的支持TypeScript
+- Vue3 可以更好的支持 TypeScript
 
 ### 新的特性
 
-1. Composition API（组合API）
+1. Composition API（组合 API）
 
-   - setup配置
-   - ref与reactive
-   - watch与watchEffect
-   - provide与inject
+   - setup 配置
+   - ref 与 reactive
+   - watch 与 watchEffect
+   - provide 与 inject
    - ......
 2. 新的内置组件
    - Fragment 
@@ -4152,7 +4192,7 @@ export default class Posts extends Vue {
 
    - 新的生命周期钩子
    - data 选项应始终被声明为一个函数
-   - 移除keyCode支持作为 v-on 的修饰符
+   - 移除 keyCode 支持作为 v-on 的修饰符
    - ......
 
 ## API 风格
@@ -4193,7 +4233,7 @@ export default {
 
 ### [组合式 API](https://cn.vuejs.org/guide/introduction.html#composition-api)
 
-组合式 API 是 Vue 3 引入的一种新的 API 风格，可以使用**导入的 API 函数来描述组件逻辑**。它允许你在一个函数中组合多个逻辑关注点。与选项式 API 不同，组合式 API 更加灵活和可重用。以下是组合式 API 的一些关键点：
+组合式 API 是 Vue 3 引入的一种新的 API 风格，可以使用 **导入的 API 函数来描述组件逻辑**。它允许你在一个函数中组合多个逻辑关注点。与选项式 API 不同，组合式 API 更加灵活和可重用。以下是组合式 API 的一些关键点：
 
 - **使用 `setup` 函数**：组件的逻辑在 `setup` 函数中定义。`setup` 函数在组件实例创建之前调用，因此没有 `this` 上下文。
 
@@ -4201,7 +4241,7 @@ export default {
 
 - **生命周期钩子**：使用 `onMounted`、`onUnmounted` 等函数来处理生命周期事件。
 
-- **默认API**
+- **默认 API**
 
   ```js
   <script setup>
@@ -4222,7 +4262,7 @@ export default {
   </script>
   ```
 
-- **自定义组合式API**：组合逻辑，可以将逻辑提取到独立的函数中，并在多个组件中重用。并且能共用外部定义的响应式变量
+- **自定义组合式 API**：组合逻辑，可以将逻辑提取到独立的函数中，并在多个组件中重用。并且能共用外部定义的响应式变量
 
   ```js
   import { ref, onMounted } from 'vue';
@@ -4257,13 +4297,13 @@ export default {
   }
   ```
 
-### [setup函数/钩子](https://cn.vuejs.org/api/composition-api-setup.html#basic-usage)
+### [setup 函数/钩子](https://cn.vuejs.org/api/composition-api-setup.html#basic-usage)
 
 https://cn.vuejs.org/api/composition-api-setup.html
 
 - 函数：在 `setup()` 函数中返回的对象会暴露给模板和组件实例。其他的选项也可以通过组件实例来获取 `setup()` 暴露的属性
 
-  setup函数的两种返回值：
+  setup 函数的两种返回值：
 
   1. 若返回一个对象，则对象中的属性、方法, 在模板中均可以直接使用
 
@@ -4324,26 +4364,26 @@ https://cn.vuejs.org/api/composition-api-setup.html
 
      此时父组件可以通过模板引用来访问这个 `increment` 方法。
 
-#### setup注意点
+#### setup 注意点
 
-1. 在模板中访问从 `setup` 返回的 [ref](https://cn.vuejs.org/api/reactivity-core.html#ref) 时，它会[自动浅层解包](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#deep-reactivity)，因此你无须再在模板中为它写 `.value`。当通过 `this` 访问时也会同样如此解包。
+1. 在模板中访问从 `setup` 返回的 [ref](https://cn.vuejs.org/api/reactivity-core.html#ref) 时，它会 [自动浅层解包](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#deep-reactivity)，因此你无须再在模板中为它写 `.value`。当通过 `this` 访问时也会同样如此解包。
 2. **`setup()` 自身并不含对组件实例的访问权，即在 `setup()` 中访问 `this` 会是 `undefined`。你可以在选项式 API 中访问组合式 API 暴露的值，但反过来则不行。**
-3. 尽量不要与Vue2.x配置混用
-   - Vue2.x配置（data、methos、computed...）中<strong style="color:#DD5145">可以访问到</strong>setup中的属性、方法。
-   - 如果有重名, setup优先。
-4. `setup()` 应该*同步地*返回一个对象。唯一可以使用 `async setup()` 的情况是，该组件是 [Suspense](https://cn.vuejs.org/guide/built-ins/suspense.html) 组件的后裔。
+3. 尽量不要与 Vue2.x 配置混用
+   - Vue2.x 配置（data、methos、computed...）中 <strong style="color:#DD5145"> 可以访问到 </strong> setup 中的属性、方法。
+   - 如果有重名, setup 优先。
+4. `setup()` 应该 *同步地* 返回一个对象。唯一可以使用 `async setup()` 的情况是，该组件是 [Suspense](https://cn.vuejs.org/guide/built-ins/suspense.html) 组件的后裔。
 
-- setup执行的时机
-  - 在beforeCreate之前执行一次，this是undefined。
+- setup 执行的时机
+  - 在 beforeCreate 之前执行一次，this 是 undefined。
 
-- setup的参数
+- setup 的参数
   - props：值为对象，包含：组件外部传递过来，且组件内部声明接收了的属性。
   - context：上下文对象
-    - attrs: 值为对象，包含：组件外部传递过来，但没有在props配置中声明的属性, 相当于 ```this.$attrs```。
+    - attrs: 值为对象，包含：组件外部传递过来，但没有在 props 配置中声明的属性, 相当于 ```this.$attrs```。
     - slots: 收到的插槽内容, 相当于 ```this.$slots```。
     - emit: 分发自定义事件的函数, 相当于 ```this.$emit```。
 
-#### 访问Props
+#### 访问 Props
 
 `setup` 函数的第一个参数是组件的 `props`。和标准的组件一致，一个 `setup` 函数的 `props` 是响应式的，并且会在传入新的 props 时同步更新。
 
@@ -4380,7 +4420,7 @@ export default {
 
 #### Setup 上下文
 
-传入 `setup` 函数的第二个参数是一个 **Setup 上下文**对象。上下文对象暴露了其他一些在 `setup` 中可能会用到的值：
+传入 `setup` 函数的第二个参数是一个 **Setup 上下文** 对象。上下文对象暴露了其他一些在 `setup` 中可能会用到的值：
 
 ```
 export default {
@@ -4410,11 +4450,11 @@ export default {
 }
 ```
 
-`attrs` 和 `slots` 都是有状态的对象，它们总是会随着组件自身的更新而更新。这意味着你应当避免解构它们，并始终通过 `attrs.x` 或 `slots.x` 的形式使用其中的属性。此外还需注意，和 `props` 不同，`attrs` 和 `slots` 的属性都**不是**响应式的。如果你想要基于 `attrs` 或 `slots` 的改变来执行副作用，那么你应该在 `onBeforeUpdate` 生命周期钩子中编写相关逻辑。
+`attrs` 和 `slots` 都是有状态的对象，它们总是会随着组件自身的更新而更新。这意味着你应当避免解构它们，并始终通过 `attrs.x` 或 `slots.x` 的形式使用其中的属性。此外还需注意，和 `props` 不同，`attrs` 和 `slots` 的属性都 **不是** 响应式的。如果你想要基于 `attrs` 或 `slots` 的改变来执行副作用，那么你应该在 `onBeforeUpdate` 生命周期钩子中编写相关逻辑。
 
 #### 暴露公共属性
 
-`expose` 函数用于显式地限制该组件暴露出的属性，当父组件通过[模板引用](https://cn.vuejs.org/guide/essentials/template-refs.html#ref-on-component)访问该组件的实例时，将仅能访问 `expose` 函数暴露出的内容：
+`expose` 函数用于显式地限制该组件暴露出的属性，当父组件通过 [模板引用](https://cn.vuejs.org/guide/essentials/template-refs.html#ref-on-component) 访问该组件的实例时，将仅能访问 `expose` 函数暴露出的内容：
 
 ```
 export default {
@@ -4442,70 +4482,30 @@ export default {
 
 ## 响应式函数
 
-### 问题
-
-https://blog.csdn.net/weixin_45578532/article/details/133785684
-
-vue3 ref修改没有在页面显示
-
-###  ref函数
-
-```js
-function ref(value) {
-  return {
-    get value() {
-      // track(refObject, "value");
-      return value;
-    },
-    set value(newValue) {
-      // trigger(refObject, "value");
-      value = newValue;
-    },
-  };
-}
-const b = ref(1);
-console.log(b.value);
-b.value = 2;
-console.log(b.value);
-```
+###  ref 函数
 
 - 作用: **定义一个响应式的数据**
 - 语法: ```const xxx = ref(initValue)``` 
-  - 创建一个包含响应式数据的<strong style="color:#DD5145">引用对象（reference对象，简称ref对象）</strong>。
-  - JS中操作数据： ```xxx.value```
-  - 模板中读取数据: 不需要.value，直接：```<div>{{xxx}}</div>```
+  - 创建一个包含响应式数据的 <strong style="color:#DD5145"> 引用对象（reference 对象，简称 ref 对象）</strong>。
+  - JS 中操作数据： ```xxx.value```
+  - 模板中读取数据: 在模板中使用 `ref` 时，Vue 会自动解包 `ref`，所以你不需要显式地使用 `.value`，直接：```<div>{{xxx}}</div>```
 - 接收的数据
-  - 基本类型的数据：响应式依然是靠``Object.defineProperty()``的```get```与```set```完成的。
-  - 对象类型的数据：内部 求助了Vue3.0中的一个新函数—— ```reactive```函数。
+  - 基本类型的数据：响应式依然是靠 ``Object.defineProperty()`` 的 ```get``` 与 ```set``` 完成的。
+  - 对象类型的数据：内部 求助了 Vue3.0 中的一个新函数—— ```reactive``` 函数。
 
-### reactive函数
+### reactive 函数
 
 使用了 Proxy 来创建响应式对象
 
-```js
-function reactive(obj) {
-  return new Proxy(obj, {
-    get(target, key) {
-      track(target, key);
-      return target[key];
-    },
-    set(target, key, value) {
-      target[key] = value;
-      trigger(target, key);
-    },
-  });
-}
+- 作用: 定义一个 <strong style="color:#DD5145"> 对象类型 </strong> 的响应式数据（基本类型不要用它，要用 ```ref``` 函数）
+- 语法：```const 代理对象= reactive(源对象)``` 接收一个对象（或数组），返回一个 <strong style="color:#DD5145"> 代理对象（Proxy 的实例对象，简称 proxy 对象）</strong>
+- reactive 定义的响应式数据是“深层次的”。内部基于 ES6 的 Proxy 实现，通过代理对象操作源对象内部数据进行操作。
 
-```
+#### reactive 的局限性
 
-- 作用: 定义一个<strong style="color:#DD5145">对象类型</strong>的响应式数据（基本类型不要用它，要用```ref```函数）
-- 语法：```const 代理对象= reactive(源对象)```接收一个对象（或数组），返回一个<strong style="color:#DD5145">代理对象（Proxy的实例对象，简称proxy对象）</strong>
-- reactive定义的响应式数据是“深层次的”。
-- 内部基于 ES6 的 Proxy 实现，通过代理对象操作源对象内部数据进行操作。
+由于这些限制，我们建议使用 `ref()` 作为声明响应式状态的主要 API。
 
-#### reactive的局限性
-
-1. **有限的值类型**：它只能用于对象类型 (对象、数组和如 `Map`、`Set` 这样的[集合类型](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects#keyed_collections))。它不能持有如 `string`、`number` 或 `boolean` 这样的[原始类型](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)。
+1. **有限的值类型**：它只能用于对象类型 (对象、数组和如 `Map`、`Set` 这样的 [集合类型](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects#keyed_collections))。它不能持有如 `string`、`number` 或 `boolean` 这样的 [原始类型](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)。
 
 2. **不能替换整个对象**：由于 Vue 的响应式跟踪是通过属性访问实现的，因此我们必须始终保持对响应式对象的相同引用。这意味着我们不能直接改变对象无法实现响应式
 
@@ -4517,7 +4517,7 @@ function reactive(obj) {
    state = reactive({ count: 1 })
    ```
 
-   **reactive包裹的对象整个替换时，要使用Object.assign替换**
+   **reactive 包裹的对象整个替换时，要使用 Object.assign 替换**
 
    - 替换数组
 
@@ -4530,7 +4530,7 @@ function reactive(obj) {
 
    - 替换对象
 
-     首先，使用`reactive`函数将要更新的对象转换为reactive对象：
+     首先，使用 `reactive` 函数将要更新的对象转换为 reactive 对象：
 
      ```
      import { reactive } from 'vue'
@@ -4541,7 +4541,7 @@ function reactive(obj) {
      const reactiveObj = reactive(originalObj)
      ```
 
-     然后，使用JavaScript的`Object.assign`方法将原始对象的属性合并到新的reactive对象中：
+     然后，使用 JavaScript 的 `Object.assign` 方法将原始对象的属性合并到新的 reactive 对象中：
 
      ```
      Object.assign(reactiveObj, { 
@@ -4550,7 +4550,7 @@ function reactive(obj) {
      })
      ```
 
-     最后，需要使用`toRefs`函数将新的reactive对象转换为ref对象以保留reactivity。
+     最后，需要使用 `toRefs` 函数将新的 reactive 对象转换为 ref 对象以保留 reactivity。
 
      ```
      import { toRefs } from 'vue'
@@ -4559,7 +4559,7 @@ function reactive(obj) {
      console.log(reactiveRefs.age.value) // 输出：25
      ```
 
-     使用`toRefs`函数将reactive对象转换为ref对象将保留reactivity，因为**它将每个属性包装在一个ref对象中，使Vue能够监视和响应属性的更改。**
+     使用 `toRefs` 函数将 reactive 对象转换为 ref 对象将保留 reactivity，因为 **它将每个属性包装在一个 ref 对象中，使 Vue 能够监视和响应属性的更改。**
 
      1. **对解构操作不友好**：当我们将响应式对象的原始类型属性解构为本地变量时，或者将该属性传递给函数时，我们将丢失响应性连接：
 
@@ -4576,8 +4576,6 @@ function reactive(obj) {
         // 我们必须传入整个对象以保持响应性
         callSomeFunction(state.count)
         ```
-
-   - 由于这些限制，我们建议使用 `ref()` 作为声明响应式状态的主要 API。
 
 ### [DOM 更新时机](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#dom-update-timing)
 
@@ -4599,7 +4597,7 @@ async function increment() {
 
 #### 作为 reactive 对象的属性
 
- ref 作为响应式对象的属性被访问或修改时**自动解包(不需要.value访问)**。换句话说，它的行为就像一个普通的属性：
+ ref 作为响应式对象的属性被访问或修改时 **自动解包(不需要.value 访问)**。换句话说，它的行为就像一个普通的属性：
 
 ```
 const count = ref(0)
@@ -4624,11 +4622,11 @@ console.log(state.count) // 2
 console.log(count.value) // 1
 ```
 
-只有当嵌套在一个深层响应式对象内时，才会发生 ref 解包。当其作为[浅层响应式对象](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive)的属性被访问时不会解包。
+只有当嵌套在一个深层响应式对象内时，才会发生 ref 解包。当其作为 [浅层响应式对象](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive) 的属性被访问时不会解包。
 
 #### 数组和集合的注意事项
 
-与 reactive 对象不同的是，当 ref 作为响应式数组或原生集合类型(如 `Map`) 中的元素被访问时，它**不会**被解包：
+与 reactive 对象不同的是，当 ref 作为响应式数组或原生集合类型(如 `Map`) 中的元素被访问时，它 **不会被解包**：
 
 ```
 const books = reactive([ref('Vue 3 Guide')])
@@ -4640,35 +4638,35 @@ const map = reactive(new Map([['count', ref(0)]]))
 console.log(map.get('count').value)
 ```
 
-### reactive对比ref
+### reactive 对比 ref
 
 https://blog.csdn.net/qq_38290251/article/details/135280017
 
 -  从定义数据角度对比：
-   -  ref用来定义：<strong style="color:#DD5145">基本类型数据</strong>。
-   -  reactive用来定义：<strong style="color:#DD5145">对象（或数组）类型数据</strong>。
-   -  **ref也可以用来定义<strong style="color:#DD5145">对象（或数组）类型数据</strong>, 它内部会自动通过```reactive```转为<strong style="color:#DD5145">代理对象</strong>。**
+   -  ref 用来定义：<strong style="color:#DD5145"> 基本类型数据 </strong>。
+   -  reactive 用来定义：<strong style="color:#DD5145"> 对象（或数组）类型数据 </strong>。
+   -  **ref 也可以用来定义 <strong style="color:#DD5145"> 对象（或数组）类型数据 </strong>, 它内部会自动通过 ```reactive``` 转为 <strong style="color:#DD5145"> 代理对象 </strong>。**
 -  从原理角度对比：
-   -  ref通过``Object.defineProperty()``的```get```与```set```来实现响应式（数据劫持）。
-   -  reactive通过使用<strong style="color:#DD5145">Proxy</strong>来实现响应式（数据劫持）, 并通过<strong style="color:#DD5145">Reflect</strong>操作<strong style="color:orange">源对象</strong>内部的数据。
+   -  ref 通过 ``Object.defineProperty()`` 的 ```get``` 与 ```set``` 来实现响应式（数据劫持）。
+   -  reactive 通过使用 <strong style="color:#DD5145"> Proxy </strong> 来实现响应式（数据劫持）, 并通过 <strong style="color:#DD5145"> Reflect </strong> 操作 <strong style="color:orange"> 源对象 </strong> 内部的数据。
 -  从使用角度对比：
-   -  ref定义的数据：操作数据<strong style="color:#DD5145">需要</strong>```.value```，读取数据时模板中直接读取<strong style="color:#DD5145">不需要</strong>```.value```。
-   -  reactive定义的数据：操作数据与读取数据：<strong style="color:#DD5145">均不需要</strong>```.value```。
+   -  ref 定义的数据：操作数据 <strong style="color:#DD5145"> 需要 </strong> ```.value```，读取数据时模板中直接读取 <strong style="color:#DD5145"> 不需要 </strong> ```.value```。
+   -  reactive 定义的数据：操作数据与读取数据：<strong style="color:#DD5145"> 均不需要 </strong> ```.value```。
 
 ### toRef
 
-> **toRef**是用来给**抽离响应式对象（被reactive包裹的对象）**中的某一个属性的，并且把这个属性**包裹成ref对象，使其和原对象产生链接。**
+> **toRef** 是用来给 **抽离响应式对象（被 reactive 包裹的对象）** 中的某一个属性的，并且把这个属性 **包裹成 ref 对象，使其和原对象产生链接。**
 
-- 作用：创建一个 ref 对象，其value值指向另一个对象中的某个属性。
+- 作用：创建一个 ref 对象，其 value 值指向另一个对象中的某个属性。
 - 语法：```const name = toRef(person,'name')```
 - 应用:   要将响应式对象中的某个属性单独提供给外部使用时。
 
 
-- 扩展：```toRefs``` 与```toRef```功能一致，但可以批量创建多个 ref 对象，语法：```toRefs(person)```
+- 扩展：```toRefs``` 与 ```toRef``` 功能一致，但可以批量创建多个 ref 对象，语法：```toRefs(person)```
 
 ![img](img/前端/vue/webp)
 
-**toRef会保持对其源 property 的响应式**
+**toRef 会保持对其源 property 的响应式**
 
 ### toRefs
 
@@ -4694,9 +4692,9 @@ console.log(state.foo) // 3
 
 如果参数是 ref，则返回内部值，否则返回参数本身。这是 `val = isRef(val) ? val.value : val` 计算的一个语法糖。
 
-### 关于ref、reactive和toRef、toRefs的区别
+### 关于 ref、reactive 和 toRef、toRefs 的区别
 
-ref、reactive数据更新后立马会更新HTML视图。toRef、toRefs更新会后会等下次更新视图的时候更新视图
+ref、reactive 数据更新后立马会更新 HTML 视图。toRef、toRefs 更新会后会等下次更新视图的时候更新视图
 
 ```jsx
   setup() {
@@ -4730,7 +4728,7 @@ ref、reactive数据更新后立马会更新HTML视图。toRef、toRefs更新会
 
 <img src="img/前端/vue/webp1" alt="img" style="zoom: 50%;" />
 
-把`people.name = "我来证明你们变了";`放到`setTimeout`里面
+把 `people.name = "我来证明你们变了";` 放到 `setTimeout` 里面
 
 <img src="img/前端/vue/webp2" alt="img" style="zoom:50%;" />
 
@@ -4741,14 +4739,14 @@ ref、reactive数据更新后立马会更新HTML视图。toRef、toRefs更新会
 - isReadonly: 检查一个对象是否是由 `readonly` 或 [`shallowReadonly()`](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreadonly) 创建的只读代理
 - isProxy: 检查一个对象是否是由 [`reactive()`](https://cn.vuejs.org/api/reactivity-core.html#reactive)、[`readonly()`](https://cn.vuejs.org/api/reactivity-core.html#readonly)、[`shallowReactive()`](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive) 或 [`shallowReadonly()`](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreadonly) 创建的代理。
 
-## watch监视函数
+## watch 监视函数
 
-- 与Vue2.x中watch配置功能一致
+- 与 Vue2.x 中 watch 配置功能一致
 
 - 两个小“坑”：
 
-  - 监视reactive定义的响应式数据时：oldValue无法正确获取，强制开启了深度监视（deep配置失效）。
-  - 监视reactive定义的响应式数据中某个属性时：deep配置有效。
+  - 监视 reactive 定义的响应式数据时：oldValue 无法正确获取，强制开启了深度监视（deep 配置失效）。
+  - 监视 reactive 定义的响应式数据中某个属性时：deep 配置有效。
 
   ```js
   //情况一：监视ref定义的响应式数据
@@ -4785,23 +4783,23 @@ ref、reactive数据更新后立马会更新HTML视图。toRef、toRefs更新会
   },{deep:true}) //此处由于监视的是reactive素定义的对象中的某个属性，所以deep配置有效
   ```
 
-1. watch监听 props 中的基本类型数据，需要通过 getter 函数返回值的形式（()=>props.xxx）才能监听
+1. watch 监听 props 中的基本类型数据，需要通过 getter 函数返回值的形式（()=> props.xxx）才能监听
 
-2. watch监听 props 中的引用类型数据，且父组件中没有改变地址指向时，可以直接监听
+2. watch 监听 props 中的引用类型数据，且父组件中没有改变地址指向时，可以直接监听
 
-3. watch监听 props 中的引用类型数据，且父组件中改变了地址指向时，需要通过 getter 函数返回值的形式（()=>props.xxx）才能监听  
+3. watch 监听 props 中的引用类型数据，且父组件中改变了地址指向时，需要通过 getter 函数返回值的形式（()=> props.xxx）才能监听  
 
 
-#### watchEffect函数
+#### watchEffect 函数
 
-- watch的套路是：既要指明监视的属性，也要指明监视的回调。
+- watch 的套路是：既要指明监视的属性，也要指明监视的回调。
 
-- watchEffect的套路是：不用指明监视哪个属性，监视的回调中用到哪个属性，那就监视哪个属性。
+- watchEffect 的套路是：不用指明监视哪个属性，监视的回调中用到哪个属性，那就监视哪个属性。
 
-- watchEffect有点像computed：
+- watchEffect 有点像 computed：
 
-  - 但computed注重的计算出来的值（回调函数的返回值），所以必须要写返回值。
-  - 而watchEffect更注重的是过程（回调函数的函数体），所以不用写返回值。
+  - 但 computed 注重的计算出来的值（回调函数的返回值），所以必须要写返回值。
+  - 而 watchEffect 更注重的是过程（回调函数的函数体），所以不用写返回值。
 
   ```js
   //watchEffect所指定的回调中用到的数据只要发生变化，则直接重新执行回调。
@@ -4816,9 +4814,9 @@ ref、reactive数据更新后立马会更新HTML视图。toRef、toRefs更新会
 
 当你更改了响应式状态，它可能会同时触发 Vue 组件更新和侦听器回调。
 
-默认情况下，用户创建的侦听器回调，都会在 Vue 组件更新**之前**被调用。这意味着你在侦听器回调中访问的 DOM 将是被 Vue 更新之前的状态。
+默认情况下，用户创建的侦听器回调，都会在 Vue 组件更新 **之前** 被调用。这意味着你在侦听器回调中访问的 DOM 将是被 Vue 更新之前的状态。
 
-如果想在侦听器回调中能访问被 Vue 更新**之后**的 DOM，你需要指明 `flush: 'post'` 选项：
+如果想在侦听器回调中能访问被 Vue 更新 **之后** 的 DOM，你需要指明 `flush: 'post'` 选项：
 
 ```
 watch(source, callback, {
@@ -4844,7 +4842,7 @@ watchPostEffect(() => {
 
 在 `setup()` 或 `<script setup>` 中用同步语句创建的侦听器，会自动绑定到宿主组件实例上，并且会在宿主组件卸载时自动停止。因此，在大多数情况下，你无需关心怎么停止一个侦听器。
 
-一个关键点是，侦听器必须用**同步**语句创建：如果用异步回调创建一个侦听器，那么它不会绑定到当前组件上，你必须手动停止它，以防内存泄漏。如下方这个例子：
+一个关键点是，侦听器必须用 **同步** 语句创建：如果用异步回调创建一个侦听器，那么它不会绑定到当前组件上，你必须手动停止它，以防内存泄漏。如下方这个例子：
 
 vue
 
@@ -4893,37 +4891,37 @@ watchEffect(() => {
 https://cn.vuejs.org/api/composition-api-lifecycle.html
 
 setup()函数阶段
-在setup()函数阶段，您可以做一些准备性的工作。您可以定义响应式数据、计算属性、方法等等。但是，您需要注意的是，由于setup()函数是在组件实例化之前调用的，因此您无法访问到this上下文并且应该使用第二个参数—— context 对象。context 包含了一些有用的属性和方法，比如如何访问父级或子级组件等。在setup()函数中定义的数据和方法将不会在模板中直接使用，如果需要在模板中使用，则需要通过 return 语句把它们暴露出去。
+在 setup()函数阶段，您可以做一些准备性的工作。您可以定义响应式数据、计算属性、方法等等。但是，您需要注意的是，由于 setup()函数是在组件实例化之前调用的，因此您无法访问到 this 上下文并且应该使用第二个参数—— context 对象。context 包含了一些有用的属性和方法，比如如何访问父级或子级组件等。在 setup()函数中定义的数据和方法将不会在模板中直接使用，如果需要在模板中使用，则需要通过 return 语句把它们暴露出去。
 
-onBeforeMount()和onMounted()阶段
-在组件进入onBeforeMount()阶段时，Vue 3会创建虚拟DOM并将其与组件关联起来。在该阶段中，您可以访问组件的DOM，并在挂载期之前对其进行修改。在组件进入onMounted()阶段后，Vue 3完成了组件的挂载。在此阶段，您可以进行一些副作用操作（如API调用、添加事件监听器等）。
+onBeforeMount()和 onMounted()阶段
+在组件进入 onBeforeMount()阶段时，Vue 3 会创建虚拟 DOM 并将其与组件关联起来。在该阶段中，您可以访问组件的 DOM，并在挂载期之前对其进行修改。在组件进入 onMounted()阶段后，Vue 3 完成了组件的挂载。在此阶段，您可以进行一些副作用操作（如 API 调用、添加事件监听器等）。
 
-onBeforeUpdate()和onUpdated()阶段
-在组件进入onBeforeUpdate()阶段时，Vue 3检测到响应式数据发生了变化，并准备重新渲染组件。在该阶段，您可以访问并修改组件的DOM。在组件进入onUpdated()阶段后，Vue 3完成了重新渲染。在此阶段，您可以进行一些副作用操作（如API调用、添加事件监听器等）。
+onBeforeUpdate()和 onUpdated()阶段
+在组件进入 onBeforeUpdate()阶段时，Vue 3 检测到响应式数据发生了变化，并准备重新渲染组件。在该阶段，您可以访问并修改组件的 DOM。在组件进入 onUpdated()阶段后，Vue 3 完成了重新渲染。在此阶段，您可以进行一些副作用操作（如 API 调用、添加事件监听器等）。
 
-onBeforeUnmount()和onUnmounted()阶段
-在组件进入onBeforeUnmount()阶段时，Vue 3已经准备卸载组件。在该阶段，您可以执行一些销毁操作（如取消订阅、清除计时器等）。在组件进入onUnmounted()阶段后，Vue 3完成了组件的卸载。在此阶段，您不能访问组件的DOM或响应式数据。
+onBeforeUnmount()和 onUnmounted()阶段
+在组件进入 onBeforeUnmount()阶段时，Vue 3 已经准备卸载组件。在该阶段，您可以执行一些销毁操作（如取消订阅、清除计时器等）。在组件进入 onUnmounted()阶段后，Vue 3 完成了组件的卸载。在此阶段，您不能访问组件的 DOM 或响应式数据。
 
-- Vue3.0中可以继续使用Vue2.x中的生命周期钩子，但有有两个被更名：
-  - ```beforeDestroy```改名为 ```beforeUnmount```
-  - ```destroyed```改名为 ```unmounted```
-- Vue3.0也提供了 Composition API 形式的生命周期钩子，与Vue2.x中钩子对应关系如下：
-  - `beforeCreate`===>`setup()`
-  - `created`=======>`setup()`
-  - `beforeMount` ===>`onBeforeMount`
-  - `mounted`=======>`onMounted`
-  - `beforeUpdate`===>`onBeforeUpdate`
-  - `updated` =======>`onUpdated`
-  - `beforeUnmount` ==>`onBeforeUnmount`
-  - `unmounted` =====>`onUnmounted`
+- Vue3.0 中可以继续使用 Vue2.x 中的生命周期钩子，但有有两个被更名：
+  - ```beforeDestroy``` 改名为 ```beforeUnmount```
+  - ```destroyed``` 改名为 ```unmounted```
+- Vue3.0 也提供了 Composition API 形式的生命周期钩子，与 Vue2.x 中钩子对应关系如下：
+  - `beforeCreate` ===> `setup()`
+  - `created` ==== ===> `setup()`
+  - `beforeMount` ===> `onBeforeMount`
+  - `mounted` ==== ===> `onMounted`
+  - `beforeUpdate` ===> `onBeforeUpdate`
+  - `updated` ==== ===> `onUpdated`
+  - `beforeUnmount` ==> `onBeforeUnmount`
+  - `unmounted` ==== => `onUnmounted`
 
 ## 组件
 
 ### 单向数据流
 
-所有的 props 都遵循着**单向绑定**原则，props 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。这避免了子组件意外修改父组件的状态的情况，不然应用的数据流将很容易变得混乱而难以理解。
+所有的 props 都遵循着 **单向绑定** 原则，props 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。这避免了子组件意外修改父组件的状态的情况，不然应用的数据流将很容易变得混乱而难以理解。
 
-另外，每次父组件更新后，所有的子组件中的 props 都会被更新到最新值，这意味着你**不应该**在子组件中去更改一个 prop。若你这么做了，Vue 会在控制台上向你抛出警告：
+另外，每次父组件更新后，所有的子组件中的 props 都会被更新到最新值，这意味着你 **不应该** 在子组件中去更改一个 prop。若你这么做了，Vue 会在控制台上向你抛出警告：
 
 ```
 const props = defineProps(['foo'])
@@ -4964,17 +4962,17 @@ props.foo = 'bar'
    const normalizedSize = computed(() => props.size.trim().toLowerCase())
    ```
 
-### 子组件v-model的作用
+### 子组件 v-model 的作用
 
-Vue中的`v-model`是一个双向绑定的语法糖，它会把父组件的属性和子组件的事件以一种更简洁的方式进行绑定。
+Vue 中的 `v-model` 是一个双向绑定的语法糖，它会把父组件的属性和子组件的事件以一种更简洁的方式进行绑定。
 
-`v-model`实质上是一个语法糖，它等价于以下的组合：
+`v-model` 实质上是一个语法糖，它等价于以下的组合：
 
 ```html
 <input v-bind:value="something" v-on:input="something = $event.target.value">
 ```
 
-在子组件中，你需要使用`props`来接收父组件传递下来的值，并使用自定义事件（`$emit`）来更新这个值。
+在子组件中，你需要使用 `props` 来接收父组件传递下来的值，并使用自定义事件（`$emit`）来更新这个值。
 
 以下是一个简单的例子：
 
@@ -5019,7 +5017,7 @@ export default {
 </script>
 ```
 
-在这个例子中，`v-model`在父组件中用来创建和子组件的`value` prop 和 `update:value`事件之间的双向绑定。当输入框的值发生变化时，子组件会发出一个`update:value`事件，并将新的值作为参数传递，父组件接收到这个事件后更新它的`parentValue`。
+在这个例子中，`v-model` 在父组件中用来创建和子组件的 `value` prop 和 `update:value` 事件之间的双向绑定。当输入框的值发生变化时，子组件会发出一个 `update:value` 事件，并将新的值作为参数传递，父组件接收到这个事件后更新它的 `parentValue`。
 
 ### 解构 `props` 对象
 
@@ -5038,7 +5036,7 @@ export default {
 
 **请注意如果你解构了 `props` 对象，解构出的变量将会丢失响应性。因此我们推荐通过 `props.xxx` 的形式来使用其中的 props。**
 
-如果你确实需要解构 `props` 对象，或者需要将某个 prop 传到一个外部函数中并**保持响应性**，那么你可以使用 [toRefs()](https://cn.vuejs.org/api/reactivity-utilities.html#torefs) 和 [toRef()](https://cn.vuejs.org/api/reactivity-utilities.html#toref) 这两个工具函数：
+如果你确实需要解构 `props` 对象，或者需要将某个 prop 传到一个外部函数中并 **保持响应性**，那么你可以使用 [toRefs()](https://cn.vuejs.org/api/reactivity-utilities.html#torefs) 和 [toRef()](https://cn.vuejs.org/api/reactivity-utilities.html#toref) 这两个工具函数：
 
 ```js
 import { toRefs, toRef } from 'vue'
@@ -5060,7 +5058,7 @@ export default {
 
 https://blog.csdn.net/qq_26018335/article/details/124986459
 
-#### defineProps父组件向子组件传值
+#### defineProps 父组件向子组件传值
 
 `defineProps` 是一个仅 `<script setup>` 中可用的编译宏命令，并不需要显式地导入。声明的 props 会自动暴露给模板。`defineProps` 会返回一个对象，其中包含了可以传递给组件的所有 props：
 
@@ -5131,9 +5129,9 @@ defineProps({
 
 #### 子组件向父组件传值/触发事件
 
-##### defineEmits触发父组件事件
+##### defineEmits 触发父组件事件
 
-可以通过defineEmits宏来声明需要抛出的事件
+可以通过 defineEmits 宏来声明需要抛出的事件
 
 ```
 <script setup>
@@ -5164,7 +5162,7 @@ defineEmits(['enlarge-text'])
 </template>
 ```
 
-##### defineEmits向父组件传值
+##### defineEmits 向父组件传值
 
 子组件的传递方式
 
@@ -5206,11 +5204,11 @@ const clickEven=(val)=>{
 </script>
 ```
 
-#### 双向绑定 prop
+#### 双向绑定
 
-##### emit-update
+##### v-model
 
-> 3.4 之前的用法
+> `.sync` 修饰符在 Vue 3 中已经被废弃，取而代之的是使用 `v-model` 进行双向绑定。你可以在父组件中使用 `v-model` 来实现双向绑定。
 
 ```vue
 //父组件
@@ -5248,7 +5246,11 @@ defineEmits<{
 
 通过触发 `update:title` 事件更新父组件值
 
-##### **defineModel**
+
+
+##### defineModel
+
+> 3.4 之后的用法
 
 **这个宏可以用来声明一个双向绑定 prop**
 
@@ -5286,9 +5288,9 @@ const myRef = ref()
 <Child v-model="myRef"></Child>
 ```
 
-#### ref父组件获取子组件的属性/方法
+#### ref 父组件获取子组件的属性/方法
 
-当时用语法糖时，需要将组建的属性及方法通过defineExpose导出，父组件才能访问到数据，否则拿不到子组件的数据
+当时用语法糖时，需要将组建的属性及方法通过 defineExpose 导出，父组件才能访问到数据，否则拿不到子组件的数据
 
 子组件的传递方式
 
@@ -5349,13 +5351,13 @@ const getSonHander=()=>{
 
 #### 1.Fragment
 
-- 在Vue2中: 组件必须有一个根标签
-- 在Vue3中: 组件可以没有根标签, 内部会将多个标签包含在一个Fragment虚拟元素中
+- 在 Vue2 中: 组件必须有一个根标签
+- 在 Vue3 中: 组件可以没有根标签, 内部会将多个标签包含在一个 Fragment 虚拟元素中
 - 好处: 减少标签层级, 减小内存占用
 
 #### 2.Teleport
 
-- 什么是Teleport？—— `Teleport` 是一种能够将我们的<strong style="color:#DD5145">组件html结构</strong>移动到指定位置的技术。
+- 什么是 Teleport？—— `Teleport` 是一种能够将我们的 <strong style="color:#DD5145"> 组件 html 结构 </strong> 移动到指定位置的技术。
 
   ```vue
   <teleport to="移动位置">
@@ -5383,7 +5385,7 @@ const getSonHander=()=>{
     
     ```
 
-  - 使用```Suspense```包裹组件，并配置好```default``` 与 ```fallback```
+  - 使用 ```Suspense``` 包裹组件，并配置好 ```default``` 与 ```fallback```
 
     ```vue
     <template>
@@ -5424,7 +5426,7 @@ const AsyncComp = defineAsyncComponent(() => {
 
 如你所见，`defineAsyncComponent` 方法接收一个返回 Promise 的加载函数。这个 Promise 的 `resolve` 回调方法应该在从服务器获得组件定义时调用。你也可以调用 `reject(reason)` 表明加载失败。
 
-[ES 模块动态导入](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import)也会返回一个 Promise，所以多数情况下我们会将它和 `defineAsyncComponent` 搭配使用。类似 Vite 和 Webpack 这样的构建工具也支持此语法 (并且会将它们作为打包时的代码分割点)，因此我们也可以用它来导入 Vue 单文件组件：
+[ES 模块动态导入](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) 也会返回一个 Promise，所以多数情况下我们会将它和 `defineAsyncComponent` 搭配使用。类似 Vite 和 Webpack 这样的构建工具也支持此语法 (并且会将它们作为打包时的代码分割点)，因此我们也可以用它来导入 Vue 单文件组件：
 
 ```
 import { defineAsyncComponent } from 'vue'
@@ -5535,7 +5537,7 @@ app.use(gloablComponent);
 #### toRaw 与 markRaw
 
 - toRaw：
-  - 作用：将一个由```reactive```生成的<strong style="color:orange">响应式对象</strong>转为<strong style="color:orange">普通对象</strong>。
+  - 作用：将一个由 ```reactive``` 生成的 <strong style="color:orange"> 响应式对象 </strong> 转为 <strong style="color:orange"> 普通对象 </strong>。
   - 使用场景：用于读取响应式对象对应的普通对象，对这个普通对象的所有操作，不会引起页面更新。
   
   ```
@@ -5564,7 +5566,7 @@ app.use(gloablComponent);
 
 #### triggerRef
 
-强制触发依赖于一个[浅层 ref](https://cn.vuejs.org/api/reactivity-advanced.html#shallowref) 的副作用，这通常在对浅引用的内部值进行深度变更后使用。
+强制触发依赖于一个 [浅层 ref](https://cn.vuejs.org/api/reactivity-advanced.html#shallowref) 的副作用，这通常在对浅引用的内部值进行深度变更后使用。
 
 - **类型**
 
@@ -5646,7 +5648,7 @@ app.use(gloablComponent);
 
 #### provide 与 inject
 
-- 作用：实现<strong style="color:#DD5145">祖与后代组件间</strong>通信
+- 作用：实现 <strong style="color:#DD5145"> 祖与后代组件间 </strong> 通信
 
 - 套路：父组件有一个 `provide` 选项来提供数据，后代组件有一个 `inject` 选项来开始使用这些数据
 
@@ -5676,15 +5678,15 @@ app.use(gloablComponent);
      
      ```
 
-## HOOK组合式函数
+## HOOK 组合式函数
 
 https://juejin.cn/post/7181712900094951483
 
-- 什么是hook？—— 本质是一个函数，把setup函数中使用的Composition API进行了封装。
+- 什么是 hook？—— 本质是一个函数，把 setup 函数中使用的 Composition API 进行了封装。
 
-- 类似于vue2.x中的mixin。
+- 类似于 vue2.x 中的 mixin。
 
-- 自定义hook的优势: 复用代码, 让setup中的逻辑更清楚易懂。
+- 自定义 hook 的优势: 复用代码, 让 setup 中的逻辑更清楚易懂。
 
 ### 约定和最佳实践
 
@@ -5709,7 +5711,7 @@ function useFeature(maybeRefOrGetter) {
 
 如果你的组合式函数在输入参数是 ref 或 getter 的情况下创建了响应式 effect，为了让它能够被正确追踪，请确保要么使用 `watch()` 显式地监视 ref 或 getter，要么在 `watchEffect()` 中调用 `toValue()`。
 
-[前面讨论过的 useFetch() 实现](https://cn.vuejs.org/guide/reusability/composables.html#accepting-reactive-state)提供了一个接受 ref、getter 或普通值作为输入参数的组合式函数的具体示例。
+[前面讨论过的 useFetch() 实现](https://cn.vuejs.org/guide/reusability/composables.html#accepting-reactive-state) 提供了一个接受 ref、getter 或普通值作为输入参数的组合式函数的具体示例。
 
 #### 返回值
 
@@ -5744,12 +5746,12 @@ Mouse position is at: {{ mouse.x }}, {{ mouse.y }}
 
 在组合式函数中的确可以执行副作用 (例如：添加 DOM 事件监听器或者请求数据)，但请注意以下规则：
 
-- 如果你的应用用到了[服务端渲染](https://cn.vuejs.org/guide/scaling-up/ssr.html) (SSR)，请确保在组件挂载后才调用的生命周期钩子中执行 DOM 相关的副作用，例如：`onMounted()`。这些钩子仅会在浏览器中被调用，因此可以确保能访问到 DOM。
+- 如果你的应用用到了 [服务端渲染](https://cn.vuejs.org/guide/scaling-up/ssr.html) (SSR)，请确保在组件挂载后才调用的生命周期钩子中执行 DOM 相关的副作用，例如：`onMounted()`。这些钩子仅会在浏览器中被调用，因此可以确保能访问到 DOM。
 - 确保在 `onUnmounted()` 时清理副作用。举例来说，如果一个组合式函数设置了一个事件监听器，它就应该在 `onUnmounted()` 中被移除 (就像我们在 `useMouse()` 示例中看到的一样)。当然也可以像之前的 `useEventListener()` 示例那样，使用一个组合式函数来自动帮你做这些事。
 
 #### 使用限制
 
-组合式函数只能在 `<script setup>` 或 `setup()` 钩子中被调用。在这些上下文中，它们也只能被**同步**调用。在某些情况下，你也可以在像 `onMounted()` 这样的生命周期钩子中调用它们。
+组合式函数只能在 `<script setup>` 或 `setup()` 钩子中被调用。在这些上下文中，它们也只能被 **同步** 调用。在某些情况下，你也可以在像 `onMounted()` 这样的生命周期钩子中调用它们。
 
 这些限制很重要，因为这些是 Vue 用于确定当前活跃的组件实例的上下文。访问活跃的组件实例很有必要，这样才能：
 
@@ -5882,7 +5884,7 @@ export function useMouse() {
 
 - 和 React Hooks 的对比
 
-  如果你有 React 的开发经验，你可能注意到组合式函数和自定义 React hooks 非常相似。组合式 API 的一部分灵感正来自于 React hooks，Vue 的组合式函数也的确在逻辑组合能力上与 React hooks 相近。然而，Vue 的组合式函数是基于 Vue 细粒度的响应性系统，这和 React hooks 的执行模型有本质上的不同。这一话题在[组合式 API 的常见问题](https://cn.vuejs.org/guide/extras/composition-api-faq.html#comparison-with-react-hooks)中有更细致的讨论。
+  如果你有 React 的开发经验，你可能注意到组合式函数和自定义 React hooks 非常相似。组合式 API 的一部分灵感正来自于 React hooks，Vue 的组合式函数也的确在逻辑组合能力上与 React hooks 相近。然而，Vue 的组合式函数是基于 Vue 细粒度的响应性系统，这和 React hooks 的执行模型有本质上的不同。这一话题在 [组合式 API 的常见问题](https://cn.vuejs.org/guide/extras/composition-api-faq.html#comparison-with-react-hooks) 中有更细致的讨论。
 
 ## router
 
@@ -5943,9 +5945,9 @@ const route = useRoute();
 
 ### 传参
 
-- Vue3中路由传递参数route.params 为空
+- Vue3 中路由传递参数 route.params 为空
 
-  在4.14后的版本中都取消掉了，真的是醉了😅😅😅
+  在 4.14 后的版本中都取消掉了，真的是醉了 😅😅😅
   https://github.com/vuejs/router/commit/e8875705eb8b8a0756544174b85a1a3c2de55ff6
 
 使用 History API 方式传递和接收
@@ -5975,7 +5977,7 @@ const goBatteryClusterInfo = (index: number): void => {
 
 在另一个页面中获取数据
 
-// 获取history中我们上个页面保存的数据
+// 获取 history 中我们上个页面保存的数据
 
 ```
 const historyParam = history.state.param;
@@ -6004,7 +6006,7 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
 
 # vue2/3
 
-### 1.全局API的转移
+### 1.全局 API 的转移
 
 - Vue 2.x 有许多全局 API 和配置。
 
@@ -6025,14 +6027,14 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
     }
     ```
   
-- Vue3.0中对这些API做出了调整：
+- Vue3.0 中对这些 API 做出了调整：
 
-  - 将全局的API，即：```Vue.xxx```调整到应用实例（```app```）上
+  - 将全局的 API，即：```Vue.xxx``` 调整到应用实例（```app```）上
 
     | 2.x 全局 API（```Vue```） | 3.x 实例 API (`app`)                        |
     | ------------------------- | ------------------------------------------- |
     | Vue.config.xxxx           | app.config.xxxx                             |
-    | Vue.config.productionTip  | <strong style="color:#DD5145">移除</strong> |
+    | Vue.config.productionTip  | <strong style="color:#DD5145"> 移除 </strong> |
     | Vue.component             | app.component                               |
     | Vue.directive             | app.directive                               |
     | Vue.mixin                 | app.mixin                                   |
@@ -6041,11 +6043,11 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
 
 ### 2.其他改变
 
-- data选项应始终被声明为一个函数。
+- data 选项应始终被声明为一个函数。
 
 - 过度类名的更改：
 
-  - Vue2.x写法
+  - Vue2.x 写法
 
     ```css
     .v-enter,
@@ -6059,7 +6061,7 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
     
     ```
 
-  - Vue3.x写法
+  - Vue3.x 写法
 
     ```css
     .v-enter-from,
@@ -6074,9 +6076,9 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
     
     ```
 
-- <strong style="color:#DD5145">移除</strong>keyCode作为 v-on 的修饰符，同时也不再支持```config.keyCodes```
+- <strong style="color:#DD5145"> 移除 </strong> keyCode 作为 v-on 的修饰符，同时也不再支持 ```config.keyCodes```
 
-- <strong style="color:#DD5145">移除</strong>```v-on.native```修饰符
+- <strong style="color:#DD5145"> 移除 </strong> ```v-on.native``` 修饰符
 
   - 父组件中绑定事件
 
@@ -6099,7 +6101,7 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
     
     ```
 
-- <strong style="color:#DD5145">移除</strong>过滤器（filter）
+- <strong style="color:#DD5145"> 移除 </strong> 过滤器（filter）
 
   > 过滤器虽然这看起来很方便，但它需要一个自定义语法，打破大括号内表达式是 “只是 JavaScript” 的假设，这不仅有学习成本，而且有实现成本！建议用方法调用或计算属性去替换过滤器。
 
@@ -6109,6 +6111,6 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
 
 # tip
 
-采用了空对象初始化的形式，来初始化对象，这样对象中的字段在赋值的时候是**不存在响应式的**
+采用了空对象初始化的形式，来初始化对象，这样对象中的字段在赋值的时候是 **不存在响应式的**
 
-http://e.betheme.net/article/show-90795.html?action=onClick
+http://e.betheme.net/article/show-90795.html?action = onClick
