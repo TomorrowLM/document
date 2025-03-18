@@ -13,15 +13,50 @@ date: 25-September-2020
 
 ## webview
 
-嵌入在原生应用中 ，实现前端的混合式开发，大多数 **Hybrid App** 混合式开发框架都是基于WebView模式进行二次开发的。  webview就是原生应用中的浏览器引擎。 
+WebView是原生应用内置的浏览器控件，在应用程序中嵌入WebView，用于加载和显示网页内容 ，实现前端的混合式开发，大多数 **Hybrid App** 混合式开发框架都是基于WebView模式进行二次开发的。  
 
-运行在webview中的JS代码有能力调用原生的系统API，没有传统浏览器沙箱的限制。沙箱的存在是因为，你永远不能完全信任加载的web内容，所以不能允许它调用原生的系统API。而在webview中开发人员通常可以完全控制加载的内容，恶意代码进入并在设备上造成混乱的可能性很低。 
+> WebView 可以简单理解为页面里的 iframe 。原生app与 WebView 的交互可以简单看作是页面与页面内 iframe 页面进行的交互。就如页面与页面内的 iframe 共用一个 Window  一样，原生与  WebView  也共用了一套原生的方法。
 
 **Android容器** 在安卓客户端中，webView容器与手机自带的浏览器内核一致，多为android-chrome。不存在兼容性和性能问题。 
 
 **RN容器** 在react-native开发中，从rn 0.37版本开始官方引入了组件，在安卓中调用原生浏览器，在IOS中默认调用的是UIWebView容器。从IOS12开始，苹果正式弃用UIWebView，统一采用WKWebView。 
 
+**优点**‌：
+
+- ‌**跨平台**‌：只需开发一套HTML、CSS和JavaScript页面，就能在多个平台上运行（如Android和iOS）。
+- ‌**快速开发**‌：可以快速上线功能，尤其是在需要频繁更新的活动页面中。
+- ‌**动态加载**‌：支持实时从服务器加载内容，方便更新业务逻辑和页面内容。
+- ‌**扩展性**‌：WebView支持前端和后端技术的整合，并通过JSBridge实现与原生功能的交互‌。
+
+‌**缺点**‌：
+
+- ‌**兼容性问题**‌：不同语言开发的APP，甚至是不同手机厂商的APP，提供的WebView浏览器内核可能有所不同，对H5的支持程度可能不同，可能会导致兼容性问题‌
+- 性能瓶颈：相比原生 UI 组件，WebView 的渲染性能较低，尤其在加载大量图片或复杂动画时。
+- 安全性：如果未正确处理跨域、注入等安全问题，WebView 可能成为攻击目标。
+
+### WebView 的应用场景
+
+- 混合开发（Hybrid App）：
+  - 在原生应用中嵌入 WebView，用于快速开发跨平台功能。
+  - 示例：电商类 App 的活动页面、用户协议、帮助文档等页面。
+- 微信小程序中的 <web-view>：
+  - 用于在小程序中加载 H5 页面或外部网页。
+  - 示例：在微信小程序中加载第三方支付页面或推广页面。
+- 跨平台框架：
+  - 一些跨平台框架（如 React Native、Flutter）利用 WebView 实现 H5 页面和原生功能的整合。
+  - 示例：React Native 提供了 WebView 组件，可以直接加载网页。
+- 加载动态内容：
+  - 当内容需要经常更改且由服务端提供时，可以使用 WebView 加载动态网页。
+- 离线应用：
+  - WebView 可以加载本地 HTML 文件（嵌入在应用包中），从而支持部分离线功能。
+
 ## 通信
+
+### JSBridge
+
+是 Native 和非 Native 之间的桥梁 ，简单来讲，主要是给 JavaScript 提供调用 Native 功能的接口，让混合开发中的『前端部分』可以方便地使用原生的系统API，如地址位置、摄像头甚至支付等 Native 功能。 
+
+WebView通过[JSBridge](https://www.baidu.com/s?rsv_dl=re_dqa_generate&sa=re_dqa_generate&wd=JSBridge&rsv_pq=d5cbda3b00200998&oq=前端 webview是什么&rsv_t=adcc/t2BO+0h4HGx6oB1c4o0LZywCflORJS9QgtM7IvPJnPBGiRTndwkmDGGIZ2rEayiugSKAK6t&tn=62095104_41_oem_dg&ie=utf-8)等机制实现前端与原生代码的双向通信，使得网页内容可以与原生应用的功能进行交互‌
 
 ### 前端通知客户端 
 
@@ -91,9 +126,7 @@ export default class App extends Component {
 
 以上在组件加载完成后通过`window.addNum = this.addNum.bind(this)`将指定方法全局暴露到`window`上，App Webview可直接操作这些方法来控制H5页面 
 
-## JSBridge
 
-是 Native 和非 Native 之间的桥梁 ，简单来讲，主要是 给 JavaScript 提供调用 Native 功能的接口，让混合开发中的『前端部分』可以方便地使用地址位置、摄像头甚至支付等 Native 功能。 
 
 
 
@@ -123,8 +156,6 @@ package.json 中指定的 [`main`](https://docs.npmjs.com/cli/v7/configuring-npm
 }
 ```
 
-
-
 ### vue3
 
 - vue3+elc模板：npm create vite@latest electron-vue3-demo -- --template vue-ts
@@ -141,6 +172,8 @@ https://www.bilibili.com/video/BV1SS4y1h7CL/?vd_source=f2241cf7d6cc0ae541b49e6fd
 
 ### vue2
 
+- electron
+
 - vue-cli-plugin-electron-builder：https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/configuration.html
 
 ### 调试
@@ -151,24 +184,236 @@ https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app#%E5%8F%AF%
 
 - rimraf：快速删除文件或目录工具
 
-  ```
-  在打包生成的文件夹中，会有一个app.asar，它是Electron应用程序的主业务文件压缩包，要知道项目中哪些文件被pack到安装包，可以通过解压app.asar进行查看
+- asar：在打包生成的文件夹中，会有一个app.asar，它是Electron应用程序的主业务文件压缩包，要知道项目中哪些文件被pack到安装包，可以通过解压app.asar进行查看
   npm i asar -g
   asar extract app.asar ./app-folder
-  ```
-
+  
 - electron-devtools-installer：electron 开发工具
 
 - electron-updater模块检测更新
 
 ### 配置
 
-#### nsis
+#### vue.config.js
 
 ```
-createDesktopShortcut表示创建快捷方式图标
-createStartMenuShortcut 表示开始菜单图标
+    electronBuilder: {
+      nodeIntegration: true,
+      preload: './electron/preload/index.ts',
+      mainProcessFile: './electron/main/index.ts', // 主进程入口文件
+      mainProcessWatch: ['./electron/main/index.ts'], // 检测主进程文件在更改时将重新编译主进程并重新启动
+      // rendererProcessFile: './src/main.ts', // 渲染进程入口文件
+      outputDir: 'build/electron',
+      builderOptions: {
+        // productName: require('./package.json').productName, //项目名，也是生成的安装文件名
+        copyright: 'Copyright © 2023', //版权信息
+        directories: {
+          output: 'build/electron/releases'
+          // buildResources: 'build/releases',
+          // app: 'build/electron/bundled'
+        },
+        extraResources: [
+          {
+            from: 'D:/times/package/xjar.exe',
+            to: 'backend/collect_backend.exe'
+          },
+          {
+            from: 'D:/times/package/boot-1.0.0.xjar',
+            to: 'backend/boot-1.0.0.xjar'
+          },
+          {
+            from: 'D:/times/package/db/times.db',
+            to: 'backend/db/times.db'
+          },
+          {
+            from: 'D:/times/package/config/application.properties',
+            to: 'backend/application.properties'
+          },
+          {
+            from: 'D:/times/package/jre',
+            to: 'backend/jre'
+          }
+        ]
+        // asar: false
+      }
+    }
 ```
+
+##### nodeIntegration
+
+- **启用 Node.js 集成**：当 `nodeIntegration` 设置为 `true` 时，Electron 渲染进程（即 Vue 应用所在的网页环境）将能够直接使用 Node.js 的 API 和模块。这意味着你可以在前端代码中直接调用 `require`、`fs`、`child_process` 等 Node.js 内置模块。
+- **安全风险**：虽然 `nodeIntegration` 提供了强大的功能，但它也带来了潜在的安全风险。如果启用了 `nodeIntegration`，恶意代码可能会利用这一点执行任意的本地系统命令或访问文件系统。因此，在生产环境中应谨慎使用，并确保应用的安全性。
+- **与上下文菜单和开发者工具的兼容性**：在某些情况下，启用 `nodeIntegration` 可能会影响 Electron 的上下文菜单和开发者工具的功能。如果你遇到相关问题，可以尝试调整其他相关配置，如 `contextIsolation`。
+
+##### preload
+
+- 指定预加载脚本的路径。
+- 预加载脚本运行在渲染进程中，但具有主进程的权限，可用于安全地暴露部分主进程功能给渲染进程。
+
+##### mainProcessFile
+
+- 指定主进程入口文件的路径。
+- 主进程负责管理应用的生命周期、窗口创建等
+
+##### mainProcessWatch
+
+- 指定需要监听的主进程文件列表。
+- 当这些文件发生变化时，会重新编译主进程代码并重启应用。
+
+##### outputDir
+
+指定 Electron 构建输出目录
+
+##### builderOptions
+
+- copyright：设置生成的安装包的版权信息
+
+- directories
+
+  - output：指定最终构建产物的输出目录
+
+- extraResources定义需要打包到 Electron 应用中的额外资源文件。路径是相对于应用的 **`resources` 目录**（Electron 应用的资源目录）
+
+  每个资源对象包含两个字段：    - **`from`**：源文件路径。    - **`to`**：目标路径（相对于打包后的应用目录）
+
+  ```
+  extraResources: [
+    {
+    	from: 'D:/times/package/xjar.exe',
+    	to: 'backend/collect_backend.exe'
+    },
+  ]
+  ```
+
+#### electron-builder.json
+
+`electron-builder.json` 文件是用于配置 Electron 应用打包和发布行为的 JSON 文件。它定义了如何构建、打包和分发 Electron 应用程序
+
+##### appId
+
+- **作用**：指定应用的唯一标识符。
+- **值**：`com.dweb.my-app`
+- **说明**：用于在操作系统中唯一标识你的应用，特别是在 Windows 和 macOS 上
+
+##### asar
+
+- **作用**：是否将应用资源（渲染线程的资源）打包为 ASAR（Archive）文件，会放在D:\work\cidsi\data-plat\iot-integration\fe-iot-integration\build\electron\releases\win-unpacked\resources。
+- **值**：`false`
+- **说明**：ASAR 是一种简单的存档格式，用于将应用文件打包成一个文件。设置为 `false` 表示不使用 ASAR 归档。
+
+##### extraFiles
+
+##### 平台特定配置
+
+```
+"linux": {
+    "icon": "./public/logo.ico"
+  },
+  "mac": {
+    "artifactName": "${productName}_${version}.${ext}",
+    "icon": "./public/logo.ico",
+    "target": [
+      "dmg"
+    ]
+  },
+  "win": {
+    "artifactName": "${productName}_${version}.${ext}",
+    "icon": "./public/logo.ico",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "asarUnpack": [
+      "src/**",
+      "README.md"
+    ],
+  },
+```
+
+
+
+- `icon`
+
+  - **作用**：指定 Windows 平台的图标路径。
+  - **值**：`./public/logo.ico`
+  - **说明**：同 Linux 和 macOS 配置。
+
+- `target`
+
+  - **作用**：指定安装包格式和架构。
+
+  - 值：
+
+    ```
+    json[
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ]
+    ```
+
+  - **说明**：生成 NSIS 格式的安装包，仅支持 `x64` 架构。
+
+- `asarUnpack`
+
+  - **作用**：指定哪些文件或目录不应被打包到 ASAR 归档中。
+  - **值**：`["src/**", "README.md"]`
+  - **说明**：`src` 目录下的所有文件和 `README.md` 文件将保持独立文件形式。
+
+- `artifactName`
+
+  - **作用**：定义 Windows 安装包的文件名模板。
+  - **值**：`${productName}_${version}.${ext}`
+  - **说明**：同 macOS 配置。
+
+##### nsis
+
+**`oneClick`**
+
+- **作用**：是否启用一键安装模式。
+- **值**：`false`
+- **说明**：如果为 `true`，则安装过程将简化为一个确认步骤。
+
+3.2 **`allowElevation`**
+
+- **作用**：是否允许安装程序请求管理员权限。
+- **值**：`true`
+- **说明**：如果为 `true`，则在需要时会提示用户提升权限。
+
+3.3 **`allowToChangeInstallationDirectory`**
+
+- **作用**：是否允许用户更改安装目录。
+- **值**：`true`
+- **说明**：如果为 `true`，则用户可以在安装过程中选择安装位置。
+
+3.4 **`installerIcon` 和 `uninstallerIcon`**
+
+- **作用**：分别指定安装程序和卸载程序的图标路径。
+- **值**：`./public/logo.ico`
+- **说明**：确保图标文件存在并正确引用。
+
+3.5 **`createDesktopShortcut`**
+
+- **作用**：是否在桌面上创建快捷方式。
+- **值**：`true`
+- **说明**：如果为 `true`，则会在用户桌面上创建应用程序的快捷方式。
+
+3.6 **`createStartMenuShortcut`**
+
+- **作用**：是否在开始菜单中创建快捷方式。
+- **值**：`true`
+- **说明**：如果为 `true`，则会在开始菜单中创建应用程序的快捷方式。
+
+3.7 **`shortcutName`**
+
+- **作用**：指定快捷方式的名称。
+- **值**：`${productName}`
+- **说明**：`${productName}` 是一个变量，表示应用名称，快捷方式名称会根据应用名称动态生成。
 
 #### 加载资源
 
@@ -330,6 +575,22 @@ app.whenReady().then(() => {
 >
 > 在 Electron 中，只有在 app 模块的 [`ready`](https://www.electronjs.org/zh/docs/latest/api/app#event-ready) 事件触发后才能创建 BrowserWindows 实例。 您可以通过使用 [`app.whenReady()`](https://www.electronjs.org/zh/docs/latest/api/app#appwhenready) API 来监听此事件，并在其成功后调用 `createWindow()` 方法。
 
+### webPreferences
+
+#### contextIsolation
+
+`contextIsolation`定义上下文隔离
+
+在一般的我们的前端项目中，渲染html页面的js中是运行在浏览器环境中的，而在Electron中，我们会发现Node中模块在其中也可以使用。（同时需要配置`nodeIntegration`为`true`）这样的话，在一个复杂项目中，就可以造成污染，重名等问题。
+
+于是Electron特意增加了上下文隔离这一概念。开启上下文隔离的条件是`contextIsolation`属性设置为`true`
+
+一旦开启该条件，渲染进程无法引入Electron和Node的各种模块。因此，如果想在其中使用，需要配置preload.js，使用`contextBridge`（上下文桥，这个名字不错）来暴露全局接口到渲染页面的脚本中
+
+
+
+使用 `contextBridge` 和 `preload`：通过 `contextBridge` 和 `preload` 机制，可以安全地将部分 Electron API 暴露给渲染进程，而无需开启 `nodeIntegration`。**这种方式更安全，能够限制渲染进程的权限，并减少潜在的安全风险。你可以在主进程中使用** `contextBridge.exposeInMainWorld` 方法将需要的 Electron API 暴露给渲染进程，然后在渲染进程中使用 `window.api` 来访问这些 API。
+
 ### app
 
 #### 关闭所有窗口时退出应用
@@ -457,19 +718,7 @@ domReady().then(appendLoading);
 setTimeout(removeLoading, 4999);
 ```
 
-### contextIsolation
 
-`contextIsolation`定义上下文隔离
-
-在一般的我们的前端项目中，渲染html页面的js中是运行在浏览器环境中的，而在Electron中，我们会发现Node中模块在其中也可以使用。（同时需要配置`nodeIntegration`为`true`）这样的话，在一个复杂项目中，就可以造成污染，重名等问题。
-
-于是Electron特意增加了上下文隔离这一概念。开启上下文隔离的条件是`contextIsolation`属性设置为`true`
-
-一旦开启该条件，渲染页面的js中无法引入Electron和Node的各种模块。因此，如果想在其中使用，需要配置preload.js，使用`contextBridge`（上下文桥，这个名字不错）来暴露全局接口到渲染页面的脚本中
-
-
-
-使用 `contextBridge` 和 `preload`：通过 `contextBridge` 和 `preload` 机制，可以安全地将部分 Electron API 暴露给渲染进程，而无需开启 `nodeIntegration`。这种方式更安全，能够限制渲染进程的权限，并减少潜在的安全风险。你可以在主进程中使用 `contextBridge.exposeInMainWorld` 方法将需要的 Electron API 暴露给渲染进程，然后在渲染进程中使用 `window.api` 来访问这些 API。
 
 ### contextBridge通信
 

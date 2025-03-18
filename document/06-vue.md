@@ -135,45 +135,24 @@ json:{
 
 ## 指令
 
-### v-for 和虚拟 DOM
+### `v-for` 与虚拟 DOM 
 
-```js
-v-for="(val,index) in array"
-//:key="index"
-//每次更改数组数据，全部的数据都会重新渲染，添加key值，从而只渲染更改的数据.这是因为每一个列表渲染的元素加上了唯一标识符，编译器通过标识符渲染指定列表，高效渲染虚拟DOM树
+```
+<ul>
+  <li v-for="item in items" :key="item.id">{{ item.text }}</li>
+</ul>
 ```
 
- 打个 🌰。把 F 元素插入到 A B C D E 中。 
+1. **初始渲染**：当组件首次渲染时，Vue.js 会解析模板中的 `v-for` 指令，根据提供的数据（如数组）生成一个虚拟 DOM 树。
+2. **数据变化**：如果数组中的数据发生变化（例如添加、删除或修改项），Vue.js 会创建一个新的虚拟 DOM 树。
+3. **比较差异**：Vue.js 使用高效的 diffing 算法比较新旧虚拟 DOM 树，找出需要更新的部分。这个过程非常快速，因为它只关注实际变化的部分。
+4. **实际更新**：最后，Vue.js 将计算出的差异应用到真实的 DOM 上，只更新那些需要改变的部分。这大大提高了应用的性能，尤其是在处理大型列表时。
 
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LTRkNzg2M2I2MTI0YzVjYjkuanBn?x-oss-process=image/format,png)
+性能优化
 
-
-
-其实是这么插的：新的 dom 和旧的 dom 比较， 第一个原来是 A，更新之后还是 A，所以就不变，第二个是 B，更新之后还是 B，所以还是不变，第三个是 C，更新之后变成了 F。  然后后面的都变化了 
-
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LWM3N2I2YWQ4MWZkNDM1YzMuanBn?x-oss-process=image/format,png)
-
-但是如果给每一个列表渲染的元素加上了唯一标识符。列表更新之后，编译器通过标识符知道第一个元素是 A。第三个是 C，就不会更新成 F。就像下图。
-
-![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy80OTI3MDM1LTk2MGYyZDg1NmI1ZWM5YzMuanBn?x-oss-process=image/format,png)
-
-vue 和 react 的虚拟 DOM 的 Diff 算法大致相同
-
-<img src="https://upload-images.jianshu.io/upload_images/3973616-cbe6ef9bad920f51.png?imageMogr2/auto-orient/strip|imageView2/2/w/576/format/webp" alt="img" style="zoom:50%;" />
-
-- 如果 dom 树有三层，在没加 ID 的情况下。
-
-  先比较第一层。比较一次
-
-  再比较第二层。比较第一层第一个节点和第二层第一个节点，第一层第一个节点和第二层第二个节点，比较第一层第二个节点和第二层两个节点。比较了四次。
-
-  算法复杂度，2 的 n 次方。
-
-- 如果加上 ID。
-
-  比较第一个节点。再比较第二个节点。再比较第三个节点。再比较第四个节点。再比较第五个节点。一直比到第 n 个节点。
-
-  算法复杂度为 n。
+- **使用 `key`**：如前所述，为 `v-for` 中的每个元素提供一个唯一的 `key` 是非常重要的，这有助于 Vue 在数据变化时高效地识别和更新具体的元素。
+- **避免大型列表的全量更新**：如果列表非常大，考虑使用 `v-if` 或计算属性来控制哪些项应该被渲染，从而减少需要比较的节点数量。
+- **使用稳定的 key**：确保用于 `v-for` 的 `key` 是稳定的（例如，使用数据库 ID 或唯一标识符），这有助于 Vue 更有效地进行节点的复用和重排序。
 
 ### v-if 和 v-show
 
@@ -256,7 +235,9 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 ### v-model 和 v-bind
 
-1、v-bind 是单向绑定，用来绑定属性、样式以及表达式。包括 class、style、src 等
+v-bind
+
+v-bind是单向绑定，用于将Vue实例中的数据与DOM元素的属性进行绑定。它只能将数据从Vue实例流向DOM元素，而不能反向流动。v-bind可以绑定任何类型的属性，如class、style、href等。使用v-bind时，可以省略v-bind，直接使用简写形式“:”，例
 
 ```
 <!-- 绑定单个属性 -->
@@ -266,11 +247,14 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 <img :src="imageSrc" alt="Example Image">
 ```
 
-2、v-model 是双向绑定，不只能将 vue 中的数据同步到页面，而且可以将用户数据的数据赋值给 vue 中的属性。
+v-model
 
-3、v-bind 可以给任何属性赋值，v-model 只能给具备 value 属性的元素进行数据双向绑定。
+v-model是双向绑定，不仅可以将数据从Vue实例流向DOM元素，还可以将用户输入的数据从DOM元素流回Vue实例。v-model主要用于表单控件，如`<input>`、`<select>`、`<textarea>`等，用于实现数据的双向绑定。当用户在这些控件中输入数据时，这些数据会实时更新到Vue实例中，反之亦然‌12。
 
+适用场景
 
+- ‌**v-bind**‌：适用于所有需要动态绑定属性的场景，如动态改变class、style、href等属性。**它不限于表单控件，可以用于任何元素‌**。
+- ‌**v-model**‌：主要用于表单控件，如输入框、选择框、文本域等，实现数据的双向绑定。当用户在这些控件中输入数据时，数据会实时更新到Vue实例中‌
 
 ### 自定义指令
 
@@ -296,7 +280,7 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 一对多：如果一个值变化后会引起一系列操作，或者一个值变化会引起一系列值的变化，用 watch 更加方便一些
 
-### **计算属性 computed**
+### 计算属性 computed
 
 - computed 计算属性，用来计算一个属性的值。
 
@@ -361,7 +345,7 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
   </script>
   ```
 
-###   侦听器 **watch**
+###   侦听器 watch
 
 watch 的意思是监听，当发生变化时，监听并且执行。
 
@@ -404,12 +388,18 @@ watch 的意思是监听，当发生变化时，监听并且执行。
 ### 区别
 
 - 功能上：computed 是计算属性，watch 是监听一个值的变化，然后执行对应的回调。
+
 - 是否调用缓存：computed 中的函数所依赖的属性没有发生变化，那么调用当前的函数的时候会从缓存中读取，而 watch 在每次监听的值发生变化的时候都会执行回调。
+
 - 是否调用 return：computed 中的函数必须要用 return 返回，watch 中的函数不是必须要用 return。
-- computed 默认第一次加载的时候就开始监听；watch 默认第一次加载不做监听，如果需要第一次加载做监听，添加 immediate 属性，设置为 true（immediate: true）
+
+- **computed 默认第一次加载的时候就开始监听；watch 默认第一次加载不做监听，如果需要第一次加载做监听，添加 immediate 属性，设置为 true（immediate: true）**
+
 - 使用场景：computed----当一个属性受多个属性影响的时候，使用 computed-----购物车商品结算。watch–当一条数据影响多条数据的时候，使用 watch-----搜索框.
 
+- computer为什么不可以用异步，watch却可以：
 
+  Computed 属性的定义是“依赖值改变，computed 值就会改变”，因此 computed 必须**同步地响应**其依赖值的变化，以确保计算属性的稳定性和可预测性
 
 ### tip
 
@@ -1205,7 +1195,7 @@ https://blog.csdn.net/u010565037/article/details/125757087
 
 # 组件
 
-## **组件命名**
+## 组件命名
 
 - #### kebab-case(短横线分隔命名) 
 
@@ -1421,7 +1411,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 
 注意 **`v-slot` 只能添加在 `<template>` 上** (只有 [一种例外情况](https://v2.cn.vuejs.org/v2/guide/components-slots.html#独占默认插槽的缩写语法))，这一点和已经废弃的 [`slot` attribute](https://v2.cn.vuejs.org/v2/guide/components-slots.html#废弃了的语法) 不同。
 
-#### **作用域插槽**
+#### 作用域插槽
 
 > **让父组件插槽内容能够访问子组件中的数据**
 
@@ -1480,7 +1470,7 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 - 被注册的组件名
 - 导入的组件对象
 
-### **keep-alive**
+### keep-alive
 
 keep-alive 是 vue 中的内置组件，包裹动态组件时，能在组件切换过程中将状态保留在内存中，而不是销毁它们。`<keep-alive>` 和 `<transition>` 相似，是一个抽象组件。它自身不会渲染一个 DOM 元素
 
@@ -1498,9 +1488,7 @@ keep-alive 是 vue 中的内置组件，包裹动态组件时，能在组件切�
   - 退出时触发 deactivated
   - 当再次进入（前进或者后退）时，只触发 activated。
 
-#### **应用场景**
-
-
+#### 应用场景
 
 缓存路由组件
 
@@ -1538,6 +1526,7 @@ keep-alive 是 vue 中的内置组件，包裹动态组件时，能在组件切�
 <blog-post post-title="hello!"></blog-post>
 <!-- 在 HTML 中是 的 camelCase (小驼峰)-->
 <blog-post postTitle="hello!"></blog-post>、
+
 //都可以用postTitle来获取
 Vue.component('blog-post', {T
   // 在 JavaScript 中是 camelCase 的
@@ -1586,45 +1575,6 @@ props: {
 
 所有的 prop 都使得其父子 prop 之间形成了一个 **单向下行绑定**：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。每次父级组件发生变更时，子组件中所有的 prop 都将会刷新为最新的值。
 
-### [model](https://v2.cn.vuejs.org/v2/api/#model)
-
-允许一个自定义组件在使用 `v-model` 时定制 prop 和 event。默认情况下，一个组件上的 `v-model` 会把 `value` 用作 prop 且把 `input` 用作 event，但是一些输入类型比如单选框和复选框按钮可能想使用 `value` prop 来达到不同的目的。使用 `model` 选项可以回避这些情况产生的冲突。
-
-- **Example**：
-
-  ```
-  Vue.component('my-checkbox', {
-    model: {
-      prop: 'checked',
-      event: 'change'
-    },
-    props: {
-      // this allows using the `value` prop for a different purpose
-      value: String,
-      // use `checked` as the prop which take the place of `value`
-      checked: {
-        type: Number,
-        default: 0
-      }
-    },
-    // ...
-  })
-  ```
-
-  ```
-  <my-checkbox v-model="foo" value="some value"></my-checkbox>
-  ```
-
-  上述代码相当于：
-
-  ```
-  <my-checkbox
-    :checked="foo"
-    @change="val => { foo = val }"
-    value="some value">
-  </my-checkbox>
-  ```
-
 ## 组件手动更新
 
 - v-if
@@ -1658,16 +1608,7 @@ https://segmentfault.com/a/1190000019208626
 
 ### 父组件向子组件通信
 
-```js
 父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。
-子组件中使用mounted编译完成，将父组件数据赋值给子组件的数据，而直接不使用父组件数据
-mounted(){
-    console.log(this.msg)
-    this.b=this.msg;
-    //   vue2.0不允许直接给父级的数据做赋值操作
-    //若父组件每次传一个对象给子组件，则可以赋值
-}
-```
 
 ### 子组件向父组件通信
 
@@ -1735,11 +1676,58 @@ var vm = new Vue({
 
 
 
-#### 双向绑定
+### 双向绑定:sync 
 
-##### sync 修饰符
+> `.sync` 修饰符在 Vue 3 中已经被废弃，取而代之的是使用 `v-model` 进行双向绑定。你可以在父组件中使用 `v-model` 来实现双向绑定。支持多个v-model
 
-> `.sync` 修饰符在 Vue 3 中已经被废弃，取而代之的是使用 `v-model` 进行双向绑定。你可以在父组件中使用 `v-model` 来实现双向绑定。
+日常开发时，我们总会遇到需要父子组件双向绑定的问题，但是考虑到组件的可维护性，vue 中是不允许子组件改变父组件传的 props 值的。那么同时，vue 中也提供了一种解决方案.[sync](https://so.csdn.net/so/search?q=sync&spm=1001.2101.3001.7020) 修饰符。sync 修饰符，与我们平常使用$emit 实现子组件向父组件通信没有区别，只不过是写法上方便一些。
+
+- $emit
+
+  子组件使用$emit 向父组件发送事件：
+
+  ```vue
+  this.$emit('update:title', newTitle)
+  ```
+
+  父组件监听这个事件并更新一个本地的数据 title：
+
+  ```vue
+  <text-document
+    :title="title"
+    @update:title="val => title = val"
+  ></text-document>
+  ```
+
+- v-model
+
+  ```
+  <com1 v-model="num"></com1>
+  等价于
+  <com1 :value="num" @input="(val)=>this.num=val"></com1>
+  ```
+
+- .sync 修饰符
+
+  1. 父组件 v-bind: title 加上.sync 修饰符，即 v-bind: title.sync
+  2. 子组件内触发的事件名称以“update: title”命名
+
+  这样父组件就不用再手动绑定@update: title 事件了。
+
+  ```vue
+  // index.vue组件
+  <info :title.sync="title" ></info>
+  
+  // 子组件
+  methods: {
+      onInput(e) {
+          this.$emit("update:title", e.target.value)
+      }
+  }
+  
+  // 它等价于
+  <info :title="title" @update:title="val=>title=val"></info> 
+  ```
 
 ### 中央事件总线
 
@@ -1799,15 +1787,7 @@ var C={
 };
 ```
 
-### provide/inject
-
-**允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效**。
-
-一言而蔽之：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
-
-**provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系**。
-
-### `$parent` / `$children` 与 `ref`
+### parent / children 与 ref
 
 - `ref`：如果在普通的 DOM 元素上使用，引用指向的就是 DOM 元素；如果用在子组件上，引用就指向组件实例
 - `$parent` / `$children`：访问父 / 子实例
@@ -1845,55 +1825,63 @@ export default {
 </script>
 ```
 
-### 使用场景
-
-- 父子通信：
-
-父向子传递数据是通过 props，子向父是通过 events（`$emit`）；通过父链 / 子链也可以通信（`$parent` / `$children`）；
-
-- 兄弟通信：
-
-Bus；Vuex
-
-- 跨级通信：
-
-Bus；Vuex；provide / inject API、`$attrs/$listeners`
-
-## 高级组件
-
-provide / inject API；`$attrs/$listeners`
-
-- （1）$props：当前组件接收到的 props 对象。Vue 实例代理了对其 props 对象属性的访问。
-
-- （2）$attrs：包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 (class 和 style 除外)。
-
-- （3）$listeners：包含了父作用域中(不含 .native 修饰器的)v-on 事件监听器。他可以通过 v-on =" listeners " 传入内部组件
-
-  `$listeners` 对象在 Vue 3 中已被移除。事件监听器现在是 `$attrs` 的一部分
 
 
+### provide/inject
+
+允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效。
+
+一言而蔽之：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
+
+provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。
 
 ### 透传 Attributes
 
-[透传 Attributes](https://cn.vuejs.org/guide/components/attrs.html) 是指由父组件传入，且没有被子组件声明为 props 或是组件自定义事件的 attributes 和事件处理函数
+在Vue中，组件的透传（也称为属性透传或属性继承）是指将父组件的某些属性或事件传递给子组件的功能。这对于封装组件时保留灵活性非常有用，特别是当子组件的API可能会变化，而我们不想让父组件的代码随之改变时
 
 #### Attributes 继承
 
-“透传 attribute”指的是传递给一个组件，却没有被该组件声明为 props 或 emits 的 attribute 或者 v-on 事件监听器。最常见的例子就是 class、style 和 id。
+Vue 2.4.0 引入了一个名为 `inheritAttrs` 的选项，允许你控制组件的根元素是否自动继承特性（attributes）。默认情况下，`inheritAttrs` 的值是 `true`，意味着所有没有被子组件的props或事件声明的特性都会被添加到子组件的根元素上。
 
-当一个组件以单个元素为根作渲染时，透传的 attribute 会自动被添加到根元素上。举例来说，假如我们有一个 <MyButton> 组件，它的模板长这样：
+```
+<!-- 父组件 -->  
+<template>  
+  <child-component :foo="foo" :bar="bar" baz="baz" @click="changeAttribute"></child-component>  
+</template>  
+  
+<script>  
+import ChildComponent from './ChildComponent.vue';  
+  
+export default {  
+  components: {  
+    ChildComponent  
+  },  
+  data() {  
+    return {  
+      foo: 'fooValue',  
+      bar: 'barValue'  
+    };  
+  }  
+};  
+</script>
+```
 
-<!-- <MyButton> 的模板 -->
-<button> click me </button>
-一个父组件使用了这个组件，并且传入了 class：
+```
+<!-- ChildComponent.vue -->  
+<template>  
+  <div v-bind="$attrs" v-on="$listeners">  
+    <!-- 这里可以渲染一些内容 -->  
+  </div>  
+</template>  
+  
+<script>  
+export default {  
+  props: ['foo'], // 只声明了 foo 作为 prop  
+};  
+</script>
+```
 
-<MyButton class="large" />
-最后渲染出的 DOM 结果是：
-
-<button class="large"> click me </button>
- 这里，<MyButton> 并没有将 class 声明为一个它所接受的 prop，所以 class 被视作透传 attribute，自动透传到了 <MyButton> 的根元素上。
-
-
+在这个例子中，`bar` 和 `baz` 属性没有被 `ChildComponent` 作为 prop 声明，所以它们会作为 `$attrs` 的一部分传递给 `ChildComponent` 的根元素。因此，`baz` 属性会被应用到 `div` 元素
 
 #### 禁用 Attributes 继承 
 
@@ -1909,27 +1897,41 @@ defineOptions({
 
 
 
-#### 对 class 和 style 的合并
+#### 透传 Attributes 的优缺点
 
-如果一个子组件的根元素已经有了 class 或 style attribute，它会和从父组件上继承的值合并。如果我们将之前的 <MyButton> 组件的模板改成这样：
+- 透传 Attributes 的优点
 
-<!-- <MyButton> 的模板 -->
-<button class="btn"> click me </button>
- 则最后渲染出的 DOM 结果会变成：
+  - 灵活性：允许父组件向子组件传递任意数量的属性，而不需要子组件显式声明它们。
 
-<button class="btn large"> click me </button>
-
-#### v-on 监听器继承
-
-同样的规则也适用于 v-on 事件监听器
-
-```
-<MyButton @click="onClick" />
-```
-
-click 监听器会被添加到 <MyButton> 的根元素，即那个原生的 <button> 元素之上。当原生的 <button> 被点击，会触发父组件的 onClick 方法。同样的，如果原生 button 元素自身也通过 v-on 绑定了一个事件监听器，则这个监听器和从父组件继承的监听器都会被触发。
+  - 重用性：提高组件的重用性，因为你可以创建通用的组件，并允许用户通过属性来定制它们。
 
 
+  - 简洁性：减少了在子组件中手动声明和绑定属性的需要，使得代码更加简洁。
+
+
+- 透传 Attributes 的缺点
+  - 不明确性：过度使用透传属性可能会导致属性来源不明确，增加了代码的阅读和维护难度。
+  - 潜在的命名冲突：如果多个层级的组件都使用相同的prop名，但没有明确地进行命名区分，可能会导致命名冲突和不可预期的行为
+
+  - 增加调试难度：当数据在多个组件之间传递时，如果出现问题，可能需要跟踪多个组件来确定问题的根源。
+
+#### 应用场景
+
+创建基础组件：当你创建一些基础组件（如按钮、输入框等）时，你可以使用透传属性来允许用户自定义这些组件的样式和行为。
+
+封装第三方组件：当你封装第三方组件时，可以使用透传属性来传递那些你不打算处理的属性，从而保持对原始组件的最大兼容性。
+
+构建布局组件：在构建复杂的布局组件时，透传属性可以帮助你传递那些与布局无关的属性到内部的子元素上。
+
+插槽内容：当使用插槽（slots）时，父组件可以通过透传数据来控制插槽内容的行为或样式。
+
+### 使用场景
+
+- 父子通信：父向子传递数据是通过 props，子向父是通过 events（`$emit`）；通过父链 / 子链也可以通信（`$parent` / `$children`）；
+
+- 兄弟通信：Bus；Vuex
+
+- 跨级通信：Bus；Vuex；provide / inject API、`$attrs/$listeners`
 
 ## 组件懒加载
 
@@ -1949,8 +1951,6 @@ click 监听器会被添加到 <MyButton> 的根元素，即那个原生的 <but
        "One-com":One
   }
   ```
-
-
 
 # vue 生命周期
 
@@ -1972,77 +1972,72 @@ Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模�
 
  比如 `created: () => console.log(this.a)` 或 `vm.$watch('a', newValue => this.myMethod())` 
 
-## beforeCreate
+## 父子组件的生命周期执行顺序
 
-> 在此阶段，`this` 指向的 Vue 实例还没有任何响应式数据，所以不能访问 `data`、`computed`、`methods` 等属性。
+一个完整的父子组件生命周期：
 
-在 **beforeCreate** 阶段，Vue 实例刚刚被初始化，实例的属性如 `data` 和 `methods` 还没有被设置。这是生命周期的第一个钩子函数，**通常用于初始化非响应式属性或执行一些同步操作。**
+父beforeCreate -> 父created -> **父beforeMount -> 子beforeCreate** -> 子created -> 子beforeMount -> **子mounted -> 父mounted-**>父beforeUpdate->子beforeUpdate->子updated->父updated->父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
+
+## 初始化阶段
+
+### beforeCreate
+
+在 **beforeCreate** 阶段，Vue 实例刚刚被初始化，实例的属性如 `data` 和 `methods` 还没有被设置。这是生命周期的第一个钩子函数，**这个阶段主要是进行一些初始化工作，如设置事件和生命周期的回调函数等。**
 
 - 初始化非响应式属性
 - 执行同步操作
 
-## created
+### created
 
-> 在此阶段，可以访问并操作 `data` 中的数据，进行数据获取或初始化操作。
-
-**created** 阶段，Vue 实例已经创建完成，`data`、`computed`、`methods` 等属性已经初始化。可以在这一步进行数据的获取和初始化。
+**created** 阶段，Vue 实例已经创建完成，`data`、`computed`、`methods` 等属性已经初始化，以及数据观测（data observer），watch/event事件的设置也已完成。可以在这一步进行数据的获取和初始化。
 
 - 数据获取
 - 初始化数据
 
-## beforeMount
+## 挂载阶段
 
-> 此阶段适合进行一些在挂载前的准备工作，如调整虚拟 DOM 的结构等。
+### beforeMount
 
-在 **beforeMount** 阶段，Vue 实例已经编译了模板，放在内存中。但还未挂载到 DOM 树上。这是操作 DOM 的最后一个机会，但此时 DOM 还未真正生成。
+在挂载开始之前被调用，此时模板编译已经完成但是还未挂载到页面中。这个阶段可以访问到编译后的模板，但还不能访问到真实的DOM元素。
 
 - 准备挂载操作
 - 操作虚拟 DOM
 
-## mounted
-
-> 在此阶段，可以安全地操作 DOM 元素，进行如第三方库初始化等需要 DOM 存在的操作。可以在 mounted 内部使用 vm.$nextTick
+### mounted
 
 **mounted** 阶段，Vue 实例已经被挂载到真实 DOM 树上，可以进行 DOM 操作。
 
 - 操作真实 DOM
+- 可以在 mounted 内部使用 vm.$nextTick
 - 启动第三方库
 
-## beforeUpdate
+## 更新阶段
 
-> 此阶段适合进行一些在数据更新前的准备工作，如保存快照等。
+### beforeUpdate
 
-在 **beforeUpdate** 阶段，当响应式数据更新时，组件重新渲染前触发。可以在此阶段对新的数据进行一些处理。
+发生在虚拟DOM打补丁之前。适合在更新之前访问现有的DOM，比如手动移除已添加的事件监听器。
 
 - 处理即将更新的数据
 - 在重新渲染前执行逻辑
 
-## updated
+### updated
 
-> 在此阶段，可以确保所有数据和 DOM 都已经是最新状态，适合进行一些与最新数据或 DOM 相关的操作。
-
-**updated** 阶段，组件更新并重新渲染后触发。这是操作最新 DOM 结构的机会。
+由于数据更改导致的虚拟DOM重新渲染和打补丁，在这之后会调用该钩子。当这个钩子被调用时，组件DOM已经更新，所以你现在可以执行依赖于DOM的操作。然而在大多数情况下，**你应该避免在此期间更改状态，因为这可能会导致更新无限循环**
 
 - 操作最新 DOM
 - 检查更新结果
 
-## beforeDestroy
+## 销毁阶段
 
-> 此阶段适合进行各种清理操作，以确保不会有内存泄漏或其他副作用。
+### beforeDestroy
 
-在 **beforeDestroy** 阶段，实例即将被销毁。在此阶段可以执行清理工作，如清除计时器、事件监听等。
+> 此阶段适合进行各种清理操作
 
-- 清理工作
-- 停止计时器
+实例销毁之前调用。在这一步中，实例仍然可以被访问，这是一个进行清理工作，如取消计时器、解绑全局事件、销毁插件对象等的好时机。以确保不会有内存泄漏或其他副作用。
 
-## destroyed
+### destroyed
 
-> 在此阶段，实例已经完全销毁，所有关联的资源都被释放。
-
-**destroyed** 阶段，实例已经销毁，所有绑定的事件监听和子实例都被清理。此时不能再访问实例中的数据和方法。
-
-- 最后的清理工作
-- 确保实例完全销毁
+实例已经完全销毁，所有关联的资源都被释放，所有绑定的事件监听和子实例都被清理。**此时不能再访问实例中的数据和方法。**
 
 ## activated	
 
@@ -2902,7 +2897,7 @@ computed: mapState([
 
 ### getters
 
-Vuex 允许我们在 store 中定义“getter”（可以认为是 store 的计算属性）。就像计算属性一样，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。
+Vuex 允许我们在 store 中定义“getter”（可以认为是 store 的计算属性）。就像计算属性一样，**getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。**
 
 ```js
 computed: {
@@ -2964,6 +2959,8 @@ export default {
 
 ###  Mutation
 
+> Mutation 必须是同步函数
+
 更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 **事件类型 (type)** 和 一个 **回调函数 (handler)**。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：
 
 ```js
@@ -2996,9 +2993,9 @@ store.commit({
 });
 ```
 
-> Mutation 必须是同步函数
-
 ### Action
+
+> 可以在 action 内部执行 **异步** 操作
 
 Action 类似于 mutation，不同在于：
 
@@ -3059,8 +3056,6 @@ store.dispatch({
   amount: 10
 })
 ```
-
-> 可以在 action 内部执行 **异步** 操作
 
 ###  Module
 
@@ -3222,6 +3217,34 @@ created () {
     dispatch('GetUserCoreInfo')
 },
 ```
+
+# pinia
+
+设计一个拥有[组合式 API](https://github.com/vuejs/composition-api) 的 Vue 状态管理库
+
+## 区别
+
+1. ‌**API简洁性**‌：
+   - ‌**Vuex**‌：使用modules、state、mutations、actions和getters来定义状态、修改和异步操作，API较为繁琐。‌
+   - ‌**Pinia**‌：简化了API，无需mutations，直接用state和actions，语法更直观。
+2. **架构设计**
+   - 遵循单一状态树的概念，将所有应用状态存储在一个全局的store中。通过actions、mutations和getters来修改和获取状态
+   - Pinia采用了去中心化的架构，每个模块都有store实例来管理
+3. ‌**[TypeScript](https://www.baidu.com/s?wd=TypeScript&tn=62095104_41_oem_dg&usm=2&ie=utf-8&rsv_pq=bf96b82e0023522a&oq=pinia和vuex区别&rsv_t=c173HXYyuDg%2F3lfZ4dUkvQdZ%2FGv66FVus6dDQyTrn68utwahT3IBImBKMU9zh%2BHHBZtGeA2aQY9q&rsv_dl=re_dqa_generate&sa=re_dqa_generate)支持**‌：
+   - ‌**Vuex**‌：虽然支持TypeScript，但类型推断复杂，尤其在大型项目中。‌
+   - ‌**Pinia**‌：原生支持TypeScript，类型推断完善，更适合TypeScript项目。‌
+4. ‌**模块化管理**‌：
+   - ‌**Vuex**‌：支持模块化，可以通过namespace管理，但嵌套和类型管理复杂。
+   - ‌**Pinia**‌：每个store是独立的，声明更清晰，方便导入和组合，且不需要命名空间。
+5. ‌**性能**‌：
+   - ‌**Vuex**‌：每次状态变更都会重新计算所有getters，可能导致性能开销。
+   - ‌**Pinia**‌：通过Composition API优化了状态追踪机制，具备更好的性能表现，避免不必要的更新。
+6. ‌**兼容性**‌：
+   - ‌**Vuex**‌：适用于Vue 2和Vue 3项目，生态成熟。
+   - ‌**Pinia**‌：专为Vue 3设计，支持Composition API，不支持Vue 2。
+7. ‌**社区支持和适用场景**‌：
+   - ‌**Vuex**‌：社区支持较强，适合复杂的项目和对状态管理有更高要求的开发者。‌
+   - ‌**Pinia**‌：社区支持相对较弱，但更适合初学者和快速开发项目。
 
 # vue-class-component
 
@@ -5243,10 +5266,6 @@ defineEmits<{
  
 <style lang="scss" scoped></style>
 ```
-
-通过触发 `update:title` 事件更新父组件值
-
-
 
 ##### defineModel
 

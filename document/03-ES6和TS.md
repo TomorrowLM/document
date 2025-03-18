@@ -25,6 +25,10 @@ http://caibaojian.com/es6/
 
 作用域定义了变量的可见性或可访问性。大白话来说，就是一个变量能不能被访问或引用，是由它的作用域决定的。
 
+- **作用域链**
+
+  当一个变量在当前作用域无法找到时，便会尝试寻找其外层的作用域，如果还找不到，再继续往上寻找
+
 - **全局作用域（Global Scope）**
 
   在代码中任何地方都能访问到的对象拥有全局作用域，一般来说以下几种情形拥有全局作用域：
@@ -41,15 +45,46 @@ http://caibaojian.com/es6/
 
   - **块级作⽤域**：ES6引⼊了 let 和 const 关键字,和 var 关键字不同，在⼤括号中使⽤ let 和 const 声明的变量存 在于块级作⽤域中。在⼤括号之外不能访问这些变量
 
-**作用域链**
-
-当一个变量在当前作用域无法找到时，便会尝试寻找其外层的作用域，如果还找不到，再继续往上寻找
-
 **好处**
 
 1. `防止命名冲突`：你写了一万行的代码文件，如果没有作用域，你要给每个变量取独一无二的名字，屁股想想也知道是种折磨。
 2. `安全性`： 变量不会被外部访问，保证了变量值不会被随意修改。你定义在函数内的变量，如果能在几千行之后不小心被修改，脚趾头想想也知道是种折磨。
 3. `更高级的语法`：封装、面向对象等的实现离不开对变量的隔离，这是依靠作用域所达到的。
+
+为什么需要块级作用域
+
+- //1.变量提升,内层变量可能会覆盖外层变量。 
+
+  ```
+  var tmp = 1;
+  function f() {
+    console.log(tmp);//undefined
+    if (false) {
+      var tmp = "hello world";
+    }
+  }
+  f();
+  
+  // `let`实际上为 JavaScript 新增了块级作用域。
+  var tmp = 1;
+  function f() {
+    console.log(tmp); //1
+    if (false) {
+      let tmp = "hello world";
+    }
+  }
+  f();
+  ```
+
+- //2.用来计数的循环变量泄露为全局变量。
+
+  ```
+  var s = 'hello';
+  for (var i = 0; i < s.length; i++) {
+  console.log(s[i]);
+  }
+  console.log(i); // 5
+  ```
 
 ### var变量和函数提升
 
@@ -135,44 +170,6 @@ function () {
   var a = 1;
 }
 ```
-
-### 块级作用域与函数
-
-> 为什么需要块级作用域
->
-> ```javascript
-> //1.变量提升,内层变量可能会覆盖外层变量。 
-> var tmp = new Date();
-> function f() {
->   console.log(tmp);
->   if (false) {
->     var tmp = "hello world";
->   }
-> }
-> f(); // undefined
-> 
-> //2.用来计数的循环变量泄露为全局变量。
-> var s = 'hello';
-> for (var i = 0; i < s.length; i++) {
->   console.log(s[i]);
-> }
-> console.log(i); // 5
-> ```
->
-
- `let`实际上为 JavaScript 新增了块级作用域。
-
-```javascript
-function f1() {
-  let n = 5;
-  if (true) {
-    let n = 10;
-  }
-  console.log(n); // 5
-}
-```
-
-上面的函数有两个代码块，都声明了变量`n`，运行后输出 5。这表示外层代码块不受内层代码块的影响,即**块级作用域也属于作用域链中**。如果两次都使用`var`定义变量`n`，最后输出的值才是 10。
 
 ### const命令
 
@@ -294,9 +291,9 @@ x // null
 
 ```
 
-- //注意点
+- 注意点
 
-  - /如果要将一个已经声明的变量用于解构赋值，必须非常小心。
+  - 如果要将一个已经声明的变量用于解构赋值，必须非常小心。
 
     ```js
     //JavaScript 引擎会将{x}理解成一个代码块，从而发生语法错误。只有不将大括号写在行首，避免 JavaScript 将其解释为代码块，才能解决这个问题。
@@ -404,7 +401,7 @@ console.log(move(undefined)); // 被解构赋值的参数 : {x: 1, y: 1}
 // [1, 1]
 ```
 
-### 变量的解构赋值的作用
+### 解构赋值的作用
 
 （1）交换变量的值
 
@@ -444,7 +441,7 @@ let jsonData = {
 let { id, status, data: number } = jsonData;
 ```
 
-（4）函数参数的默认值(数组或者对象的默认值)
+（4）函数参数的解构默认值(数组或者对象的默认值)
 
 ```js
 function foo({ x, y = 5 }) {
@@ -475,6 +472,543 @@ const {first,second} = require('xxx');
 ```
 
 ## 数据类型扩展
+
+### 运算符
+
+#### rest
+
+> rest运算符也是三个点号，不过其功能与扩展运算符恰好相反，**rest参数是一个数组**，该变量将多余的参数放入数组中
+
+##### 注意
+
+- 解构赋值必须是最后一个参数，否则会报错。
+
+  ```javascript
+  let { ...x, y, z } = obj; // 句法错误
+  let { x, ...y, ...z } = obj; // 句法错误
+  ```
+
+  上面代码中，解构赋值不是最后一个参数，所以会报错。
+
+- 解构赋值的拷贝是浅拷贝，即如果一个键的值是复合类型的值（数组、对象、函数）、那么解构赋值拷贝的是这个值的引用，而不是这个值的副本。
+
+  ```javascript
+  let obj = { a: { b: 1 } };
+  let { ...x } = obj;
+  obj.a.b = 2;
+  x.a.b // 2
+  ```
+
+  上面代码中，`x`是解构赋值所在的对象，拷贝了对象`obj`的`a`属性。`a`属性引用了一个对象，修改这个对象的值，会影响到解构赋值对它的引用。
+
+  另外，**解构赋值不会拷贝继承自原型对象的属性**。
+
+  ```javascript
+  let o1 = { a: 1 };
+  let o2 = { b: 2 };
+  o2.__proto__ = o1;
+  let o3 = { ...o2 };
+  o3 // { b: 2 }
+  ```
+
+  上面代码中，对象`o3`是`o2`的拷贝，但是只复制了`o2`自身的属性，没有复制它的原型对象`o1`的属性。
+
+##### 函数
+
+ES6引入rest参数（形式为“...变量名”），用于获取函数的多余参数，这样就不需要使用arguments对象了。。
+
+```javascript
+function add(...values) {
+  let sum = 0;
+
+  for (var val of values) {
+    sum += val;
+  }
+
+  return sum;
+}
+
+add(2, 5, 3) // 10
+```
+
+```js
+function push(array, ...items) {
+  console.log(items)
+  return array.concat(items);
+}
+
+console.log(push([], 1, 2, 3, 4, 5)) // [1, 2, 3, 4, 5]
+```
+
+##### 配合解构
+
+```
+// 数组
+const [a, ...rest] = [1, 2, 3, 4];
+console.log(a);//1
+console.log(rest);//[2, 3, 4]
+
+// 对象配合
+const {age, ...rest} = {name: 'qxj', age: 24, hobby: 'write code'};
+console.log(age);					//24
+console.log(rest);					//{ name: 'qxj', hobby: 'write code' }
+
+```
+
+#### 扩展运算符
+
+##### 对象的扩展运算符
+
+扩展运算符（`...`）用于取出参数对象的所有可遍历属性，拷贝到当前对象之中。
+
+```javascript
+let z = { a: 3, b: 4 };
+let n = { ...z };
+n // { a: 3, b: 4 }
+```
+
+这等同于使用`Object.assign`方法。
+
+```javascript
+let aClone = { ...a };
+// 等同于
+let aClone = Object.assign({}, a);
+```
+
+扩展运算符可以用于合并两个对象。
+
+```javascript
+let ab = { ...a, ...b };
+// 等同于
+let ab = Object.assign({}, a, b);
+```
+
+如果用户自定义的属性，放在扩展运算符后面，则扩展运算符内部的同名属性会被覆盖掉。
+
+```javascript
+let aWithOverrides = { ...a, x: 1, y: 2 };
+// 等同于
+let aWithOverrides = { ...a, ...{ x: 1, y: 2 } };
+// 等同于
+let x = 1, y = 2, aWithOverrides = { ...a, x, y };
+// 等同于
+let aWithOverrides = Object.assign({}, a, { x: 1, y: 2 });
+```
+
+上面代码中，`a`对象的`x`属性和`y`属性，拷贝到新对象后会被覆盖掉。
+
+这用来修改现有对象部分的部分属性就很方便了。
+
+```javascript
+let newVersion = {
+  ...previousVersion,
+  name: 'New Name' // Override the name property
+};
+```
+
+上面代码中，`newVersion`对象自定义了`name`属性，其他属性全部复制自`previousVersion`对象。
+
+如果把自定义属性放在扩展运算符前面，就变成了设置新对象的默认属性值。
+
+```javascript
+let aWithDefaults = { x: 1, y: 2, ...a };
+// 等同于
+let aWithDefaults = Object.assign({}, { x: 1, y: 2 }, a);
+// 等同于
+let aWithDefaults = Object.assign({ x: 1, y: 2 }, a);
+```
+
+扩展运算符的参数对象之中，如果有取值函数`get`，这个函数是会执行的。
+
+```javascript
+// 并不会抛出错误，因为x属性只是被定义，但没执行
+let aWithXGetter = {
+  ...a,
+  get x() {
+    throws new Error('not thrown yet');
+  }
+};
+
+// 会抛出错误，因为x属性被执行了
+let runtimeError = {
+  ...a,
+  ...{
+    get x() {
+      throws new Error('thrown now');
+    }
+  }
+};
+```
+
+如果扩展运算符的参数是`null`或`undefined`，这个两个值会被忽略，不会报错。
+
+```javascript
+let emptyObject = { ...null, ...undefined }; // 不报错
+```
+
+##### 应用场景
+
+- 合并数组
+
+  扩展运算符提供了数组合并的新写法。
+
+  ```javascript
+  // ES5
+  [1, 2].concat(more)
+  // ES6
+  [1, 2, ...more]
+  ```
+
+- 字符串
+
+  扩展运算符还可以将字符串转为真正的数组。
+
+  ```javascript
+  [...'hello']
+  // [ "h", "e", "l", "l", "o" ]
+  ```
+
+- 实现了Iterator接口的对象
+
+  任何Iterator接口的对象，都可以用扩展运算符转为真正的数组。
+
+  ```javascript
+  var nodeList = document.querySelectorAll('div');
+  var array = [...nodeList];
+  ```
+
+  上面代码中，`querySelectorAll`方法返回的是一个`nodeList`对象。它不是数组，而是一个类似数组的对象。这时，扩展运算符可以将其转为真正的数组，原因就在于`NodeList`对象实现了Iterator接口。
+
+  对于那些没有部署Iterator接口的类似数组的对象，扩展运算符就无法将其转为真正的数组。
+
+  ```javascript
+  let arrayLike = {
+    '0': 'a',
+    '1': 'b',
+    '2': 'c',
+    length: 3
+  };
+  
+  // TypeError: Cannot spread non-iterable object.
+  let arr = [...arrayLike];
+  ```
+
+  上面代码中，`arrayLike`是一个类似数组的对象，但是没有部署Iterator接口，扩展运算符就会报错。这时，可以改为使用`Array.from`方法将`arrayLike`转为真正的数组。
+
+#### 指数运算符
+
+ES2016 新增了一个指数运算符（`**`）。
+
+```javascript
+2 ** 2 // 4
+2 ** 3 // 8
+```
+
+这个运算符的一个特点是右结合，而不是常见的左结合。多个指数运算符连用时，是从最右边开始计算的。
+
+```javascript
+// 相当于 2 ** (3 ** 2)
+2 ** 3 ** 2
+// 512
+```
+
+上面代码中，首先计算的是第二个指数运算符，而不是第一个。
+
+指数运算符可以与等号结合，形成一个新的赋值运算符（`**=`）。
+
+```javascript
+let a = 1.5;
+a **= 2;
+// 等同于 a = a * a;
+
+let b = 4;
+b **= 3;
+// 等同于 b = b * b * b;
+```
+
+#### 链判断运算符
+
+编程实务中，如果读取对象内部的某个属性，往往需要判断一下，属性的上层对象是否存在。比如，读取`message.body.user.firstName`这个属性，安全的写法是写成下面这样。
+
+```javascript
+// 错误的写法
+const  firstName = message.body.user.firstName || 'default';
+
+// 正确的写法
+const firstName = (message
+  && message.body
+  && message.body.user
+  && message.body.user.firstName) || 'default';
+```
+
+上面例子中，`firstName`属性在对象的第四层，所以需要判断四次，每一层是否有值。
+
+三元运算符`?:`也常用于判断对象是否存在。
+
+```javascript
+const fooInput = myForm.querySelector('input[name=foo]')
+const fooValue = fooInput ? fooInput.value : undefined
+```
+
+上面例子中，必须先判断`fooInput`是否存在，才能读取`fooInput.value`。
+
+这样的层层判断非常麻烦，因此 [ES2020](https://github.com/tc39/proposal-optional-chaining) 引入了“链判断运算符”（optional chaining operator）`?.`，简化上面的写法。
+
+```javascript
+const firstName = message?.body?.user?.firstName || 'default';
+const fooValue = myForm.querySelector('input[name=foo]')?.value
+```
+
+上面代码使用了`?.`运算符，直接在链式调用的时候判断，左侧的对象是否为`null`或`undefined`。如果是的，就不再往下运算，而是返回`undefined`。
+
+下面是判断对象方法是否存在，如果存在就立即执行的例子。
+
+```javascript
+iterator.return?.()
+```
+
+上面代码中，`iterator.return`如果有定义，就会调用该方法，否则`iterator.return`直接返回`undefined`，不再执行`?.`后面的部分。
+
+对于那些可能没有实现的方法，这个运算符尤其有用。
+
+```javascript
+if (myForm.checkValidity?.() === false) {
+  // 表单校验失败
+  return;
+}
+```
+
+上面代码中，老式浏览器的表单对象可能没有`checkValidity()`这个方法，这时`?.`运算符就会返回`undefined`，判断语句就变成了`undefined === false`，所以就会跳过下面的代码。
+
+链判断运算符`?.`有三种写法。
+
+- `obj?.prop` // 对象属性是否存在
+- `obj?.[expr]` // 同上
+- `func?.(...args)` // 函数或对象方法是否存在
+
+使用这个运算符，有几个注意点。
+
+（1）短路机制
+
+本质上，`?.`运算符相当于一种短路机制，只要不满足条件，就不再往下执行。
+
+```javascript
+a?.[++x]
+// 等同于
+a == null ? undefined : a[++x]
+```
+
+上面代码中，如果`a`是`undefined`或`null`，那么`x`不会进行递增运算。也就是说，链判断运算符一旦为真，右侧的表达式就不再求值。
+
+（2）**括号的影响**
+
+如果属性链有圆括号，链判断运算符对圆括号外部没有影响，只对圆括号内部有影响。
+
+```javascript
+(a?.b).c
+// 等价于
+(a == null ? undefined : a.b).c
+```
+
+上面代码中，`?.`对圆括号外部没有影响，不管`a`对象是否存在，圆括号后面的`.c`总是会执行。一般来说，使用`?.`运算符的场合，不应该使用圆括号。
+
+（3）报错场合
+
+以下写法是禁止的，会报错。
+
+```javascript
+// 构造函数
+new a?.()
+new a?.b()
+
+// 链判断运算符的右侧有模板字符串
+a?.`{b}`
+a?.b`{c}`
+
+// 链判断运算符的左侧是 super
+super?.()
+super?.foo
+
+// 链运算符用于赋值运算符左侧
+a?.b = c
+```
+
+（4）右侧不得为十进制数值
+
+为了保证兼容以前的代码，允许`foo?.3:0`被解析成`foo ? .3 : 0`，因此规定如果`?.`后面紧跟一个十进制数字，那么`?.`不再被看成是一个完整的运算符，而会按照三元运算符进行处理，也就是说，那个小数点会归属于后面的十进制数字，形成一个小数。
+
+#### Null 判断运算符
+
+读取对象属性的时候，如果某个属性的值是`null`或`undefined`，有时候需要为它们指定默认值。常见做法是通过`||`运算符指定默认值。
+
+```javascript
+const headerText = response.settings.headerText || 'Hello, world!';
+const animationDuration = response.settings.animationDuration || 300;
+const showSplashScreen = response.settings.showSplashScreen || true;
+```
+
+上面的三行代码都通过`||`运算符指定默认值，但是这样写是错的。开发者的原意是，只要属性的值为`null`或`undefined`，默认值就会生效，**但是属性的值如果为空字符串或`false`或`0`，默认值也会生效。**
+
+为了避免这种情况，[ES2020](https://github.com/tc39/proposal-nullish-coalescing) 引入了一个新的 Null 判断运算符`??`。它的行为类似`||`，但是只有运算符左侧的值为`null`或`undefined`时，才会返回右侧的值。
+
+```javascript
+const headerText = response.settings.headerText ?? 'Hello, world!';
+const animationDuration = response.settings.animationDuration ?? 300;
+const showSplashScreen = response.settings.showSplashScreen ?? true;
+```
+
+上面代码中，默认值只有在左侧属性值为`null`或`undefined`时，才会生效。
+
+这个运算符的一个目的，就是跟链判断运算符`?.`配合使用，为`null`或`undefined`的值设置默认值。
+
+```javascript
+const animationDuration = response.settings?.animationDuration ?? 300;
+```
+
+上面代码中，如果`response.settings`是`null`或`undefined`，或者`response.settings.animationDuration`是`null`或`undefined`，就会返回默认值300。也就是说，这一行代码包括了两级属性的判断。
+
+这个运算符很适合判断函数参数是否赋值。
+
+```javascript
+function Component(props) {
+  const enable = props.enabled ?? true;
+  // …
+}
+```
+
+上面代码判断`props`参数的`enabled`属性是否赋值，基本等同于下面的写法。
+
+```javascript
+function Component(props) {
+  const {
+    enabled: enable = true,
+  } = props;
+  // …
+}
+```
+
+`??`本质上是逻辑运算，它与其他两个逻辑运算符`&&`和`||`有一个优先级问题，它们之间的优先级到底孰高孰低。优先级的不同，往往会导致逻辑运算的结果不同。
+
+现在的规则是，如果多个逻辑运算符一起使用，必须用括号表明优先级，否则会报错。
+
+```javascript
+// 报错
+lhs && middle ?? rhs
+lhs ?? middle && rhs
+lhs || middle ?? rhs
+lhs ?? middle || rhs
+```
+
+上面四个表达式都会报错，必须加入表明优先级的括号。
+
+```javascript
+(lhs && middle) ?? rhs;
+lhs && (middle ?? rhs);
+
+(lhs ?? middle) && rhs;
+lhs ?? (middle && rhs);
+
+(lhs || middle) ?? rhs;
+lhs || (middle ?? rhs);
+
+(lhs ?? middle) || rhs;
+lhs ?? (middle || rhs);
+```
+
+#### 逻辑赋值运算符
+
+ES2021 引入了三个新的[逻辑赋值运算符](https://github.com/tc39/proposal-logical-assignment)（logical assignment operators），将逻辑运算符与赋值运算符进行结合。
+
+```javascript
+// 或赋值运算符
+x ||= y
+// 等同于
+x || (x = y)
+
+// 与赋值运算符
+x &&= y
+// 等同于
+x && (x = y)
+
+// Null 赋值运算符
+x ??= y
+// 等同于
+x ?? (x = y)
+```
+
+这三个运算符`||=`、`&&=`、`??=`相当于先进行逻辑运算，然后根据运算结果，再视情况进行赋值运算。
+
+它们的一个用途是，为变量或属性设置默认值。
+
+```javascript
+// 老的写法
+user.id = user.id || 1;
+
+// 新的写法
+user.id ||= 1;
+```
+
+上面示例中，`user.id`属性如果不存在，则设为`1`，新的写法比老的写法更紧凑一些。
+
+下面是另一个例子。
+
+```javascript
+function example(opts) {
+  opts.foo = opts.foo ?? 'bar';
+  opts.baz ?? (opts.baz = 'qux');
+}
+```
+
+上面示例中，参数对象`opts`如果不存在属性`foo`和属性`baz`，则为这两个属性设置默认值。有了“Null 赋值运算符”以后，就可以统一写成下面这样。
+
+```javascript
+function example(opts) {
+  opts.foo ??= 'bar';
+  opts.baz ??= 'qux';
+}
+```
+
+#### `#!`命令
+
+Unix 的命令行脚本都支持`#!`命令，又称为 Shebang 或 Hashbang。这个命令放在脚本的第一行，用来指定脚本的执行器。
+
+比如 Bash 脚本的第一行。
+
+```bash
+#!/bin/sh
+```
+
+Python 脚本的第一行。
+
+```python
+#!/usr/bin/env python
+```
+
+[ES2023](https://github.com/tc39/proposal-hashbang) 为 JavaScript 脚本引入了`#!`命令，写在脚本文件或者模块文件的第一行。
+
+```javascript
+// 写在脚本文件第一行
+#!/usr/bin/env node
+'use strict';
+console.log(1);
+
+// 写在模块文件第一行
+#!/usr/bin/env node
+export {};
+console.log(1);
+```
+
+有了这一行以后，Unix 命令行就可以直接执行脚本。
+
+```bash
+# 以前执行脚本的方式
+$ node hello.js
+
+# hashbang 的方式
+$ ./hello.js
+```
+
+对于 JavaScript 引擎来说，会把`#!`理解成注释，忽略掉这一行。
 
 ### 字符串的扩展
 
@@ -955,354 +1489,7 @@ var s = '𠮷';
 
  `g`修饰符只要剩余位置中存在匹配就可，而`y`修饰符确保匹配必须从剩余的第一个位置开始，这也就是“粘连”的涵义。 
 
-### 运算符
 
-#### 指数运算符
-
-ES2016 新增了一个指数运算符（`**`）。
-
-```javascript
-2 ** 2 // 4
-2 ** 3 // 8
-```
-
-这个运算符的一个特点是右结合，而不是常见的左结合。多个指数运算符连用时，是从最右边开始计算的。
-
-```javascript
-// 相当于 2 ** (3 ** 2)
-2 ** 3 ** 2
-// 512
-```
-
-上面代码中，首先计算的是第二个指数运算符，而不是第一个。
-
-指数运算符可以与等号结合，形成一个新的赋值运算符（`**=`）。
-
-```javascript
-let a = 1.5;
-a **= 2;
-// 等同于 a = a * a;
-
-let b = 4;
-b **= 3;
-// 等同于 b = b * b * b;
-```
-
-#### 链判断运算符
-
-编程实务中，如果读取对象内部的某个属性，往往需要判断一下，属性的上层对象是否存在。比如，读取`message.body.user.firstName`这个属性，安全的写法是写成下面这样。
-
-```javascript
-// 错误的写法
-const  firstName = message.body.user.firstName || 'default';
-
-// 正确的写法
-const firstName = (message
-  && message.body
-  && message.body.user
-  && message.body.user.firstName) || 'default';
-```
-
-上面例子中，`firstName`属性在对象的第四层，所以需要判断四次，每一层是否有值。
-
-三元运算符`?:`也常用于判断对象是否存在。
-
-```javascript
-const fooInput = myForm.querySelector('input[name=foo]')
-const fooValue = fooInput ? fooInput.value : undefined
-```
-
-上面例子中，必须先判断`fooInput`是否存在，才能读取`fooInput.value`。
-
-这样的层层判断非常麻烦，因此 [ES2020](https://github.com/tc39/proposal-optional-chaining) 引入了“链判断运算符”（optional chaining operator）`?.`，简化上面的写法。
-
-```javascript
-const firstName = message?.body?.user?.firstName || 'default';
-const fooValue = myForm.querySelector('input[name=foo]')?.value
-```
-
-上面代码使用了`?.`运算符，直接在链式调用的时候判断，左侧的对象是否为`null`或`undefined`。如果是的，就不再往下运算，而是返回`undefined`。
-
-下面是判断对象方法是否存在，如果存在就立即执行的例子。
-
-```javascript
-iterator.return?.()
-```
-
-上面代码中，`iterator.return`如果有定义，就会调用该方法，否则`iterator.return`直接返回`undefined`，不再执行`?.`后面的部分。
-
-对于那些可能没有实现的方法，这个运算符尤其有用。
-
-```javascript
-if (myForm.checkValidity?.() === false) {
-  // 表单校验失败
-  return;
-}
-```
-
-上面代码中，老式浏览器的表单对象可能没有`checkValidity()`这个方法，这时`?.`运算符就会返回`undefined`，判断语句就变成了`undefined === false`，所以就会跳过下面的代码。
-
-链判断运算符`?.`有三种写法。
-
-- `obj?.prop` // 对象属性是否存在
-- `obj?.[expr]` // 同上
-- `func?.(...args)` // 函数或对象方法是否存在
-
-下面是`obj?.[expr]`用法的一个例子。
-
-```bash
-let hex = "#C0FFEE".match(/#([A-Z]+)/i)?.[1];
-```
-
-上面例子中，字符串的`match()`方法，如果没有发现匹配会返回`null`，如果发现匹配会返回一个数组，`?.`运算符起到了判断作用。
-
-下面是`?.`运算符常见形式，以及不使用该运算符时的等价形式。
-
-```javascript
-a?.b
-// 等同于
-a == null ? undefined : a.b
-
-a?.[x]
-// 等同于
-a == null ? undefined : a[x]
-
-a?.b()
-// 等同于
-a == null ? undefined : a.b()
-
-a?.()
-// 等同于
-a == null ? undefined : a()
-```
-
-上面代码中，特别注意后两种形式，如果`a?.b()`和`a?.()`。如果`a?.b()`里面的`a.b`有值，但不是函数，不可调用，那么`a?.b()`是会报错的。`a?.()`也是如此，如果`a`不是`null`或`undefined`，但也不是函数，那么`a?.()`会报错。
-
-使用这个运算符，有几个注意点。
-
-（1）短路机制
-
-本质上，`?.`运算符相当于一种短路机制，只要不满足条件，就不再往下执行。
-
-```javascript
-a?.[++x]
-// 等同于
-a == null ? undefined : a[++x]
-```
-
-上面代码中，如果`a`是`undefined`或`null`，那么`x`不会进行递增运算。也就是说，链判断运算符一旦为真，右侧的表达式就不再求值。
-
-（2）括号的影响
-
-如果属性链有圆括号，链判断运算符对圆括号外部没有影响，只对圆括号内部有影响。
-
-```javascript
-(a?.b).c
-// 等价于
-(a == null ? undefined : a.b).c
-```
-
-上面代码中，`?.`对圆括号外部没有影响，不管`a`对象是否存在，圆括号后面的`.c`总是会执行。
-
-一般来说，使用`?.`运算符的场合，不应该使用圆括号。
-
-（3）报错场合
-
-以下写法是禁止的，会报错。
-
-```javascript
-// 构造函数
-new a?.()
-new a?.b()
-
-// 链判断运算符的右侧有模板字符串
-a?.`{b}`
-a?.b`{c}`
-
-// 链判断运算符的左侧是 super
-super?.()
-super?.foo
-
-// 链运算符用于赋值运算符左侧
-a?.b = c
-```
-
-（4）右侧不得为十进制数值
-
-为了保证兼容以前的代码，允许`foo?.3:0`被解析成`foo ? .3 : 0`，因此规定如果`?.`后面紧跟一个十进制数字，那么`?.`不再被看成是一个完整的运算符，而会按照三元运算符进行处理，也就是说，那个小数点会归属于后面的十进制数字，形成一个小数。
-
-#### **Null 判断运算符**
-
-读取对象属性的时候，如果某个属性的值是`null`或`undefined`，有时候需要为它们指定默认值。常见做法是通过`||`运算符指定默认值。
-
-```javascript
-const headerText = response.settings.headerText || 'Hello, world!';
-const animationDuration = response.settings.animationDuration || 300;
-const showSplashScreen = response.settings.showSplashScreen || true;
-```
-
-上面的三行代码都通过`||`运算符指定默认值，但是这样写是错的。开发者的原意是，只要属性的值为`null`或`undefined`，默认值就会生效，但是属性的值如果为空字符串或`false`或`0`，默认值也会生效。
-
-为了避免这种情况，[ES2020](https://github.com/tc39/proposal-nullish-coalescing) 引入了一个新的 Null 判断运算符`??`。它的行为类似`||`，但是只有运算符左侧的值为`null`或`undefined`时，才会返回右侧的值。
-
-```javascript
-const headerText = response.settings.headerText ?? 'Hello, world!';
-const animationDuration = response.settings.animationDuration ?? 300;
-const showSplashScreen = response.settings.showSplashScreen ?? true;
-```
-
-上面代码中，默认值只有在左侧属性值为`null`或`undefined`时，才会生效。
-
-这个运算符的一个目的，就是跟链判断运算符`?.`配合使用，为`null`或`undefined`的值设置默认值。
-
-```javascript
-const animationDuration = response.settings?.animationDuration ?? 300;
-```
-
-上面代码中，如果`response.settings`是`null`或`undefined`，或者`response.settings.animationDuration`是`null`或`undefined`，就会返回默认值300。也就是说，这一行代码包括了两级属性的判断。
-
-这个运算符很适合判断函数参数是否赋值。
-
-```javascript
-function Component(props) {
-  const enable = props.enabled ?? true;
-  // …
-}
-```
-
-上面代码判断`props`参数的`enabled`属性是否赋值，基本等同于下面的写法。
-
-```javascript
-function Component(props) {
-  const {
-    enabled: enable = true,
-  } = props;
-  // …
-}
-```
-
-`??`本质上是逻辑运算，它与其他两个逻辑运算符`&&`和`||`有一个优先级问题，它们之间的优先级到底孰高孰低。优先级的不同，往往会导致逻辑运算的结果不同。
-
-现在的规则是，如果多个逻辑运算符一起使用，必须用括号表明优先级，否则会报错。
-
-```javascript
-// 报错
-lhs && middle ?? rhs
-lhs ?? middle && rhs
-lhs || middle ?? rhs
-lhs ?? middle || rhs
-```
-
-上面四个表达式都会报错，必须加入表明优先级的括号。
-
-```javascript
-(lhs && middle) ?? rhs;
-lhs && (middle ?? rhs);
-
-(lhs ?? middle) && rhs;
-lhs ?? (middle && rhs);
-
-(lhs || middle) ?? rhs;
-lhs || (middle ?? rhs);
-
-(lhs ?? middle) || rhs;
-lhs ?? (middle || rhs);
-```
-
-#### 逻辑赋值运算符
-
-ES2021 引入了三个新的[逻辑赋值运算符](https://github.com/tc39/proposal-logical-assignment)（logical assignment operators），将逻辑运算符与赋值运算符进行结合。
-
-```javascript
-// 或赋值运算符
-x ||= y
-// 等同于
-x || (x = y)
-
-// 与赋值运算符
-x &&= y
-// 等同于
-x && (x = y)
-
-// Null 赋值运算符
-x ??= y
-// 等同于
-x ?? (x = y)
-```
-
-这三个运算符`||=`、`&&=`、`??=`相当于先进行逻辑运算，然后根据运算结果，再视情况进行赋值运算。
-
-它们的一个用途是，为变量或属性设置默认值。
-
-```javascript
-// 老的写法
-user.id = user.id || 1;
-
-// 新的写法
-user.id ||= 1;
-```
-
-上面示例中，`user.id`属性如果不存在，则设为`1`，新的写法比老的写法更紧凑一些。
-
-下面是另一个例子。
-
-```javascript
-function example(opts) {
-  opts.foo = opts.foo ?? 'bar';
-  opts.baz ?? (opts.baz = 'qux');
-}
-```
-
-上面示例中，参数对象`opts`如果不存在属性`foo`和属性`baz`，则为这两个属性设置默认值。有了“Null 赋值运算符”以后，就可以统一写成下面这样。
-
-```javascript
-function example(opts) {
-  opts.foo ??= 'bar';
-  opts.baz ??= 'qux';
-}
-```
-
-#### `#!`命令
-
-Unix 的命令行脚本都支持`#!`命令，又称为 Shebang 或 Hashbang。这个命令放在脚本的第一行，用来指定脚本的执行器。
-
-比如 Bash 脚本的第一行。
-
-```bash
-#!/bin/sh
-```
-
-Python 脚本的第一行。
-
-```python
-#!/usr/bin/env python
-```
-
-[ES2023](https://github.com/tc39/proposal-hashbang) 为 JavaScript 脚本引入了`#!`命令，写在脚本文件或者模块文件的第一行。
-
-```javascript
-// 写在脚本文件第一行
-#!/usr/bin/env node
-'use strict';
-console.log(1);
-
-// 写在模块文件第一行
-#!/usr/bin/env node
-export {};
-console.log(1);
-```
-
-有了这一行以后，Unix 命令行就可以直接执行脚本。
-
-```bash
-# 以前执行脚本的方式
-$ node hello.js
-
-# hashbang 的方式
-$ ./hello.js
-```
-
-对于 JavaScript 引擎来说，会把`#!`理解成注释，忽略掉这一行。
 
 ### 数值的扩展
 
@@ -1841,7 +2028,7 @@ for (let i of arr) {
 
 #### 简洁表示法
 
-##### **属性简写**
+##### 属性简写
 
 ES6允许直接写入变量和函数，作为对象的属性和方法。这样的书写更加简洁。
 
@@ -1870,7 +2057,7 @@ function f(x, y) {
 f(1, 2) // Object {x: 1, y: 2}
 ```
 
-##### **方法简写**
+##### 方法简写
 
 ```javascript
 var o = {
@@ -2097,7 +2284,7 @@ const obj = {
 };
 
 Object.setPrototypeOf(obj, proto);
-obj.find() // "hello"
+console.log(obj.find()) // "hello"
 ```
 
 上面代码中，对象`obj.find()`方法之中，通过`super.foo`引用了原型对象`proto`的`foo`属性。
@@ -2149,180 +2336,6 @@ obj.foo() // "world"
 
 上面代码中，`super.foo`指向原型对象`proto`的`foo`方法，但是绑定的`this`却还是当前对象`obj`，因此输出的就是`world`。
 
-#### 对象的扩展运算符
-
-目前，ES7有一个[提案](https://github.com/sebmarkbage/ecmascript-rest-spread)，将Rest运算符（解构赋值）/扩展运算符（`...`）引入对象。Babel转码器已经支持这项功能。
-
-##### 解构赋值
-
-对象的解构赋值用于从一个对象取值，相当于将所有可遍历的、但尚未被读取的属性，分配到指定的对象上面。所有的键和它们的值，都会拷贝到新对象上面。
-
-```javascript
-let { x, y, ...z } = { x: 1, y: 2, a: 3, b: 4 };
-x // 1
-y // 2
-z // { a: 3, b: 4 }
-```
-
-上面代码中，变量`z`是解构赋值所在的对象。它获取等号右边的所有尚未读取的键（`a`和`b`），将它们连同值一起拷贝过来。
-
-由于解构赋值要求等号右边是一个对象，所以如果等号右边是`undefined`或`null`，就会报错，因为它们无法转为对象。
-
-```javascript
-let { x, y, ...z } = null; // 运行时错误
-let { x, y, ...z } = undefined; // 运行时错误
-```
-
-解构赋值必须是最后一个参数，否则会报错。
-
-```javascript
-let { ...x, y, z } = obj; // 句法错误
-let { x, ...y, ...z } = obj; // 句法错误
-```
-
-上面代码中，解构赋值不是最后一个参数，所以会报错。
-
-注意，解构赋值的拷贝是浅拷贝，即如果一个键的值是复合类型的值（数组、对象、函数）、那么解构赋值拷贝的是这个值的引用，而不是这个值的副本。
-
-```javascript
-let obj = { a: { b: 1 } };
-let { ...x } = obj;
-obj.a.b = 2;
-x.a.b // 2
-```
-
-上面代码中，`x`是解构赋值所在的对象，拷贝了对象`obj`的`a`属性。`a`属性引用了一个对象，修改这个对象的值，会影响到解构赋值对它的引用。
-
-另外，**解构赋值不会拷贝继承自原型对象的属性**。
-
-```javascript
-let o1 = { a: 1 };
-let o2 = { b: 2 };
-o2.__proto__ = o1;
-let o3 = { ...o2 };
-o3 // { b: 2 }
-```
-
-上面代码中，对象`o3`是`o2`的拷贝，但是只复制了`o2`自身的属性，没有复制它的原型对象`o1`的属性。
-
-下面是另一个例子。
-
-```javascript
-var o = Object.create({ x: 1, y: 2 });
-o.z = 3;
-
-let { x, ...{ y, z } } = o;
-x // 1
-y // undefined
-z // 3
-```
-
-上面代码中，变量`x`是单纯的解构赋值，所以可以读取继承的属性；解构赋值产生的变量`y`和`z`，只能读取对象自身的属性，所以只有变量`z`可以赋值成功。
-
-解构赋值的一个用处，是扩展某个函数的参数，引入其他操作。
-
-```javascript
-function baseFunction({ a, b }) {
-  // ...
-}
-function wrapperFunction({ x, y, ...restConfig }) {
-  // 使用x和y参数进行操作
-  // 其余参数传给原始函数
-  return baseFunction(restConfig);
-}
-```
-
-上面代码中，原始函数`baseFunction`接受`a`和`b`作为参数，函数`wrapperFunction`在`baseFunction`的基础上进行了扩展，能够接受多余的参数，并且保留原始函数的行为。
-
-##### 扩展运算符
-
-扩展运算符（`...`）用于取出参数对象的所有可遍历属性，拷贝到当前对象之中。
-
-```javascript
-let z = { a: 3, b: 4 };
-let n = { ...z };
-n // { a: 3, b: 4 }
-```
-
-这等同于使用`Object.assign`方法。
-
-```javascript
-let aClone = { ...a };
-// 等同于
-let aClone = Object.assign({}, a);
-```
-
-扩展运算符可以用于合并两个对象。
-
-```javascript
-let ab = { ...a, ...b };
-// 等同于
-let ab = Object.assign({}, a, b);
-```
-
-如果用户自定义的属性，放在扩展运算符后面，则扩展运算符内部的同名属性会被覆盖掉。
-
-```javascript
-let aWithOverrides = { ...a, x: 1, y: 2 };
-// 等同于
-let aWithOverrides = { ...a, ...{ x: 1, y: 2 } };
-// 等同于
-let x = 1, y = 2, aWithOverrides = { ...a, x, y };
-// 等同于
-let aWithOverrides = Object.assign({}, a, { x: 1, y: 2 });
-```
-
-上面代码中，`a`对象的`x`属性和`y`属性，拷贝到新对象后会被覆盖掉。
-
-这用来修改现有对象部分的部分属性就很方便了。
-
-```javascript
-let newVersion = {
-  ...previousVersion,
-  name: 'New Name' // Override the name property
-};
-```
-
-上面代码中，`newVersion`对象自定义了`name`属性，其他属性全部复制自`previousVersion`对象。
-
-如果把自定义属性放在扩展运算符前面，就变成了设置新对象的默认属性值。
-
-```javascript
-let aWithDefaults = { x: 1, y: 2, ...a };
-// 等同于
-let aWithDefaults = Object.assign({}, { x: 1, y: 2 }, a);
-// 等同于
-let aWithDefaults = Object.assign({ x: 1, y: 2 }, a);
-```
-
-扩展运算符的参数对象之中，如果有取值函数`get`，这个函数是会执行的。
-
-```javascript
-// 并不会抛出错误，因为x属性只是被定义，但没执行
-let aWithXGetter = {
-  ...a,
-  get x() {
-    throws new Error('not thrown yet');
-  }
-};
-
-// 会抛出错误，因为x属性被执行了
-let runtimeError = {
-  ...a,
-  ...{
-    get x() {
-      throws new Error('thrown now');
-    }
-  }
-};
-```
-
-如果扩展运算符的参数是`null`或`undefined`，这个两个值会被忽略，不会报错。
-
-```javascript
-let emptyObject = { ...null, ...undefined }; // 不报错
-```
-
 #### 属性描述对象
 
 > 对象的每个属性都有一个描述对象（Descriptor），用来控制该属性的行为。`Object.getOwnPropertyDescriptor`方法可以获取该属性的描述对象。
@@ -2347,7 +2360,15 @@ JavaScript 提供了一个内部数据结构，用来描述对象的属性，控
 
 - `enumerable`
 
+  
+
   `enumerable`是一个布尔值，**表示该属性是否可遍历**，默认为`true`。如果设为`false`，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
+
+  ```
+  const a = { a: 1 }
+  Object.defineProperty(a, 'a', { value: 2, enumerable: false });
+  console.log(Object.keys(a)); // []
+  ```
 
 - configurable
 
@@ -2397,8 +2418,6 @@ Object.getOwnPropertyDescriptor([], 'length').enumerable
 ```
 
 上面代码中，`toString`和`length`属性的`enumerable`都是`false`，**因此`for...in`不会遍历到这两个继承自原型的属性。**
-
-
 
 **另外，ES6规定，所有Class的原型的方法都是不可枚举的。**
 
@@ -3200,7 +3219,7 @@ Object.defineProperty(obj, prop, descriptor)
 
 ###### hasOwnProperty
 
-方法会返回一个布尔值，指示对象**自身属性**中是否具有指定的属性（也就是，是否有指定的键）。
+方法会返回一个布尔值，指示对象**自身属性（不是原型上的属性）**中是否具有指定的属性（也就是，是否有指定的键）。
 
 ```js
 const object1 = {};
@@ -3505,8 +3524,6 @@ m1({z: 3}) // [0, 0]
 m2({z: 3}) // [undefined, undefined]
 ```
 
-
-
 #### 函数的length属性
 
 指定了默认值以后，函数的`length`属性，将返回没有指定默认值的参数个数。也就是说，指定了默认值后，`length`属性将失真。
@@ -3517,114 +3534,7 @@ m2({z: 3}) // [undefined, undefined]
 (function (a, b, c = 5) {}).length // 2
 ```
 
-#### rest参数
 
-ES6引入rest参数（形式为“...变量名”），用于获取函数的多余参数，这样就不需要使用arguments对象了。rest参数搭配的变量是一个数组，该变量将多余的参数放入数组中。
-
-```javascript
-function add(...values) {
-  let sum = 0;
-
-  for (var val of values) {
-    sum += val;
-  }
-
-  return sum;
-}
-
-add(2, 5, 3) // 10
-```
-
-#### 扩展运算符
-
-##### **含义**
-
-扩展运算符（spread）是三个点（`...`）。它好比rest参数的逆运算，将一个数组转为用逗号分隔的参数序列。
-
-```javascript
-console.log(...[1, 2, 3])
-// 1 2 3
-
-console.log(1, ...[2, 3, 4], 5)
-// 1 2 3 4 5
-```
-
-该运算符主要用于函数调用。
-
-```javascript
-function push(array, ...items) {
-  array.push(...items);
-}
-```
-
-##### 扩展运算符的应用
-
-**（1）合并数组**
-
-扩展运算符提供了数组合并的新写法。
-
-```javascript
-// ES5
-[1, 2].concat(more)
-// ES6
-[1, 2, ...more]
-```
-
-**（2）与解构赋值结合**
-
-扩展运算符可以与解构赋值结合起来，用于生成数组。
-
-```javascript
-const [first, ...rest] = [1, 2, 3, 4, 5];
-first // 1
-rest  // [2, 3, 4, 5]
-```
-
-如果将扩展运算符用于数组赋值，只能放在参数的最后一位，否则会报错。
-
-```javascript
-const [...butLast, last] = [1, 2, 3, 4, 5];
-// 报错
-
-const [first, ...middle, last] = [1, 2, 3, 4, 5];
-// 报错
-```
-
-**（4）字符串**
-
-扩展运算符还可以将字符串转为真正的数组。
-
-```javascript
-[...'hello']
-// [ "h", "e", "l", "l", "o" ]
-```
-
-**（5）实现了Iterator接口的对象**
-
-任何Iterator接口的对象，都可以用扩展运算符转为真正的数组。
-
-```javascript
-var nodeList = document.querySelectorAll('div');
-var array = [...nodeList];
-```
-
-上面代码中，`querySelectorAll`方法返回的是一个`nodeList`对象。它不是数组，而是一个类似数组的对象。这时，扩展运算符可以将其转为真正的数组，原因就在于`NodeList`对象实现了Iterator接口。
-
-对于那些没有部署Iterator接口的类似数组的对象，扩展运算符就无法将其转为真正的数组。
-
-```javascript
-let arrayLike = {
-  '0': 'a',
-  '1': 'b',
-  '2': 'c',
-  length: 3
-};
-
-// TypeError: Cannot spread non-iterable object.
-let arr = [...arrayLike];
-```
-
-上面代码中，`arrayLike`是一个类似数组的对象，但是没有部署Iterator接口，扩展运算符就会报错。这时，可以改为使用`Array.from`方法将`arrayLike`转为真正的数组。
 
 #### 箭头函数
 
@@ -3925,7 +3835,7 @@ iter.next() // { value: undefined, done: true }
 
  [ECMAScript 6 入门 - Class](http://es6.ruanyifeng.com/#docs/class)
 
-传统方法中，JavaScript 通过构造函数实现类的概念，通过原型链实现继承。而在 ES6 中，我们终于迎来了 `class`。TypeScript 除了实现了所有 ES6 中的类的功能以外，还添加了一些新的用法。
+https://es6.ruanyifeng.com/#docs/class-extends
 
 ### 类的概念
 
@@ -3943,7 +3853,68 @@ iter.next() // { value: undefined, done: true }
 - 抽象类（Abstract Class）：抽象类是供其他类继承的基类，抽象类不允许被实例化。抽象类中的抽象方法必须在子类中被实现
 - 接口（Interfaces）：不同类之间公有的属性或方法，可以抽象成一个接口。接口可以被类实现（implements）。一个类只能继承自另一个类，但是可以实现多个接口
 
-### 基本概念和构造函数比较
+### class和构造函数区别
+
+- 语法糖:
+  - **Class:** `class` 语法是 ES6 引入的，本质上是构造函数的语法糖。它提供了一种更简洁、更面向对象的语法来定义对象蓝图。
+  - **构造函数:** 传统的构造函数使用 `function` 关键字定义，并通过 `new` 关键字来创建对象实例。
+- 使用上
+  - 类的构造函数，不使用`new`是没法调用的，会报错。这是它跟普通构造函数的一个主要区别，后者不用`new`也可以执行。
+  - 方法定义
+    - **Class:** 在 `class` 中定义方法更加简洁，不需要使用 `prototype` 属性。方法默认会被添加到类的原型上。
+    - **构造函数:** 需要将方法显式地添加到构造函数的 `prototype` 属性上，才能被所有实例共享。
+  - 静态
+    - **Class:** 使用 `static` 关键字可以定义静态方法，静态方法属于类本身，而不是类的实例。
+    - **构造函数:** 可以通过将方法直接添加到构造函数本身上来模拟静态方法，但不如 `class` 语法清晰。
+  - `super` 关键字:
+    - **Class:** 在子类中，可以使用 `super` 关键字来调用父类的方法或构造函数，方便实现继承和扩展。
+    - **构造函数:** 在构造函数中，需要通过 `Parent.call(this, ...)` 的方式来调用父类的构造函数。
+  - `new.target`:
+    - **Class:** 支持 `new.target`，可以检测构造函数是否通过 `new` 关键字调用。
+    - **构造函数:** 也支持 `new.target`。
+- 原型继承:
+  - **Class:** 使用 `class` 定义的类，其原型继承关系更加清晰。通过 `extends` 关键字可以方便地实现继承，子类的原型会指向父类的原型。
+  - **构造函数:** 使用构造函数实现继承需要手动操作原型链，例如**将子类的原型指向父类的实例**，并设置 `constructor` this指向。相对来说比较繁琐，容易出错。
+
+- **类的内部所有定义的方法，都是不可枚举的**（non-enumerable）。
+
+  ```javascript
+  class Point {
+    constructor(x, y) {
+      // ...
+    }
+  
+    toString() {
+      // ...
+    }
+  }
+  
+  Object.keys(Point.prototype)
+  // []
+  Object.getOwnPropertyNames(Point.prototype)
+  // ["constructor","toString"]
+  ```
+
+  **这一点与ES5的行为不一致。**
+
+  ```javascript
+  var Point = function (x, y) {
+    // ...
+  };
+  
+  Point.prototype.toString = function() {
+    // ...
+  };
+  
+  console.log(Object.keys(Point.prototype))
+  // ["toString"]
+  console.log(Object.getOwnPropertyNames(Point.prototype))
+  // ["constructor","toString"] 
+  ```
+
+  
+
+### class使用
 
 ```js
 class Point {
@@ -3959,8 +3930,6 @@ class Point {
 var b = new Point(1,2);
 ```
 
-上面代码定义了一个“类”，可以看到里面有一个`constructor`方法，这就是构造方法，而`this`关键字则代表实例对象。也就是说，ES5的构造函数`Point`，对应ES6的`Point`类的构造方法。
-
 `Point`类除了构造方法，还定义了一个`toString`方法。注意，**定义“类”的方法的时候，前面不需要加上`function`这个关键字**，直接把函数定义放进去了就可以了。另外，**方法之间不需要逗号分隔**，加了会报错。
 
 ```javascript
@@ -3973,7 +3942,7 @@ console.log(Point === Point.prototype.constructor); //true
 
 上面代码表明，**类的数据类型就是函数，类本身就指向构造函数。**
 
-**构造函数的`prototype`属性，在ES6的“类”上面继续存在**。事实上，类的所有方法都定义在类的`prototype`属性上面。
+**类的所有方法都定义在类的`prototype`属性上面**
 
 ```javascript
 class Point {
@@ -3992,16 +3961,6 @@ console.log(Point.prototype); // constructor，fn
 
 ![class](https://z3.ax1x.com/2021/01/28/y9AUb9.png)
 
-`b`是B类的实例，它的`constructor`方法就是B类原型的`constructor`方法。
-
-```javascript
-class B {}
-let b = new B();
-
-b.constructor === B
-b.constructor === B.prototype.constructor // true
-```
-
 `Object.assign`方法可以很方便地一次向类添加多个方法。
 
 ```javascript
@@ -4017,65 +3976,11 @@ Object.assign(Point.prototype, {
 });
 ```
 
-另外，**类的内部所有定义的方法，都是不可枚举的**（non-enumerable）。
 
-```javascript
-class Point {
-  constructor(x, y) {
-    // ...
-  }
-
-  toString() {
-    // ...
-  }
-}
-
-Object.keys(Point.prototype)
-// []
-Object.getOwnPropertyNames(Point.prototype)
-// ["constructor","toString"]
-```
-
-**这一点与ES5的行为不一致。**
-
-```javascript
-var Point = function (x, y) {
-  // ...
-};
-
-Point.prototype.toString = function() {
-  // ...
-};
-
-Object.keys(Point.prototype)
-// ["toString"]
-Object.getOwnPropertyNames(Point.prototype)
-// ["constructor","toString"]
-```
-
-### constructor方法
-
-`constructor`方法是类的默认方法，通过`new`命令生成对象实例时，**自动调用**该方法。一个类必须有`constructor`方法，如果没有显式定义，一个空的`constructor`方法会被默认添加。
-
-**`constructor`方法默认返回实例对象（即`this`），可以指定返回另外一个对象。**
-
-```javascript
-class Foo {
-  constructor() {
-    console.log(this);//Foo {}
-    return Object.create(null);
-    // return Object.create(this);将Foo赋值给了实例对象的原型对象
-  }
-}
-
-console.log(new Foo() instanceof Foo);//false
-```
-
-上面代码中，`constructor`函数返回一个全新的对象，结果导致实例对象不是`Foo`类的实例。
 
 ### this的指向
 
-类的方法内部如果含有`this`，它默认指向类的实例。但是，必须非常小心，一旦单独使用该方法，很可能报错。
+**this默认指向类的实例**。但是，必须非常小心，一旦单独使用该方法，很可能报错。
 
 ```javascript
 class Logger {
@@ -4147,8 +4052,6 @@ const logger = selfish(new Logger());
 
 ### 类的实例对象
 
-类的构造函数，不使用`new`是没法调用的，会报错。这是它跟普通构造函数的一个主要区别，后者不用`new`也可以执行。
-
 ```javascript
 //定义类
 class Point {
@@ -4172,7 +4075,7 @@ point.hasOwnProperty('toString') // false
 point.__proto__.hasOwnProperty('toString') // true
 ```
 
-上面代码中，`x`和`y`都是实例对象`point`**自身的属性**（因为定义在`this`变量上），所以`hasOwnProperty`方法返回`true`，而`toString`是原型对象的属性（因为定义在`Point`类上），所以`hasOwnProperty`方法返回`false`。这些都与ES5的行为保持一致。
+上面代码中，`x`和`y`都是实例对象`point`**自身的属性**，所以`hasOwnProperty`方法返回`true`，而`toString`是原型对象的属性，所以`hasOwnProperty`方法返回`false`。这些都与ES5的行为保持一致。
 
 与ES5一样，类的所有实例共享一个原型对象。这也意味着，**可以通过实例的`__proto__`属性为Class添加方法。**
 
@@ -4192,51 +4095,129 @@ p3.printName() // "Oops"
 
 ### 属性和方法
 
-```js
+#### constructor方法
+
+**ES5的构造函数`Point`，对应类的constructor构造方法。**
+
+`b`是B类的实例，它的`constructor`方法就是B类原型的`constructor`方法。
+
+```javascript
+class B {}
+let b = new B();
+
+b.constructor === B
+b.constructor === B.prototype.constructor // true
+```
+
+`constructor`方法是类的默认方法，通过`new`命令生成对象实例时，**自动调用**该方法。一个类必须有`constructor`方法，如果没有显式定义，一个空的`constructor`方法会被默认添加。
+
+**`constructor`方法默认返回实例对象（即`this`），可以指定返回另外一个对象。**
+
+```javascript
 class Foo {
-  _count = 0; //除了可以定义在constructor()方法里面的this上面，也可以定义在类内部的最顶层。新写法定义的属性是实例对象自身的属性，而不是定义在实例对象的原型上面。
-  static a1 = 1;
-  static classMethod() {
-    return "hello";
+  constructor() {
+    console.log(this);//Foo {}
+    return Object.create(null);
+    // return Object.create(this);将Foo赋值给了实例对象的原型对象
   }
 }
 
-console.log(Foo.a1, Foo.classMethod()); //1 'hello'
-
-const foo = new Foo();
-console.log(foo.a1); //undefined
-// TypeError: foo.classMethod is not a function
-
+console.log(new Foo() instanceof Foo);//false
 ```
 
-#### 类的实例属性
+上面代码中，`constructor`函数返回一个全新的对象，结果导致实例对象不是`Foo`类的实例。
 
-类的实例属性**可以用等式**，写入类的定义之中。
+#### 实例属性定义
+
+- 写在类的`constructor`方法里面
+
+  ```
+  class ReactCounter extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        count: 0
+      };
+    }
+  }
+  ```
+
+- 写入类的定义之中
+
+  ```
+  class MyClass {
+    myProp = 42;//除了可以定义在constructor()方法里面的this上面，也可以定义在类内部的最顶层。新写法定义的属性是实例对象自身的属性，而不是定义在实例对象的原型上面。
+  
+    constructor() {
+      console.log(this.myProp); // 42
+    }
+  }
+  ```
+
+  
+
+#### 私有属性
+
+[ES2022](https://github.com/tc39/proposal-class-fields)正式为`class`添加了私有属性，方法是在属性名之前使用`#`表示。
 
 ```javascript
-class MyClass {
-  myProp = 42;//除了可以定义在constructor()方法里面的this上面，也可以定义在类内部的最顶层。新写法定义的属性是实例对象自身的属性，而不是定义在实例对象的原型上面。
+class IncreasingCounter {
+  #count = 0;
+  get value() {
+    console.log('Getting the current value!');
+    return this.#count;
+  }
+  increment() {
+    this.#count++;
+  }
+}
+```
+
+上面代码中，`#count`就是私有属性，只能在类的内部使用（`this.#count`）。如果在类的外部使用，就会报错。
+
+```javascript
+const counter = new IncreasingCounter();
+counter.#count // 报错
+counter.#count = 42 // 报错
+```
+
+这种写法不仅可以写私有属性，还可以用来写私有方法。
+
+```javascript
+class Foo {
+  #a;
+  #b;
+  constructor(a, b) {
+    this.#a = a;
+    this.#b = b;
+  }
+  #sum() {
+    return this.#a + this.#b;
+  }
+  printSum() {
+    console.log(this.#sum());
+  }
+}
+```
+
+上面示例中，`#sum()`就是一个私有方法。
+
+另外，**私有属性也可以设置 getter 和 setter 方法。**
+
+```javascript
+class Counter {
+  #xValue = 0;
 
   constructor() {
-    console.log(this.myProp); // 42
+    console.log(this.#x);
+  }
+
+  get #x() { return this.#xValue; }
+  set #x(value) {
+    this.#xValue = value;
   }
 }
 ```
-
-以前，我们定义实例属性，只能写在类的`constructor`方法里面。上面代码中，`myProp`就是`MyClass`的实例属性。在`MyClass`的实例上，可以读取这个属性。
-
-```javascript
-class ReactCounter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      count: 0
-    };
-  }
-}
-```
-
-上面代码中，构造方法`constructor`里面，定义了`this.state`属性。有了新的写法以后，可以不在`constructor`方法里面定义。
 
 #### 类的静态属性
 
@@ -4254,7 +4235,9 @@ class Foo {
 }
 ```
 
-```javascript
+静态属性是MyClass本身的属性, 而不是定义在实例对象this上的属性, 只能通过 MyClass.prop 访问。静态属性是可以继承的。
+
+```
 class MyClass {
   static myStaticProp = 42;
 
@@ -4263,10 +4246,8 @@ class MyClass {
   }
 }
 MyClass.age = 2;
-new MyClass();
 const foo = new MyClass();
-console.log(foo.age); //undefined  
-// 静态属性是MyClass本身的属性, 而不是定义在实例对象this上的属性, 只能通过 MyClass.prop 访问。静态属性是继承的。
+console.log(foo.age, foo.myStaticProp); //undefined  undefined
 ```
 
 #### 类的静态方法
@@ -4594,27 +4575,6 @@ var Cat = (function (_super) {
 var cat = new Cat('Tom');
 ```
 
-#### 类的类型
-
-给类加上 TypeScript 的类型很简单，与接口类似：
-
-```ts
-class Animal {
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-  sayHi(): string {
-    return `My name is ${this.name}`;
-  }
-}
-
-let a: Animal = new Animal('Jack');
-console.log(a.sayHi()); // My name is Jack
-```
-
-
-
 #### 属性表达式
 
 ```
@@ -4631,70 +4591,91 @@ class Square {
 }
 ```
 
+#### new.target属性
 
+**new是从构造函数生成实例的命令**。
 
-#### 私有属性
+ES6为`new`命令**引入了一个`new.target`属性，（在构造函数中）返回`new`命令作用于的那个构造函数**。如果构造函数不是通过`new`命令调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
 
-[ES2022](https://github.com/tc39/proposal-class-fields)正式为`class`添加了私有属性，方法是在属性名之前使用`#`表示。
-
-```javascript
-class IncreasingCounter {
-  #count = 0;
-  get value() {
-    console.log('Getting the current value!');
-    return this.#count;
-  }
-  increment() {
-    this.#count++;
-  }
-}
 ```
-
-上面代码中，`#count`就是私有属性，只能在类的内部使用（`this.#count`）。如果在类的外部使用，就会报错。
-
-```javascript
-const counter = new IncreasingCounter();
-counter.#count // 报错
-counter.#count = 42 // 报错
-```
-
-这种写法不仅可以写私有属性，还可以用来写私有方法。
-
-```javascript
-class Foo {
-  #a;
-  #b;
-  constructor(a, b) {
-    this.#a = a;
-    this.#b = b;
-  }
-  #sum() {
-    return this.#a + this.#b;
-  }
-  printSum() {
-    console.log(this.#sum());
-  }
-}
-```
-
-上面示例中，`#sum()`就是一个私有方法。
-
-另外，**私有属性也可以设置 getter 和 setter 方法。**
-
-```javascript
-class Counter {
-  #xValue = 0;
-
+class A {
   constructor() {
-    console.log(this.#x);
-  }
-
-  get #x() { return this.#xValue; }
-  set #x(value) {
-    this.#xValue = value;
+    console.log(new.target.name);
   }
 }
+class B extends A {
+  constructor() {
+    super();
+  }
+}
+new A() // A
+new B() // B
 ```
+
+
+
+```javascript
+// 另一种写法
+function Person(name) {
+  if (new.target === Person) {
+    this.name = name;
+  } else {
+    // throw new Error("必须使用new生成实例");
+  }
+}
+
+var person = new Person("张三"); // 正确
+var notAPerson = Person.call(person, "张三"); // 报错
+console.log(person.name);//张三
+console.log(notAPerson.name); //Cannot read property 'name' of undefined 
+```
+
+上面代码确保构造函数只能通过`new`命令调用。
+
+需要注意的是，子类继承父类时，`new.target`会返回子类。
+
+```javascript
+class Rectangle {
+  constructor(length, width) {
+    console.log(new.target === Rectangle, new.target === Square);//false true
+    // ...
+  }
+}
+
+class Square extends Rectangle {
+  constructor(length) {
+    console.log(new.target === Rectangle, new.target === Square);//false true
+    super(length, length);
+  }
+}
+
+var obj = new Square(3); // 输出 false
+
+```
+
+利用这个特点，**可以写出不能独立使用、必须继承后才能使用的类**。
+
+```javascript
+class Shape {
+  constructor() {
+    if (new.target === Shape) {
+      throw new Error('本类不能实例化');
+    }
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(length, width) {
+    super();
+    // ...
+  }
+}
+
+var x = new Shape();  // 报错
+var y = new Rectangle(3, 4);  // 正确
+```
+
+### 关键字
 
 #### get和set
 
@@ -4857,160 +4838,26 @@ A.test(o2.__proto__) // true
 
 上面示例中，对于修改原型链形成的继承，子类都取不到父类的私有属性，所以`in`运算符无效。
 
-#### new.target属性
 
-**new是从构造函数生成实例的命令**。
-
-ES6为`new`命令**引入了一个`new.target`属性，（在构造函数中）返回`new`命令作用于的那个构造函数**。如果构造函数不是通过`new`命令调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
-
-```
-class A {
-  constructor() {
-    console.log(new.target.name);
-  }
-}
-class B extends A {
-  constructor() {
-    super();
-  }
-}
-new A() // A
-new B() // B
-```
-
-
-
-```javascript
-// 另一种写法
-function Person(name) {
-  if (new.target === Person) {
-    this.name = name;
-  } else {
-    // throw new Error("必须使用new生成实例");
-  }
-}
-
-var person = new Person("张三"); // 正确
-var notAPerson = Person.call(person, "张三"); // 报错
-console.log(person.name);//张三
-console.log(notAPerson.name); //Cannot read property 'name' of undefined 
-```
-
-上面代码确保构造函数只能通过`new`命令调用。
-
-需要注意的是，子类继承父类时，`new.target`会返回子类。
-
-```javascript
-class Rectangle {
-  constructor(length, width) {
-    console.log(new.target === Rectangle, new.target === Square);//false true
-    // ...
-  }
-}
-
-class Square extends Rectangle {
-  constructor(length) {
-    console.log(new.target === Rectangle, new.target === Square);//false true
-    super(length, length);
-  }
-}
-
-var obj = new Square(3); // 输出 false
-
-```
-
-利用这个特点，**可以写出不能独立使用、必须继承后才能使用的类**。
-
-```javascript
-class Shape {
-  constructor() {
-    if (new.target === Shape) {
-      throw new Error('本类不能实例化');
-    }
-  }
-}
-
-class Rectangle extends Shape {
-  constructor(length, width) {
-    super();
-    // ...
-  }
-}
-
-var x = new Shape();  // 报错
-var y = new Rectangle(3, 4);  // 正确
-```
 
 ### Class的继承
 
-Class之间可以通过`extends`关键字实现继承，让子类继承父类的属性和方法。除了私有属性，实例属性，父类的所有属性和方法，都会被子类继承，其中**包括静态方法**。这比ES5的通过修改原型链实现继承，要清晰和方便很多。
+除了私有属性，父类的所有属性和方法，都会被子类继承，其中**包括静态方法**。
 
-```javascript
-class parent {
-  constructor(x) {
-    this.x = x;
-  }
-}
-parent.name1 = 1;
-class child extends parent {
-  constructor(x, y) {
-    super(); //新建父类的`this`对象
-    this.y = y;
-  }
-  toString() {
-    return this.y + " " + super.toString(); // 调用父类的toString()
-  }
-}
-console.log(child.name1); //1
+#### super
 
-const obj = new child(1, 2);
-console.log(obj.x, obj.y);//undefined 2
-console.log(obj.toString());//2 [object Object]
-```
+##### 为什么 super() 之前不能访问 this
 
-上面代码中，`constructor`方法和`toString`方法之中，都出现了`super`关键字
+- 原因：**子类没有自己的`this`对象，而是继承父类的`this`对象**
 
-- constructor表示函数：**super它在这里表示调用父类的构造函数**
-- toString表示父类对象
+  JS 语言不可以隐式调用 super，而要交给开发者？因为 JS 是弱类型的，**super 调用时的传参没法自动预判**
 
-```js
-class A {
-  name = "A";
-
-  constructor() {
-    console.log("My name is " + this.name);//由于super()在子类构造方法中执行时，子类的属性和方法还没有绑定到this，所以如果存在同名属性，此时拿到的是父类的属性。
-    console.log(new.target.name);
-  }
-}
-class B extends A {
-  name = "B";
-  constructor() {
-    super(); //其内部的this指向的是子类B的构造函数
-  }
-}
-new A(); //A
-new B(); //B
-
-```
-
-上面代码中，虽然super代表的是父类的构造函数，但它内部的**this指向的是当前子类的构造函数**
-
-子类必须在`constructor`方法中调用`super`方法，否则新建实例时会报错。这是因为**子类没有自己的`this`对象，而是继承父类的`this`对象**，然后对其进行加工。如果不调用`super`方法，子类就得不到`this`对象。
-
-- ES5 的继承机制，是先创造一个独立的子类的实例对象，然后再将父类的属性和方法添加到这个对象上面`Parent.apply(this)`，即“实例在前，继承在后”。
-
-- ES6 的继承机制，调用`super()`的作用是形成子类的`this`对象。
-
-  super方法先初始化父类，子类实例继承父类，把父类的实例属性和方法放到子类的`this`对象上面。子类在调用`super()`之前，是没有`this`对象的，任何对`this`的操作都要放在`super()`的后面。
-
-  注意，这意味着新建子类实例时，父类的构造函数必定会先运行一次。
+- 机制：调用super时父类的构造函数`constructor`先运行一次，然后默认返回父类实例对象（即`this`），最后将实例对象this赋给子类
 
 ```js
 class Animal {
   name = 'animal';
   constructor() {
-    //执行a,this是指向Animal
-    //执行b,super先创建Animal实例对象，this指向Rabbit，但子类的属性和方法还没有绑定到this，所以如果存在同名属性，此时拿到的是父类的属性，此时还是animal
     console.log(this) //Animal { name: 'animal' } Rabbit { name: 'animal' }
     console.log(this.name); //animal,animal
   }
@@ -5025,8 +4872,8 @@ class Rabbit extends Animal {
   }
 }
 console.log(Rabbit.prototype); //Animal {constructor: ƒ}
-let a = new Animal(); // *
-let b = new Rabbit(); // *
+let a = new Animal(); //执行a,this是指向Animal
+let b = new Rabbit(); //执行b,super先创建Animal实例对象，this指向Rabbit，但子类的属性和方法还没有绑定到this，所以如果存在同名属性，此时拿到的是父类的属性，此时还是animal
 
 ```
 
@@ -5037,6 +4884,36 @@ constructor(...args) {
   super(...args);
 }
 ```
+
+##### 使用
+
+```javascript
+class parent {
+  constructor(x) {
+    this.x = x;
+  }
+}
+parent.name1 = 1;
+class child extends parent {
+  constructor(x, y) {
+    super(x); //新建父类的`this`对象
+    this.y = y;
+  }
+  toString() {
+    return this.y + " " + super.toString(); // 调用父类的toString()
+  }
+}
+console.log(parent.name1, child.name1); //1
+
+const obj = new child(1, 2);
+console.log(obj.x, obj.y);//1 2
+console.log(obj.toString());//2 [object Object]
+```
+
+上面代码中，`constructor`方法和`toString`方法之中，都出现了`super`关键字
+
+- constructor中`super`表示函数：**super它在这里表示调用父类的构造函数**
+- toString中`super`表示父类对象
 
 #### prototype和`proto`
 
@@ -5451,31 +5328,24 @@ jQuery.unsubscribe('done', f2);
   
   - 一旦状态改变，就不会在变。状态改变的过程只可能是：从`pending`变为`fulfilled`和从`pending`变为`rejected`。如果状态发生上述变化后，此时状态就不会在改变了，这时就称为`resolved`（已定型）
   
-    为了行文方便，本章后面的`resolved`统一只指`fulfilled`状态，不包含`rejected`状态。
-  
 - **优点：** 可以将异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数 
 
 - **缺点：** 无法取消`Promise`  其次，如果没有使用`catch()`方法指定错误处理的回调函数，`Promise`内部抛出的错误，不会反应到外部。 **Promise 内部的错误不会影响到 Promise 外部的代码，通俗的说法就是“Promise 会吃掉错误”。**    
 
   ```js
-  const someAsyncThing = function () {
-    return new Promise(function (resolve, reject) {
+  try {
+    //throw new Error("x 必须为正数");
+    console.log(123);
+    new Promise(function (resolve, reject) {
       // 下面一行会报错，因为x没有声明
       throw new Error("x 必须为正数");
+    }).then(function () {
+      console.log("everything is great");
+    }).catch((err) => {
+      console.log(err); // Error
     });
-  };
-  try {
-    someAsyncThing()
-      .then(function () {
-        console.log("everything is great");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   } catch (error) {
-    setTimeout(() => {
-      console.log(123);
-    }, 3000);
+    console.log(123);
   }
   
   ```
@@ -5578,6 +5448,26 @@ jQuery.unsubscribe('done', f2);
   上面代码中，调用`resolve(1)`以后，后面的`console.log(2)`还是会执行，并且会首先打印出来。这是因为**立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是晚于本轮循环的同步任务。**
 
   一般来说，调用`resolve`或`reject`以后，Promise 的使命就完成了，后继操作应该放到`then`方法里面，而不应该直接写在`resolve`或`reject`的后面。所以，最好在它们前面加上`return`语句，这样就不会有意外。
+  
+- 抛出错误会终结 Promise 的参数函数的执行
+
+  ```
+  try {
+    new Promise((resolve, reject) => {
+      throw new Error('error');
+      resolve(1);
+      console.log(2);
+    }).then(r => {
+      console.log(r);
+    }).catch(e => {
+      console.log(e.message);// error
+    });
+  } catch (e) {
+    console.log(e);// error
+  }
+  ```
+
+  
 
 #### API
 
@@ -5643,14 +5533,6 @@ var promise = new Promise(function(resolve, reject) {
 promise.catch(function(error) {
   console.log(error);// Error: test
 });
-
-// 写法二
-var promise = new Promise(function(resolve, reject) {
-  reject(new Error('test'));
-});
-promise.catch(function(error) {
-  console.log(error);// Error: test
-});
 ```
 
 **如果Promise状态已经变成`Resolved`，再抛出错误是无效的。**
@@ -5658,12 +5540,12 @@ promise.catch(function(error) {
 ```javascript
 var promise = new Promise(function(resolve, reject) {
   resolve('ok');
+  console.log('after resolve');
   throw new Error('test');
 });
 promise
-  .then(function(value) { console.log(value) })
+  .then(function(value) { console.log(value) }) // ok
   .catch(function(error) { console.log(error) });
-// ok
 ```
 
 一般来说，不要在`then`方法里面定义Reject状态的回调函数（即`then`的第二个参数），总是使用`catch`方法。理由是catch可以捕获前面`then`方法执行中的错误，也更接近同步的写法（`try/catch`）。因此，建议总是使用`catch`方法，而不使用`then`方法的第二个参数。
@@ -5699,22 +5581,21 @@ new Promise((resolve) => {
 `catch()`方法返回的还是一个 Promise 对象，因此**后面还可以接着调用`then()`方法。**
 
 ```js
-const someAsyncThing = function() {
-  return new Promise(function(resolve, reject) {
+const someAsyncThing = function () {
+  return new Promise(function (resolve, reject) {
     // 下面一行会报错，因为x没有声明
     resolve(x + 2);
   });
 };
 
 someAsyncThing()
-.catch(function(error) {
-  console.log('oh no', error);
-})
-.then(function() {
-  console.log('carry on');
-});
-// oh no [ReferenceError: x is not defined]
-// carry on
+  .catch(function (error) {
+    console.log('oh no', error); // oh no [ReferenceError: x is not defined]
+    return 1;
+  })
+  .then(function (res) {
+    console.log(res, 'carry on');// 1 carry on
+  });
 ```
 
 ##### all
@@ -5886,9 +5767,7 @@ Promise.reject('出错了')
 
 上面代码中，`Promise.reject()`方法的参数是一个字符串，后面`catch()`方法的参数`e`就是这个字符串。
 
-#### 源码
 
-https://zhuanlan.zhihu.com/p/76811638
 
 #### 代码
 
@@ -5897,20 +5776,17 @@ const a = new Promise((resolve, reject) => {
   reject(1)
 })
 a.catch((i) => {
-  console.log(i)
+  console.log(i) //1
   return new Promise((resolve, reject) => {
     resolve(2)
   })
 }).then((i) => {
-  console.log(i)
+  console.log(i) //2
 })
-// 1
 //返回新的promise，那么下一级.then()会在新的promise状态改变之后执行
 ```
 
-- 返回新的promise，那么下一级.then()会在新的promise状态改变之后执行
-- 没有return，相当于return Promise.resolve(undefined);
-- return非Promise的数据data，相当于return Promise.resolve(data);
+
 
 ```js
 let a = new Promise((resolve, reject) => {
@@ -5970,6 +5846,74 @@ new Promise((resolved, reject) => {
 }).catch((res) => {
   console.log(res);
 })
+[Error: x 必须为正数] ​​​​​at ​​​​​​​​res​​​ ​quokka.js:6:3​
+```
+
+
+
+```js
+let a = new Promise((resolve, reject) => {
+  console.log(1);
+  setTimeout(() => {
+    console.log(2);
+    resolve(3)
+}, 1000);
+});
+a.then((index) => {
+  console.log(index);
+});
+console.log(a);
+```
+
+```
+1 ​​​​​at ​​​​​​quokka.js:2:3​
+
+Promise { <pending> }
+  ​​​​​at ​​​​​​​​a​​​ ​quokka.js:11:1​
+
+2 ​​​​​at ​​​​​​quokka.js:4:5​
+
+3 ​​​​​at ​​​​​​​​index​​​ ​quokka.js:9:3​
+```
+
+```js
+new Promise((resolved,reject)=>{
+  console.log(1);
+  resolved(2)
+  console.log(3);
+  resolved(4)
+  console.log(5);
+  reject(4)
+}).then((res)=>{
+  console.log(res);
+}).catch((res)=>{
+  console.log(res);
+})
+
+JavaScript具有"从头到尾"的概念。 除非抛出错误/return，否则函数将一直执行直到return语句或其结尾。
+```
+
+```
+1 ​​​​​at ​​​​​​quokka.js:2:3​
+
+3 ​​​​​at ​​​​​​quokka.js:4:3​
+
+5 ​​​​​at ​​​​​​quokka.js:6:3​
+
+2 ​​​​​at ​​​​​​​​res​​​ ​quokka.js:9:3​
+```
+
+```js
+new Promise((resolved, reject) => {
+  throw new Error('x 必须为正数');
+}).then((res) => {
+  console.log(res);
+}).catch((res) => {
+  console.log(res);
+})
+```
+
+```
 [Error: x 必须为正数] ​​​​​at ​​​​​​​​res​​​ ​quokka.js:6:3​
 ```
 
@@ -6083,14 +6027,25 @@ Generator 函数的执行必须靠执行器，所以才有了`co`模块，而`as
 
     `async`函数返回的Promise对象，必须等到内部所有`await`命令的Promise对象执行完，才会发生状态改变。也就是说，只有`async`函数内部的异步操作执行完，才会执行`then`方法指定的回调函数。
 
-  - 返回rejected
+  - 当执行到失败状态，整个`async`函数都会中断执行。
 
-    `async`函数内部抛出错误，会导致返回的Promise对象变为`reject`状态。抛出的错误对象会被`catch`方法回调函数接收到。**只要一个`await`语句后面的Promise变为`reject`，那么整个`async`函数都会中断执行。**
-
+    - `async`函数内部抛出错误
+    - reject
+    
+    为了避免这个问题，可以将await`放在`try...catch`结构里面，这样第二个`await`就会执行。
+    
     ```js
     async function f() {
-      throw new Error('出错了');
-      //await Promise.reject('出错了');
+      // await Promise.reject('出错了');
+      // throw new Error('出错了');
+      try {
+        // await Promise.reject('出错了');
+        throw new Error('出错了');
+      } catch (e) {
+        console.log(e); //Error
+      }
+    
+      console.log('123'); //123
       await Promise.resolve('hello world'); // 不会执行
     }
     
@@ -6101,7 +6056,69 @@ Generator 函数的执行必须靠执行器，所以才有了`co`模块，而`as
     ```
     
 
-为了避免这个问题，可以将第一个`await`放在`try...catch`结构里面，这样第二个`await`就会执行。
+#### await
+
+https://blog.csdn.net/dashenfeng1/article/details/135922483
+
+- await如果碰到微任务或者宏任务，会阻塞await方法后面的程序，然后**跳出该async方法**，执行**与该async方法并列**的**同步任务**
+
+  **（` let a = await 1;`也是会跳出去的）**
+
+  ```
+  async function f1() {
+    console.log(1);
+    let a = await 3;
+    console.log(a);
+  
+  }
+  f1()
+  console.log(2);
+  ```
+
+  
+
+- 当程序执行到await方法时，进入await方法内部**并执行到return前**
+
+  ```
+  async function async1() {
+    console.log("async1 start"); //2
+    await async2();
+    console.log("async1 end"); // 6
+  }
+  
+  async function async2() {
+    console.log("async2"); //3
+  }
+  
+  console.log("script start");  //1
+  setTimeout(function () {
+    console.log("setTimeout"); //8
+  }, 0);
+  
+  async1();
+  
+  new Promise(function (resolve) {
+    console.log("promise1");  //4
+    resolve();
+  }).then(function () {
+    console.log("promise2"); //7
+  });
+  
+  console.log("script end"); //5
+  
+  ```
+
+  先按顺序执行同步任务 “script start”
+  遇见setTimeout，属于宏任务，放入到宏任务队列中
+  进入async1函数， 执行同步任务（语句），打印"async1 start"
+  遇见 await之后的async2 进入方法内部，直行到return前（因为async2里没有return，所以就全部执行完），打印"async2",**然后await async2()后面的语句都被阻塞，继续执行与async2方法并列的同步任务**
+  进入Promise，同步打印"promise1"
+  遇到.then,放入微任务队列中
+  执行同步任务"script end"
+  同步任务执行结束后，开始执行所有微任务，按顺序输出"async1 end"，“promise2”
+  微任务执行结束后，输出下一轮宏任务"setTimeout"
+
+
 
 #### 错误处理
 
@@ -6177,139 +6194,79 @@ f()
 
 #### 代码
 
-````js
-const fn = async () => {
-  console.log(1);
-  const a = await 2;
-  console.log(a);
-  const b = await new Promise((resolve, reject) => {
-    console.log(3);
-    resolve(5);
-  }).then((res) => {
-    console.log(4);
-    return res;
-  });
-  console.log(b);
-  console.log("end");
-};
+- 如果碰到微任务或者宏任务，会跳出这个函数
 
-fn();
-
-
-1 ​​​​​at ​​​​​​quokka.js:2:3​
-
-2 ​​​​​at ​​​​​​​​a​​​ ​quokka.js:4:3​
-
-3 ​​​​​at ​​​​​​quokka.js:6:5​
-
-4 ​​​​​at ​​​​​​quokka.js:9:5​
-
-5 ​​​​​at ​​​​​​​​b​​​ ​quokka.js:12:3​
-
-'end' ​​​​​at ​​​​​​quokka.js:13:3​
-
-
-//在async中将异步的代码同步执行
-var a = async () => {
-  console.log(1);
-
-  new Promise((resolved) => {
-    console.log(2);
-    resolved(3);
-  }).then((v) => {
-    console.log(v);
-  });
-
-  await  setTimeout(() => {
+  ```js
+  var a = async () => {
+    console.log(1);
+    await new Promise((resolved) => {
+      console.log(2);
+      resolved(4);
+    }).then((v) => {
+      console.log(v);
+    });
     console.log(5);
-  });; //阻塞等待上面promise执行完成
-
-  new Promise((resolved) => {
-    console.log(6);
-    resolved(7);
-  }).then((v) => {
-    console.log(v);
-  });
-  console.log("end");
-};
-a();
-
-1 ​​​​​at ​​​​​​quokka.js:3:3​
-
-2 ​​​​​at ​​​​​​quokka.js:6:5​
-
-3 ​​​​​at ​​​​​​​​v​​​ ​quokka.js:9:5​
-
-6 ​​​​​at ​​​​​​quokka.js:20:5​
-
-'end' ​​​​​at ​​​​​​quokka.js:25:3​
-
-7 ​​​​​at ​​​​​​​​v​​​ ​quokka.js:23:5​
-
-5 ​​​​​at ​​​​​​quokka.js:14:7​
-
-
-async function f1(){
-  console.log(2);
-  await f2()
-  console.log(6);
-}
-async function f2(){
+  };
+  a();
   console.log(3);
-}
-console.log(1);
-setTimeout(() => {
-  console.log(8);
-}, 0);
-f1()
-new Promise((resolved)=>{
-  console.log(4);
-  resolved(7)
-}).then((res)=>{
-  console.log(res);
-})
-console.log(5);
+  ```
 
-1 ​​​​​at ​​​​​​quokka.js:9:1​
+  ```
+  var a = async () => {
+    console.log(1);
+    function fn() {
+      console.log(2);
+      setTimeout(() => {
+        console.log(5)
+      })
+    }
+    await fn()
+    console.log(4);
+  };
+  a();
+  console.log(3);
+  ```
 
-2 ​​​​​at ​​​​​​quokka.js:2:3​
+  
 
-3 ​​​​​at ​​​​​​quokka.js:7:3​
+- 很多人以为await会一直等待之后的表达式执行完之后才会继续执行后面的代码，实际上await会产生一个微任务(Promise.then是微任务)。await后面的函数会执行一遍，然后就会跳出整个async函数来执行后面js栈的代码。等本轮事件循环执行完了之后又会跳回到async函数中执行剩下的代码
 
-4 ​​​​​at ​​​​​​quokka.js:15:3​
-
-5 ​​​​​at ​​​​​​quokka.js:20:1​
-
-6 ​​​​​at ​​​​​​quokka.js:4:3​
-
-7 ​​​​​at ​​​​​​​​res​​​ ​quokka.js:18:3​
-
-8 ​​​​​at ​​​​​​quokka.js:11:3​
-```
-
-const fn = async (b) => {
-  new Promise(resolved => {
-    console.log(55);
-    resolved(4)
+  ```
+  async function f1() {
+    console.log(2);
+    await f2()
+    console.log(9);
+  }
+  async function f2() {
+    console.log(3);
+    await new Promise((resolved) => {
+      console.log(4);
+      resolved(7)
+    }).then((res) => {
+      console.log(res);
+    })
+  }
+  console.log(1);
+  setTimeout(() => {
+    console.log(10);
+  }, 0);
+  f1()
+  new Promise((resolved) => {
+    console.log(5);
+    resolved(8)
   }).then((res) => {
-    console.log(res, 88);
-    b = res
+    console.log(res);
   })
-  return b
-}
+  console.log(6);
+  ```
 
-const a = async () => {
-  let b = 1
-  b = await fn(b) //await 不会管里面是否要异步处理，只能在fn里面处理异步
-  console.log(b);
-}
+  
 
-a()
-````
+
 
 ### 捕获promise内部报错
 
-```
+```js
 const a = () => {
   return new Promise((resolve, reject) => {
     try {
@@ -7177,33 +7134,23 @@ const sayHello = (name: string | undefined) => { /* ... */ };
 
 以上示例中 `name` 的类型是 `string | undefined` 意味着可以将 `string` 或 `undefined` 的值传递给 `sayHello` 函数。
 
-### type
+### keyof
 
-定义类型由两种方式：接口（interface）和类型别名（type alias）
-
-interface只能定义对象类型，type声明的方式可以定义组合类型，交叉类型和原始类型
-
-‌**[import type](https://www.baidu.com/s?rsv_dl=re_dqa_generate&sa=re_dqa_generate&wd=import type&rsv_pq=e2d65df102dc1df4&oq=import type&rsv_t=98547bqOcsYtqdcqbKDZ8Wp6crBNDU8GcL2i6IKP43szRbtIVa8lNv8fW6XOqi0NxUE6gs3AOnAs&tn=62095104_41_oem_dg&ie=utf-8)是[TypeScript](https://www.baidu.com/s?rsv_dl=re_dqa_generate&sa=re_dqa_generate&wd=TypeScript&rsv_pq=e2d65df102dc1df4&oq=import type&rsv_t=98547bqOcsYtqdcqbKDZ8Wp6crBNDU8GcL2i6IKP43szRbtIVa8lNv8fW6XOqi0NxUE6gs3AOnAs&tn=62095104_41_oem_dg&ie=utf-8) 3.8版本引入的一个特性，专门用于导入类型。**‌它允许开发者仅仅导入类型而不是整个模块的运行时代码。使用import type导入的内容不会包含在编译后的JavaScript输出中，这有助于减小输出文件的大小并提高项目构建性能‌12。
-
-#### 使用场景和优势
-
-1. ‌**仅导入类型信息**‌：import type用于导入类型声明，如接口、类型别名、枚举等。这种导入方式不会影响生成的JavaScript代码，因为类型信息在编译时会被移除‌45。
-2. ‌**避免循环依赖和副作用**‌：使用import type可以避免循环依赖问题，并且不会引入模块的副作用，因为运行时的代码不会被包含在生成的JavaScript文件中‌34。
-3. ‌**减小输出文件大小**‌：由于import type不包含实际执行的代码，因此可以减少最终打包文件的大小‌23。
-
-#### 语法示例
+**用于获取一个类型的所有键（属性名）作为联合类型**‌
 
 ```
-typescriptCopy Code// someTypes.ts
-export type Foo = { bar: string; };
-
-// main.ts
-import type { Foo } from './someTypes';
-
-let obj: Foo = { bar: 'value' }; // 使用Foo类型定义一个对象
+interface Person {
+    id: number;
+    name: string;
+    age: number;
+}
 ```
 
-在这个例子中，`import type { Foo } from './someTypes';`仅导入Foo类型的声明，不会影响生成的JavaScript代码‌45。
+使用`keyof`可以获取这个接口的所有键：
+
+```
+type KeysOfPerson = keyof Person; // 'id' | 'name' | 'age'
+```
 
 ### typeof
 
@@ -7212,7 +7159,7 @@ let obj: Foo = { bar: 'value' }; // 使用Foo类型定义一个对象
 在TypeScript中，`typeof`运算符可以获取一个值的类型。这与JavaScript中的`typeof`运算符不同，JavaScript中的`typeof`返回的是字符串，而TypeScript中的`typeof`返回的是类型的描述。例如：
 
 ```
-typescriptCopy Codeconst a = { x: 0 };
+const a = { x: 0 };
 type T0 = typeof a; // { x: number }
 type T1 = typeof a.x; // number
 ```
@@ -7222,7 +7169,7 @@ type T1 = typeof a.x; // number
 当`typeof`与对象结合使用时，可以获取该对象的类型。例如：
 
 ```
-typescriptCopy Codelet lolo = { name: 'zhanhsan', age: 18, child: { name: 'zhangsansan', like: true, age: 12 } };
+let lolo = { name: 'zhanhsan', age: 18, child: { name: 'zhangsansan', like: true, age: 12 } };
 type Lolo = typeof lolo; // { name: string; age: number; child: { name: string; like: boolean; age: number; } }
 type LoloChild = typeof lolo.child; // { name: string; like: boolean; age: number; }
 ```
@@ -7232,11 +7179,133 @@ type LoloChild = typeof lolo.child; // { name: string; like: boolean; age: numbe
 `typeof`也可以用于枚举类型，例如：
 
 ```
-typescriptCopy Codeenum HttpMethod { Get, Post };
+enum HttpMethod { Get, Post };
 type Methods = typeof HttpMethod; // { Get: number, Post: number }
 const meth: Methods = { Get: 0, Post: 1 };
 type Meth = keyof typeof HttpMethod; // "Get" | "Post"
 ```
+
+
+
+### `instanceof`类型保护
+
+*`instanceof`类型保护*是通过构造函数来细化类型的一种方式。 比如，我们借鉴一下之前字符串填充的例子：
+
+```ts
+interface Padder {
+    getPaddingString(): string
+}
+
+class SpaceRepeatingPadder implements Padder {
+    constructor(private numSpaces: number) { }
+    getPaddingString() {
+        return Array(this.numSpaces + 1).join(" ");
+    }
+}
+
+class StringPadder implements Padder {
+    constructor(private value: string) { }
+    getPaddingString() {
+        return this.value;
+    }
+}
+
+function getRandomPadder() {
+    return Math.random() < 0.5 ?
+        new SpaceRepeatingPadder(4) :
+        new StringPadder("  ");
+}
+
+// 类型为SpaceRepeatingPadder | StringPadder
+let padder: Padder = getRandomPadder();
+
+if (padder instanceof SpaceRepeatingPadder) {
+    padder; // 类型细化为'SpaceRepeatingPadder'
+}
+if (padder instanceof StringPadder) {
+    padder; // 类型细化为'StringPadder'
+}
+```
+
+`instanceof`的右侧要求是一个构造函数，TypeScript将细化为：
+
+1. 此构造函数的 `prototype`属性的类型，如果它的类型不为 `any`的话
+2. 构造签名所返回的类型的联合
+
+以此顺序。
+
+### InstanceType 
+
+InstanceType 是一个内置的工具类型，用于获取一个类的实例类型。
+
+```
+class MyClass {
+  x = 0;
+  y = 0;
+}
+ 
+type Instance = InstanceType<typeof MyClass>; // MyClass的实例类型
+ 
+let instance: Instance = new MyClass(); // 这是正确的
+```
+
+### Record
+
+#### 定义和用途
+
+`Record`的内部定义接收两个泛型参数：键类型（key type）和值类型（value type）。其作用是定义一个对象的键和值类型，确保对象的键是唯一的，并且每个键都映射到一个具体的值类型‌
+
+```
+type Record<K extends string | number | symbol, T> = { [P in K]: T; };
+//这里，K表示对象的键类型，可以是字符串、数字或符号的子类型；T表示对象的值类型
+
+const obj: Record<string, string> = { "a": "1" };
+interface Person { name: string; age: number; }
+const obj: Record<string, Person> = { "a": { name: "dj", age: 12 } };
+
+```
+
+#### Record的应用场景
+
+1. ‌配置对象：在复杂的项目中，配置文件通常包含多个模块的不同设置。使用Record可以确保配置的键名正确且值类型统一。例如：
+
+   ```
+   interface AppConfig { port: number; env: 'development' | 'production'; }
+   const config: Record<string, AppConfig> = {
+       server: { port: 3000, env: 'development' },
+       client: { port: 8080, env: 'production' },
+   };
+   ```
+
+2. ‌枚举场景
+
+   可以用于将枚举类型转换为易于使用的键值对映射，便于在代码中引用。例如：
+
+   ```
+   enum Color { Red, Green, Blue }
+   const colorNameMap: Record<Color, string> = { [Color.Red]: 'Red', [Color.Green]: 'Green', [Color.Blue]: 'Blue' };
+   ```
+
+3. ‌联合类型场景
+
+   ‌在处理联合类型时，Record可以定义一个对象的键是联合类型，值是具体的类型。例如：
+
+   ```
+   type Scores = Record<'Math' | 'English' | 'Science', number>;
+   const studentScores: Scores = { Math: 90, English: 85, Science: 92 };
+   ```
+
+4. ‌动态表单配置
+
+   ‌在构建动态表单时，Record可以用来定义表单项的配置，每个表单项都有其特有的属性。例如：
+
+   ```
+   interface FormField { type: 'text' | 'checkbox' | 'select'; label: string; required?: boolean; }
+   const formConfig: Record<string, FormField> = {
+       username: { type: 'text', label: 'Username', required: true },
+       agreeTerms: { type: 'checkbox', label: 'Agree to terms', required: false },
+   };
+   ```
 
 ## 基础类型
 
@@ -7593,6 +7662,665 @@ myFavoriteNumber = 'seven';
 myFavoriteNumber = 7;
 ```
 
+## 自定义类型
+
+### type 与 interface 的区别
+
+定义类型由两种方式：接口（interface）和类型别名（type alias）
+
+#### 相同点
+
+- 都可以描述一个对象或者函数
+
+- 都允许拓展（extends和交叉类型）。值得注意的是，接口和类型别名并不互斥。类型别名可以继承接口，反之亦然。
+
+  ```
+  interface 继承 interface
+   
+  interface Person{
+      name:string
+  }
+   
+  interface Student extends Person { stuNo: number }
+   
+   
+  interface 继承 type
+   
+  type Person = {
+      name:string
+  }
+   
+  interface Student extends Person { stuNo: number }
+   
+   
+  type 继承 type
+   
+  type Person = {
+      name:string
+  }
+   
+  type Student = Person & { stuNo: number }
+   
+   
+  type 继承 interface
+   
+  interface Person{
+      name:string
+  }
+   
+  type Student = Person & { stuNo: number }
+  ```
+
+  
+
+#### 不同点
+
+- interface
+
+  - 只能定义对象类型
+  - 多次声明一个同名的接口，TypeScript 会将它们合并到一个声明中，并将它们视为一个接口。这称为**声明合并**
+
+- type
+
+  - 可以定义基本类型，元组，组合类型，交叉类型
+
+    ```
+    // 基本类型别名
+    type Name = string
+    
+    // 联合类型
+    interface Dog {
+        a:number
+    }
+    interface Cat {
+        b:string
+    }
+    type Pet = Dog | Cat
+    let c:Pet={a:1}
+    
+    // 元组
+    type PetList = [Dog, Pet]
+    ```
+
+  - `type`的话，重复声明一个同名类型是会报错的
+
+### 接口
+
+**作用：**
+
+- 对“对象”进行约束描述
+- 对“类”的一部分行为进行抽象
+
+**特点：**
+
+- 接口与值的结构必须相同
+
+  ```tsx
+  interface LabelledValue {
+      size: number;
+      label: string;
+  }
+  function printLabel(labelledObj: LabelledValue) {
+      console.log(labelledObj.label);
+  }
+  let myObj1 = { label: "Size 10 Object" };
+  let myObj2 = { label: "Size 10 Object", other:1 };
+  //少了
+  printLabel(myObj1);
+  //多了
+  printLabel(myObj2);
+  ```
+
+- 可以捕获引用了不存在的属性时的错误
+
+  ```tsx
+  interface LabelledValue {
+      size: number;
+      label: string;
+  }
+  function printLabel(labelledObj: LabelledValue) {
+      console.log(labelledObj.labell);
+    }
+  let myObj = { size:10, label: "Size 10 Object" };
+  printLabel(myObj);
+  ```
+
+#### 可选属性
+
+接口里的属性不全都是必需的。 有些是只在某些条件下存在，或者根本不存在。 可选属性在应用“option bags”模式时很常用，即给函数传入的参数对象中只有部分属性赋值了。
+
+下面是应用了“option bags”的例子：
+
+```ts
+interface SquareConfig {
+  color?: string;
+  width?: number;
+}
+
+function createSquare(config: SquareConfig): {color: string; area: number} {
+  let newSquare = {color: "white", area: 100};
+  if (config.color) {
+    newSquare.color = config.color;
+  }
+  if (config.width) {
+    newSquare.area = config.width * config.width;
+  }
+  return newSquare;
+}
+
+let mySquare = createSquare({color: "black"});
+```
+
+带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个`?`符号。
+
+#### 只读属性
+
+一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用 `readonly`来指定只读属性:
+
+```ts
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+```
+
+你可以通过赋值一个对象字面量来构造一个`Point`。 赋值后， `x`和`y`再也不能被改变了。
+
+```ts
+let p1: Point = { x: 10, y: 20 };
+p1.x = 5; // error!
+```
+
+TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改：
+
+```ts
+let a: number[] = [1, 2, 3, 4];
+let ro: ReadonlyArray<number> = a;
+ro[0] = 12; // 类型“readonly number[]”中的索引签名仅允许读取
+ro.push(5); // 类型“readonly number[]”上不存在属性“push”
+ro.length = 100; // 无法分配到 "length" ，因为它是只读属性
+a = ro; // 类型 "readonly number[]" 为 "readonly"，不能分配给可变类型 "number[]"
+```
+
+上面代码的最后一行，可以看到就算把整个`ReadonlyArray`赋值到一个普通数组也是不可以的。 但是你可以用类型断言重写：
+
+```ts
+a = ro as number[];
+```
+
+**`readonly` vs `const`**
+
+最简单判断该用`readonly`还是`const`的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 `const`，若做为属性则使用`readonly`。
+
+#### 额外的属性检查
+
+```ts
+interface SquareConfig {
+    color?: string;
+    width?: number;
+}
+
+function createSquare(config: SquareConfig): { color: string; width: number } {
+  return {color: '1', width: 1}
+}
+
+let mySquare = createSquare({ colour: "red", width: 100 });
+```
+
+注意传入`createSquare`的参数拼写为*`colour`*而不是`color`。 在JavaScript里，这会默默地失败。 **编译器能够捕获引用了未声明属性的错误**
+
+```ts
+// error: 'colour' not expected in type 'SquareConfig'
+let mySquare = createSquare({ colour: "red", width: 100 });
+```
+
+**解决**
+
+- 最简便的方法是使用**类型断言**：
+
+```ts
+let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
+```
+
+- 加上额外属性声明，允许对象引用除可选属性以外的其他属性
+
+```ts
+interface SquareConfig {
+    color?: string;
+    width?: number;
+    [propName: string]: any;//加上额外属性声明，允许对象引用除可选属性以外的其他属性
+}
+```
+
+#### 可索引的类型
+
+与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如`a[10]`或`ageMap["daniel"]`。 可索引类型具有一个 *索引签名*，它描述了对象索引的类型，还有相应的索引返回值类型。 
+
+```ts
+// 数字索引——约束数组
+// index 是随便取的名字，可以任意取名
+// 只要 index 的类型是 number，那么值的类型必须是 string
+interface StringArray {
+  // key 的类型为 number ，一般都代表是数组
+  // 限制 value 的类型为 string
+  [index:number]:string
+}
+let arr:StringArray = ['aaa','bbb'];
+console.log(arr);
+
+
+// 字符串索引——约束对象
+// 只要 index 的类型是 string，那么值的类型必须是 string
+interface StringObject {
+  // key 的类型为 string ，一般都代表是对象
+  // 限制 value 的类型为 string
+  [index:string]:string
+}
+let obj:StringObject = {name:'ccc'};
+
+```
+
+字符串索引签名能够很好的描述`dictionary`模式，并且它们也会确保所有属性与其返回值类型相匹配。 因为字符串索引声明了 `obj.property`和`obj["property"]`两种形式都可以。 下面的例子里， `name`的类型与字符串索引类型不匹配，所以类型检查器给出一个错误提示：
+
+```ts
+interface NumberDictionary {
+  [index: string]: number;
+  length: number;    // 可以，length是number类型
+  name: string       // 错误，`name`的类型与索引类型返回值的类型不匹配
+}
+```
+
+最后，你可以将索引签名设置为只读，这样就防止了给索引赋值：
+
+```ts
+interface ReadonlyStringArray {
+    readonly [index: number]: string;
+}
+let myArray: ReadonlyStringArray = ["Alice", "Bob"];
+myArray[2] = "Mallory"; // error!
+```
+
+你不能设置`myArray[2]`，因为索引签名是只读的。
+
+**Element implicitly has an ‘any‘ type because expression of type ‘string‘ can‘t be used to index type**
+英文报错：Element implicitly has an ‘any’ type because expression of type ‘string’ can’t be used to index type
+
+中文报错：元素隐式具有 “any” 类型，因为类型为 “string” 的表达式不能用于索引类型 “UserInfo”。
+
+```
+interface UserInfo {
+  name: string;
+  age: number;
+  address: string;
+}
+```
+
+```
+let userInfo: UserInfo = {
+  name: "刘德华",
+  age: 18,
+  address: "吉林市长春市九台区其塔木镇",
+};
+let coontent = userInfo[v.value]
+解决方法：
+let content = userInfo[v.value as keyof typeof userInfo]
+原因分析：
+
+根据英文分析，是断言 v.value 的值是对象 userInfo 的 key
+```
+
+#### 函数类型
+
+为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 具体的格式是一个只有**参数列表**和**返回值类型**的函数定义。**参数列表**里的每个参数都需要名字和类型。
+
+```ts
+interface Func {
+  (param1: string, param2: number): boolean;
+}
+```
+
+这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何**创建一个函数类型的变量，并将一个同类型的函数赋值给这个变量。**
+
+```ts
+const myFunc: Func = function(param1, param2){
+  return typeof param1 === "string" && typeof param2 === "number";
+};
+```
+
+**对于函数类型的类型检查来说，函数的参数名不需要与接口里定义的名字相匹配。** 比如，我们使用下面的代码重写上面的例子：
+
+```ts
+interface Func {
+  (param1: string, param2: number): boolean;
+}
+
+const myFunc: Func = function(param2, param3){
+  console.log(param2, param3);// 1，2
+  return typeof param2 === "string" && typeof param3 === "number";
+};
+
+myFunc('1',2)
+```
+
+#### 继承接口
+
+和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
+
+```ts
+interface Shape {
+    color: string;
+}
+
+interface SquareSquare extends Shape {
+    sideLength: number;
+}
+
+const square ={} as SquareSquare;
+square.color = "blue";
+square.sideLength = 10;
+```
+
+一个接口可以继承多个接口，创建出多个接口的合成接口。
+
+```ts
+interface Shape {
+    color: string;
+}
+
+interface PenStroke {
+    penWidth: number;
+}
+
+interface Square extends Shape, PenStroke {
+    sideLength: number;
+}
+
+let square = <Square>{};
+square.color = "blue";
+square.sideLength = 10;
+square.penWidth = 5.0;
+```
+
+#### 类类型
+
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
+
+##### implements实现类接口
+
+> 类可以实现（implement）接口。通过接口，你可以强制地指明类遵守某个契约。你可以在接口中声明一个方法，然后要求类去具体实现它。**一个类只能继承自另一个类，有时候不同类之间可以有一些共有的特性，这时候就可以把特性提取成接口（interfaces），用 `implements` 关键字来实现**
+
+举例来说，门是一个类，防盗门是门的子类。如果防盗门有一个报警器的功能，我们可以简单的给防盗门添加一个报警方法。这时候如果有另一个类，车，也有报警器的功能，就可以考虑把报警器提取出来，作为一个接口，防盗门和车都去实现它：
+
+```ts
+//定义类
+interface Alarm {
+  alert(): void;
+}
+
+class Door {
+  alert() {
+    console.log('Door');
+  }
+}
+//实现类，继承类
+class SecurityDoor extends Door implements Alarm {
+  alert() {
+    console.log('SecurityDoor alert');
+  }
+}
+
+class Car implements Alarm {
+  alert() {
+    console.log('Car alert');
+  }
+}
+
+let a = new SecurityDoor()
+a.alert()
+let b = new Car()
+b.alert()
+```
+
+一个类可以实现多个接口，下例中，`Car` 实现了 `Alarm` 和 `Light` 接口，既能报警，也能开关车灯：
+
+```ts
+//定义类
+interface Alarm {
+  alert(): void;
+  lightOn: () => string;
+}
+
+class Door {
+  alert() {
+    console.log('Door');
+  }
+}
+//实现类接口，继承类
+class SecurityDoor extends Door implements Alarm {
+  alert() {
+    console.log('SecurityDoor alert');
+  }
+  lightOn() {
+    return '1'
+  }
+}
+
+class Car implements Alarm {
+  alert() {
+    console.log('Car alert');
+  }
+}
+
+let a = new SecurityDoor()
+a.alert()
+let b = new Car()
+b.alert()
+```
+
+##### extends继承类接口
+
+接口可以继承接口，下例中，我们使用 `extends` 使 `LightableAlarm` 继承 `Alarm：`
+
+```ts
+interface Alarm {
+  alert();
+}
+
+interface LightableAlarm extends Alarm {
+  lightOn()
+  lightOff()
+}
+
+class A implements LightableAlarm {
+  alert() {
+    console.log(1);
+  }
+
+  lightOn() {
+    console.log(2);
+  }
+
+  lightOff() {
+    console.log(3);
+  }
+}
+
+let c = new A();
+```
+
+##### 接口继承类
+
+接口也可以继承类：
+
+```ts
+class Point {
+  x: number;
+  y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+  point() {
+
+  }
+}
+
+interface Point3d extends Point {
+  z: number;
+}
+
+let point3d: Point3d = {
+  x: 1,
+  y: 2,
+  z: 3,
+  point: function () {
+    console.log(this.x)
+  }
+};
+point3d.point()
+```
+
+为什么 TypeScript 会支持接口继承类呢？
+
+实际上，当我们在声明 `class Point` 时，除了会创建一个名为 `Point` 的类之外，同时也创建了一个名为 `Point` 的类型（实例的类型）。
+
+所以我们既可以将 `Point` 当做一个类来用（使用 `new Point` 创建它的实例）,也可以将 `Point` 当做一个类型来用（使用 `: Point` 表示参数的类型）
+
+### 类型别名type 
+
+#### 使用场景和优势
+
+1. ‌**仅导入类型信息**‌：import type用于导入类型声明，如接口、类型别名、枚举等。这种导入方式不会影响生成的JavaScript代码，因为类型信息在编译时会被移除‌。
+2. ‌**避免循环依赖和副作用**‌：使用import type可以避免循环依赖问题，并且不会引入模块的副作用，因为运行时的代码不会被包含在生成的JavaScript文件中‌。
+3. ‌**减小输出文件大小**‌：由于import type不包含实际执行的代码，因此可以减少最终打包文件的大小‌
+
+##### 导入类型信息
+
+```
+// someTypes.ts
+export type Foo = { bar: string; };
+
+// main.ts
+import type { Foo } from './someTypes';
+
+let obj: Foo = { bar: 'value' }; // 使用Foo类型定义一个对象
+```
+
+在这个例子中，`import type { Foo } from './someTypes';`仅导入Foo类型的声明。
+
+##### 泛型
+
+同接口一样，类型别名也可以是泛型 - axios举例
+
+```
+import type { AxiosResponse } from 'axios';
+type ApiResponse<T = any> = {
+  success: boolean;
+  data: T;
+  code: string;
+  message: string;
+};
+type HttpResponse<T = any> = AxiosResponse<ApiResponse<T>>;
+
+type HttpResponseP<T = any> = Promise<HttpResponse<T>>;
+
+type HttpTableResponse<T = any> = HttpResponse<TableResponse<T>>;
+
+
+```
+
+### 交叉类型
+
+交叉类型是将多个类型合并为一个类型。 这让我们可以把现有的多种类型叠加到一起成为一种类型，它包含了所需的所有类型的特性。 例如，type是type1和type2接口的交集。 就是说这个类型的对象同时拥有了这二种类型的成员。
+
+```ts
+interface type1{
+    a1:number,
+    a2:string
+}
+interface type2{
+    b1:number,
+    b2:string
+}
+interface type<t,k>{
+   a:t,
+   b:k
+}
+let c:type<type1,type2> = {
+   a:{
+       a1:1,
+       a2:'1'
+   },
+   b:{
+       b1:1,
+       b2:'1'
+   }
+}
+console.log(c)//{ a: { a1: 1, a2: '1' }, b: { b1: 1, b2: '1' } } 
+```
+
+### 联合类型
+
+联合类型（Union Types）表示取值可以为多种类型中的一种。
+
+#### 简单的例子
+
+```ts
+let myFavoriteNumber: string | number;
+myFavoriteNumber = 'seven';
+myFavoriteNumber = 7;
+let myFavoriteNumber: string | number;
+myFavoriteNumber = true;
+
+// index.ts(2,1): error TS2322: Type 'boolean' is not assignable to type 'string | number'.
+//   Type 'boolean' is not assignable to type 'number'.
+```
+
+联合类型使用 `|` 分隔每个类型。
+
+这里的 `let myFavoriteNumber: string | number` 的含义是，允许 `myFavoriteNumber` 的类型是 `string` 或者 `number`，但是不能是其他类型。
+
+#### 访问联合类型的属性或方法
+
+当 TypeScript 不确定一个联合类型的变量到底是哪个类型的时候，我们**只能访问此联合类型的所有类型里共有的属性或方法**：
+
+```ts
+function getLength(something: string | number): number {
+    return something.length;
+}
+
+// index.ts(2,22): error TS2339: Property 'length' does not exist on type 'string | number'.
+//   Property 'length' does not exist on type 'number'.
+```
+
+上例中，`length` 不是 `string` 和 `number` 的共有属性，所以会报错。
+
+访问 `string` 和 `number` 的共有属性是没问题的：
+
+```ts
+function getString(something: string | number): string {
+    return something.toString();
+}
+```
+
+联合类型的变量在被赋值的时候，会根据**类型推论**的规则推断出一个类型：
+
+```ts
+let myFavoriteNumber: string | number;
+myFavoriteNumber = 'seven';
+console.log(myFavoriteNumber.length); // 5
+myFavoriteNumber = 7;
+console.log(myFavoriteNumber.length); // 编译时报错
+
+// index.ts(5,30): error TS2339: Property 'length' does not exist on type 'number'.
+```
+
+上例中，第二行的 `myFavoriteNumber` 被推断成了 `string`，访问它的 `length` 属性不会报错。
+
+而第四行的 `myFavoriteNumber` 被推断成了 `number`，访问它的 `length` 属性时就报错了。
+
+
+
 ## 枚举
 
 ### 是什么
@@ -7859,13 +8587,13 @@ SomeNameSpaceName.SomeClassName;
 以下实例演示了命名空间的使用，定义在不同文件中：
 
 ```
-IShape.ts 文件代码：
+//IShape.ts 文件代码：
 namespace Drawing { 
     export interface IShape { 
         draw(); 
     }
 }
-Circle.ts 文件代码：
+//Circle.ts 文件代码：
 /// <reference path = "IShape.ts" /> 
 namespace Drawing { 
     export class Circle implements IShape { 
@@ -7875,448 +8603,6 @@ namespace Drawing {
     }
 }
 ```
-
-## 接口
-
-**作用：**
-
-- 对“对象”进行约束描述
-- 对“类”的一部分行为进行抽象
-
-**特点：**
-
-- 接口与值的结构必须相同
-
-  ```tsx
-  interface LabelledValue {
-      size: number;
-      label: string;
-  }
-  function printLabel(labelledObj: LabelledValue) {
-      console.log(labelledObj.label);
-  }
-  let myObj1 = { label: "Size 10 Object" };
-  let myObj2 = { label: "Size 10 Object", other:1 };
-  //少了
-  printLabel(myObj1);
-  //多了
-  printLabel(myObj2);
-  ```
-
-- 可以捕获引用了不存在的属性时的错误
-
-  ```tsx
-  interface LabelledValue {
-      size: number;
-      label: string;
-  }
-  function printLabel(labelledObj: LabelledValue) {
-      console.log(labelledObj.labell);
-    }
-  let myObj = { size:10, label: "Size 10 Object" };
-  printLabel(myObj);
-  ```
-
-### 可选属性
-
-接口里的属性不全都是必需的。 有些是只在某些条件下存在，或者根本不存在。 可选属性在应用“option bags”模式时很常用，即给函数传入的参数对象中只有部分属性赋值了。
-
-下面是应用了“option bags”的例子：
-
-```ts
-interface SquareConfig {
-  color?: string;
-  width?: number;
-}
-
-function createSquare(config: SquareConfig): {color: string; area: number} {
-  let newSquare = {color: "white", area: 100};
-  if (config.color) {
-    newSquare.color = config.color;
-  }
-  if (config.width) {
-    newSquare.area = config.width * config.width;
-  }
-  return newSquare;
-}
-
-let mySquare = createSquare({color: "black"});
-```
-
-带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个`?`符号。
-
-### 只读属性
-
-一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用 `readonly`来指定只读属性:
-
-```ts
-interface Point {
-    readonly x: number;
-    readonly y: number;
-}
-```
-
-你可以通过赋值一个对象字面量来构造一个`Point`。 赋值后， `x`和`y`再也不能被改变了。
-
-```ts
-let p1: Point = { x: 10, y: 20 };
-p1.x = 5; // error!
-```
-
-TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改：
-
-```ts
-let a: number[] = [1, 2, 3, 4];
-let ro: ReadonlyArray<number> = a;
-ro[0] = 12; // 类型“readonly number[]”中的索引签名仅允许读取
-ro.push(5); // 类型“readonly number[]”上不存在属性“push”
-ro.length = 100; // 无法分配到 "length" ，因为它是只读属性
-a = ro; // 类型 "readonly number[]" 为 "readonly"，不能分配给可变类型 "number[]"
-```
-
-上面代码的最后一行，可以看到就算把整个`ReadonlyArray`赋值到一个普通数组也是不可以的。 但是你可以用类型断言重写：
-
-```ts
-a = ro as number[];
-```
-
-**`readonly` vs `const`**
-
-最简单判断该用`readonly`还是`const`的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 `const`，若做为属性则使用`readonly`。
-
-### 额外的属性检查
-
-```ts
-interface SquareConfig {
-    color?: string;
-    width?: number;
-}
-
-function createSquare(config: SquareConfig): { color: string; width: number } {
-  return {color: '1', width: 1}
-}
-
-let mySquare = createSquare({ colour: "red", width: 100 });
-```
-
-注意传入`createSquare`的参数拼写为*`colour`*而不是`color`。 在JavaScript里，这会默默地失败。 **编译器能够捕获引用了未声明属性的错误**
-
-```ts
-// error: 'colour' not expected in type 'SquareConfig'
-let mySquare = createSquare({ colour: "red", width: 100 });
-```
-
-**解决**
-
-- 最简便的方法是使用**类型断言**：
-
-```ts
-let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
-```
-
-- 加上额外属性声明，允许对象引用除可选属性以外的其他属性
-
-```ts
-interface SquareConfig {
-    color?: string;
-    width?: number;
-    [propName: string]: any;//加上额外属性声明，允许对象引用除可选属性以外的其他属性
-}
-```
-
-### 可索引的类型
-
-与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如`a[10]`或`ageMap["daniel"]`。 可索引类型具有一个 *索引签名*，它描述了对象索引的类型，还有相应的索引返回值类型。 
-
-```ts
-// 数字索引——约束数组
-// index 是随便取的名字，可以任意取名
-// 只要 index 的类型是 number，那么值的类型必须是 string
-interface StringArray {
-  // key 的类型为 number ，一般都代表是数组
-  // 限制 value 的类型为 string
-  [index:number]:string
-}
-let arr:StringArray = ['aaa','bbb'];
-console.log(arr);
-
-
-// 字符串索引——约束对象
-// 只要 index 的类型是 string，那么值的类型必须是 string
-interface StringObject {
-  // key 的类型为 string ，一般都代表是对象
-  // 限制 value 的类型为 string
-  [index:string]:string
-}
-let obj:StringObject = {name:'ccc'};
-
-```
-
-字符串索引签名能够很好的描述`dictionary`模式，并且它们也会确保所有属性与其返回值类型相匹配。 因为字符串索引声明了 `obj.property`和`obj["property"]`两种形式都可以。 下面的例子里， `name`的类型与字符串索引类型不匹配，所以类型检查器给出一个错误提示：
-
-```ts
-interface NumberDictionary {
-  [index: string]: number;
-  length: number;    // 可以，length是number类型
-  name: string       // 错误，`name`的类型与索引类型返回值的类型不匹配
-}
-```
-
-最后，你可以将索引签名设置为只读，这样就防止了给索引赋值：
-
-```ts
-interface ReadonlyStringArray {
-    readonly [index: number]: string;
-}
-let myArray: ReadonlyStringArray = ["Alice", "Bob"];
-myArray[2] = "Mallory"; // error!
-```
-
-你不能设置`myArray[2]`，因为索引签名是只读的。
-
-**Element implicitly has an ‘any‘ type because expression of type ‘string‘ can‘t be used to index type**
-英文报错：Element implicitly has an ‘any’ type because expression of type ‘string’ can’t be used to index type
-
-中文报错：元素隐式具有 “any” 类型，因为类型为 “string” 的表达式不能用于索引类型 “UserInfo”。
-
-```
-interface UserInfo {
-  name: string;
-  age: number;
-  address: string;
-}
-```
-
-```
-let userInfo: UserInfo = {
-  name: "刘德华",
-  age: 18,
-  address: "吉林市长春市九台区其塔木镇",
-};
-let coontent = userInfo[v.value]
-解决方法：
-let content = userInfo[v.value as keyof typeof userInfo]
-原因分析：
-
-根据英文分析，是断言 v.value 的值是对象 userInfo 的 key
-```
-
-### 函数类型
-
-为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 具体的格式是一个只有**参数列表**和**返回值类型**的函数定义。**参数列表**里的每个参数都需要名字和类型。
-
-```ts
-interface Func {
-  (param1: string, param2: number): boolean;
-}
-```
-
-这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何**创建一个函数类型的变量，并将一个同类型的函数赋值给这个变量。**
-
-```ts
-const myFunc: Func = function(param1, param2){
-  return typeof param1 === "string" && typeof param2 === "number";
-};
-```
-
-**对于函数类型的类型检查来说，函数的参数名不需要与接口里定义的名字相匹配。** 比如，我们使用下面的代码重写上面的例子：
-
-```ts
-interface Func {
-  (param1: string, param2: number): boolean;
-}
-
-const myFunc: Func = function(param2, param3){
-  console.log(param2, param3);// 1，2
-  return typeof param2 === "string" && typeof param3 === "number";
-};
-
-myFunc('1',2)
-```
-
-### 继承接口
-
-和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
-
-```ts
-interface Shape {
-    color: string;
-}
-
-interface SquareSquare extends Shape {
-    sideLength: number;
-}
-
-const square ={} as SquareSquare;
-square.color = "blue";
-square.sideLength = 10;
-```
-
-一个接口可以继承多个接口，创建出多个接口的合成接口。
-
-```ts
-interface Shape {
-    color: string;
-}
-
-interface PenStroke {
-    penWidth: number;
-}
-
-interface Square extends Shape, PenStroke {
-    sideLength: number;
-}
-
-let square = <Square>{};
-square.color = "blue";
-square.sideLength = 10;
-square.penWidth = 5.0;
-```
-
-### 类类型
-
-接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
-
-#### implements实现类接口
-
-> 类可以实现（implement）接口。通过接口，你可以强制地指明类遵守某个契约。你可以在接口中声明一个方法，然后要求类去具体实现它。**一个类只能继承自另一个类，有时候不同类之间可以有一些共有的特性，这时候就可以把特性提取成接口（interfaces），用 `implements` 关键字来实现**
-
-举例来说，门是一个类，防盗门是门的子类。如果防盗门有一个报警器的功能，我们可以简单的给防盗门添加一个报警方法。这时候如果有另一个类，车，也有报警器的功能，就可以考虑把报警器提取出来，作为一个接口，防盗门和车都去实现它：
-
-```ts
-//定义类
-interface Alarm {
-  alert(): void;
-}
-
-class Door {
-  alert() {
-    console.log('Door');
-  }
-}
-//实现类，继承类
-class SecurityDoor extends Door implements Alarm {
-  alert() {
-    console.log('SecurityDoor alert');
-  }
-}
-
-class Car implements Alarm {
-  alert() {
-    console.log('Car alert');
-  }
-}
-
-let a = new SecurityDoor()
-a.alert()
-let b = new Car()
-b.alert()
-```
-
-一个类可以实现多个接口，下例中，`Car` 实现了 `Alarm` 和 `Light` 接口，既能报警，也能开关车灯：
-
-```ts
-//定义类
-interface Alarm {
-  alert(): void;
-  lightOn: () => string;
-}
-
-class Door {
-  alert() {
-    console.log('Door');
-  }
-}
-//实现类接口，继承类
-class SecurityDoor extends Door implements Alarm {
-  alert() {
-    console.log('SecurityDoor alert');
-  }
-  lightOn() {
-    return '1'
-  }
-}
-
-class Car implements Alarm {
-  alert() {
-    console.log('Car alert');
-  }
-}
-
-let a = new SecurityDoor()
-a.alert()
-let b = new Car()
-b.alert()
-```
-
-#### extends继承类接口
-
-接口可以继承接口，下例中，我们使用 `extends` 使 `LightableAlarm` 继承 `Alarm：`
-
-```ts
-interface Alarm {
-  alert();
-}
-
-interface LightableAlarm extends Alarm {
-  lightOn()
-  lightOff()
-}
-
-class A implements LightableAlarm {
-  alert() {
-    console.log(1);
-  }
-
-  lightOn() {
-    console.log(2);
-  }
-
-  lightOff() {
-    console.log(3);
-  }
-}
-
-let c = new A();
-```
-
-#### 接口继承类
-
-接口也可以继承类：
-
-```ts
-class Point {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-  point() {
-
-  }
-}
-
-interface Point3d extends Point {
-  z: number;
-}
-
-let point3d: Point3d = {
-  x: 1,
-  y: 2,
-  z: 3,
-  point: function () {
-    console.log(this.x)
-  }
-};
-point3d.point()
-```
-
-为什么 TypeScript 会支持接口继承类呢？
-
-实际上，当我们在声明 `class Point` 时，除了会创建一个名为 `Point` 的类之外，同时也创建了一个名为 `Point` 的类型（实例的类型）。
-
-所以我们既可以将 `Point` 当做一个类来用（使用 `new Point` 创建它的实例）,也可以将 `Point` 当做一个类型来用（使用 `: Point` 表示参数的类型）
 
 ## 函数
 
@@ -8641,9 +8927,7 @@ function reverse(x: number | string): number | string {
 
 > 考虑可重用性。 组件不仅能够支持当前的数据类型，同时也能支持未来的数据类型
 
-泛型（Generics）是指在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定类型的一种特性。
-
-当我们需要写一个传入什么类型就得到什么类型的函数
+泛型（Generics）是指在定义函数、接口或类的时候，**不预先指定具体的类型，而在使用的时候再指定类型的一种特性**。当我们需要写一个传入什么类型就得到什么类型的函数
 
 - 使用`any`类型会导致这个函数可以接收任何类型的`arg`参数，这样就丢失了一些信息
   
@@ -8947,1190 +9231,4 @@ fn1(1,['2']);
   ```
 
   
-
-
-
-## 高级类型
-
-### 交叉类型
-
-交叉类型是将多个类型合并为一个类型。 这让我们可以把现有的多种类型叠加到一起成为一种类型，它包含了所需的所有类型的特性。 例如，type是type1和type2接口的交集。 就是说这个类型的对象同时拥有了这二种类型的成员。
-
-```ts
-interface type1{
-    a1:number,
-    a2:string
-}
-interface type2{
-    b1:number,
-    b2:string
-}
-interface type<t,k>{
-   a:t,
-   b:k
-}
-let c:type<type1,type2> = {
-   a:{
-       a1:1,
-       a2:'1'
-   },
-   b:{
-       b1:1,
-       b2:'1'
-   }
-}
-console.log(c)//{ a: { a1: 1, a2: '1' }, b: { b1: 1, b2: '1' } } 
-```
-
-```ts
-interface type1{
-    a1:number,
-    a2:string
-}
-interface type2{
-    b1:number,
-    b2:string
-}
-interface type<t,k>{
-   a1,
-   a2,
-   b1,
-   b2
-}
-let c:type<type1,type2> = {
-       a1:1,
-       a2:'1',
-       b1:1,
-       b2:'1'
-}
-console.log(c)//{ a1: 1, a2: '1', b1: 1, b2: '1' } 
-```
-
-### 联合类型
-
-联合类型（Union Types）表示取值可以为多种类型中的一种。
-
-#### 简单的例子
-
-```ts
-let myFavoriteNumber: string | number;
-myFavoriteNumber = 'seven';
-myFavoriteNumber = 7;
-let myFavoriteNumber: string | number;
-myFavoriteNumber = true;
-
-// index.ts(2,1): error TS2322: Type 'boolean' is not assignable to type 'string | number'.
-//   Type 'boolean' is not assignable to type 'number'.
-```
-
-联合类型使用 `|` 分隔每个类型。
-
-这里的 `let myFavoriteNumber: string | number` 的含义是，允许 `myFavoriteNumber` 的类型是 `string` 或者 `number`，但是不能是其他类型。
-
-#### 访问联合类型的属性或方法
-
-当 TypeScript 不确定一个联合类型的变量到底是哪个类型的时候，我们**只能访问此联合类型的所有类型里共有的属性或方法**：
-
-```ts
-function getLength(something: string | number): number {
-    return something.length;
-}
-
-// index.ts(2,22): error TS2339: Property 'length' does not exist on type 'string | number'.
-//   Property 'length' does not exist on type 'number'.
-```
-
-上例中，`length` 不是 `string` 和 `number` 的共有属性，所以会报错。
-
-访问 `string` 和 `number` 的共有属性是没问题的：
-
-```ts
-function getString(something: string | number): string {
-    return something.toString();
-}
-```
-
-联合类型的变量在被赋值的时候，会根据**类型推论**的规则推断出一个类型：
-
-```ts
-let myFavoriteNumber: string | number;
-myFavoriteNumber = 'seven';
-console.log(myFavoriteNumber.length); // 5
-myFavoriteNumber = 7;
-console.log(myFavoriteNumber.length); // 编译时报错
-
-// index.ts(5,30): error TS2339: Property 'length' does not exist on type 'number'.
-```
-
-上例中，第二行的 `myFavoriteNumber` 被推断成了 `string`，访问它的 `length` 属性不会报错。
-
-而第四行的 `myFavoriteNumber` 被推断成了 `number`，访问它的 `length` 属性时就报错了。
-
-### `typeof`类型保护
-
-### `instanceof`类型保护
-
-*`instanceof`类型保护*是通过构造函数来细化类型的一种方式。 比如，我们借鉴一下之前字符串填充的例子：
-
-```ts
-interface Padder {
-    getPaddingString(): string
-}
-
-class SpaceRepeatingPadder implements Padder {
-    constructor(private numSpaces: number) { }
-    getPaddingString() {
-        return Array(this.numSpaces + 1).join(" ");
-    }
-}
-
-class StringPadder implements Padder {
-    constructor(private value: string) { }
-    getPaddingString() {
-        return this.value;
-    }
-}
-
-function getRandomPadder() {
-    return Math.random() < 0.5 ?
-        new SpaceRepeatingPadder(4) :
-        new StringPadder("  ");
-}
-
-// 类型为SpaceRepeatingPadder | StringPadder
-let padder: Padder = getRandomPadder();
-
-if (padder instanceof SpaceRepeatingPadder) {
-    padder; // 类型细化为'SpaceRepeatingPadder'
-}
-if (padder instanceof StringPadder) {
-    padder; // 类型细化为'StringPadder'
-}
-```
-
-`instanceof`的右侧要求是一个构造函数，TypeScript将细化为：
-
-1. 此构造函数的 `prototype`属性的类型，如果它的类型不为 `any`的话
-2. 构造签名所返回的类型的联合
-
-以此顺序。
-
-### 类型别名type
-
-用来给一个类型起个新名字。生成一个接口
-
-```ts
-type str1 = string;
-type str2 = ()=>string;   //此为函数类型形状，注意跟下面区分
-type str = str1 | str2;
-
-let s:str = "hello";
-let s1:str = () =>"heihei";   //为箭头函数
-```
-
-类型别名会给一个类型起个新名字。 类型别名有时和接口很像，但是可以作用于原始值，联合类型，元组以及其它任何你需要手写的类型。
-
-```ts
-type Name = string;
-type NameResolver = () => string;
-type NameOrResolver = Name | NameResolver;
-function getName(n: NameOrResolver): Name {
-    if (typeof n === 'string') {
-        return n;
-    }
-    else {
-        return n();
-    }
-}
-```
-
-起别名不会新建一个类型 - 它创建了一个新名字来引用那个类型。 
-
-#### 泛型
-
-同接口一样，类型别名也可以是泛型 - 我们可以添加类型变量并且在别名声明的右侧传入：
-
-```ts
-type Container<T> = { value: T };
-type Tree<T> = {
-    value: T;
-    left: Tree<T>;
-    right: Tree<T>;
-}
-```
-
-axios举例
-
-```
-import type { AxiosResponse } from 'axios';
-type ApiResponse<T = any> = {
-  success: boolean;
-  data: T;
-  code: string;
-  message: string;
-};
-type HttpResponse<T = any> = AxiosResponse<ApiResponse<T>>;
-
-type HttpResponseP<T = any> = Promise<HttpResponse<T>>;
-
-type HttpTableResponse<T = any> = HttpResponse<TableResponse<T>>;
-
-useRequest《》
-```
-
-
-
-#### type 与 interface 的区别
-
-相同点：
-
-- 都可以描述一个对象或者函数
-- 都允许拓展（extends和交叉类型）
-
-不同点：
-
-- type 可以声明基本类型别名，联合类型，元组等类型
-- type 语句中还可以使用 typeof 获取实例的类型进行赋值
-- interface 能够声明合并
-
-##### 相似的
-
-`type` 用于定义数据的类型别名。`interface` 用于定义数据的类型别名。
-
-```ts
-type User = {
-    name1: string
-    age: number
-  };
-let user:User={
-    name1:'1',
-    age:1
-}
-
-interface User {
-    name1: string
-    age: number
-  };
-let user:User={
-    name1:'1',
-    age:1
-}
-```
-
-##### 不相似的
-
-`type` 与 `interface` 都可以实现继承，但是他们的表现形式不同。
-
-```ts
-//interface extends interface
-
-interface Name {
-  name: string;
-}
-interface User extends Name {
-  age: number;
-}
-
-//type 与 type 交叉
-
-type Name = {
-  name: string;
-}
-type User = Name & { age: number  };
-
-//interface extends type
-
-type Name = {
-  name: string;
-}
-interface User extends Name {
-  age: number;
-}
-
-//type 与 interface 交叉
-
-interface Name {
-  name: string;
-}
-type User = Name & {
-  age: number;
-}
-```
-
-因为 `type` 作为类型的别名，因此可以轻易的实现声明基本类型别名，联合类型，元组等类型，而 interface 则不行。
-
-```ts
-// 基本类型别名
-type Name = string
-
-// 联合类型,
-interface Dog {
-    a:number
-}
-interface Cat {
-    b:string
-}
-type Pet = Dog | Cat
-let c:Pet={a:1}
-
-// 具体定义数组每个位置的类型
-type PetList = [Dog, Pet]
-```
-
-interface 能够声明合并，而 type 不行（会报重复声明错误）。
-
-```ts
-interface User {
-    name: string,
-    age: number,
-}
-interface User {
-    sex: string,
-}
-let a:User={
-    name:'q',
-    age:1,
-    sex:'men'
-}
-type guest = {
-    name: string,
-    age: number,
-}
-type guest = {
-    sex: string,
-}
-//type 报错
-```
-
-### InstanceType 
-
-InstanceType 是一个内置的工具类型，用于获取一个类的实例类型。
-
-```
-class MyClass {
-  x = 0;
-  y = 0;
-}
- 
-type Instance = InstanceType<typeof MyClass>; // MyClass的实例类型
- 
-let instance: Instance = new MyClass(); // 这是正确的
-```
-
-### Record
-
-**Record<BreakPoint, number>**‌ 是一种类型定义，用于表示一个键为 BreakPoint 类型、值为 number 类型的记录。在编程中，这种类型定义通常用于**描述具有特定键值对的数据结构**。
-
-#### 定义和用途
-
-在 TypeScript 中，`Record` 是一个泛型接口，用于表示一个对象，其属性名是一个联合类型，而属性值则是固定的类型。例如，`Record<BreakPoint, number>` 表示一个对象，其键是 `BreakPoint` 类型的枚举值，值是 `number` 类型。这种类型定义常用于需要明确键和值类型的场景，例如配置项、状态管理等。
-
-#### 示例
-
-假设有一个枚举类型 `BreakPoint`：
-
-```
-enum BreakPoint {
-  BP1,
-  BP2,
-  BP3
-}
-```
-
-使用 `Record<BreakPoint, number>` 可以定义一个对象，其键是 `BreakPoint` 的枚举值，值是 `number` 类型：
-
-```
-const config: Record<BreakPoint, number> = {
-  [BreakPoint.BP1]: 100,
-  [BreakPoint.BP2]: 200,
-  [BreakPoint.BP3]: 300
-};
-```
-
-在这个例子中，`config` 对象有三个属性：`BP1`、`BP2` 和 `BP3`，分别对应值为 100、200 和 300。这种结构使得代码更加清晰和易于管理。
-
-# 编程题
-
-## 代码合集收藏
-
-https://mp.weixin.qq.com/s/w9iLd56H4xyXSlRwiKs04g
-
-## 异步
-
-### **async**
-
-```js
-//在async中将异步的代码同步执行
-var a = async () => {
-  console.log(1);
-  function fn(){
-    setTimeout(()=>{
-        console.log(5)
-    })
-  }
-  await fn()
-  // await的Promise会同步执行完
-  await的 new Promise((resolved) => {
-    console.log(2);
-    resolved(3);
-  }).then((v) => {
-    console.log(v);
-  });
-  console.log(4);
-};
-a();
-```
-
-```
-1 ​​​​​at ​quokka.js:2:2​
-
-2 ​​​​​at ​quokka.js:10:4​
-
-3 ​​​​​at ​​​v​​​ ​quokka.js:13:4​
-
-4 ​​​​​at ​quokka.js:16:2​
-
-5 ​​​​​at ​quokka.js:5:8​
-```
-
-```js
-async function f1(){
-  console.log(2);
-  await f2()
-  console.log(6);
-}
-async function f2(){
-  console.log(3);
-}
-console.log(1);
-setTimeout(() => {
-  console.log(8);
-}, 0);
-f1()
-new Promise((resolved)=>{
-  console.log(4);
-  resolved(7)
-}).then((res)=>{
-  console.log(res);
-})
-console.log(5);
-
-很多人以为await会一直等待之后的表达式执行完之后才会继续执行后面的代码，实际上await会产生一个微任务(Promise.then是微任务)。await后面的函数会执行一遍，然后就会跳出整个async函数来执行后面js栈的代码。等本轮事件循环执行完了之后又会跳回到async函数中执行剩下的代码
-
-```
-
-
-
-```
-1 ​​​​​at ​​​​​​quokka.js:9:1​
-
-2 ​​​​​at ​​​​​​quokka.js:2:3​
-
-3 ​​​​​at ​​​​​​quokka.js:7:3​
-
-4 ​​​​​at ​​​​​​quokka.js:15:3​
-
-5 ​​​​​at ​​​​​​quokka.js:20:1​
-
-6 ​​​​​at ​​​​​​quokka.js:4:3​
-
-7 ​​​​​at ​​​​​​​​res​​​ ​quokka.js:18:3​
-
-8 ​​​​​at ​​​​​​quokka.js:11:3​
-```
-
-### **promise**
-
-```js
-let a = new Promise((resolve, reject) => {
-  console.log(1);
-  setTimeout(() => {
-    console.log(2);
-    resolve(3)
-}, 1000);
-});
-a.then((index) => {
-  console.log(index);
-});
-console.log(a);
-```
-
-```
-1 ​​​​​at ​​​​​​quokka.js:2:3​
-
-Promise { <pending> }
-  ​​​​​at ​​​​​​​​a​​​ ​quokka.js:11:1​
-
-2 ​​​​​at ​​​​​​quokka.js:4:5​
-
-3 ​​​​​at ​​​​​​​​index​​​ ​quokka.js:9:3​
-```
-
-```js
-new Promise((resolved,reject)=>{
-  console.log(1);
-  resolved(2)
-  console.log(3);
-  resolved(4)
-  console.log(5);
-  reject(4)
-}).then((res)=>{
-  console.log(res);
-}).catch((res)=>{
-  console.log(res);
-})
-
-JavaScript具有"从头到尾"的概念。 除非抛出错误/return，否则函数将一直执行直到return语句或其结尾。
-```
-
-```
-1 ​​​​​at ​​​​​​quokka.js:2:3​
-
-3 ​​​​​at ​​​​​​quokka.js:4:3​
-
-5 ​​​​​at ​​​​​​quokka.js:6:3​
-
-2 ​​​​​at ​​​​​​​​res​​​ ​quokka.js:9:3​
-```
-
-```js
-new Promise((resolved, reject) => {
-  throw new Error('x 必须为正数');
-}).then((res) => {
-  console.log(res);
-}).catch((res) => {
-  console.log(res);
-})
-```
-
-```
-[Error: x 必须为正数] ​​​​​at ​​​​​​​​res​​​ ​quokka.js:6:3​
-```
-
-## 时间空间复杂度
-
-log：https://blog.csdn.net/weixin_39888180/article/details/111268391
-
-### 时间复杂度
-
-其实就是一个函数，用大 O 表示， 比如 O(1)、 O(n)...
-
-它的作用就是用来`定义描述算法的运行时间`
-
-- **O(1)**
-
-```
-    let i = 0
-    i += 1
-复制代码
-```
-
-- **O(n)：** 如果是 O(1) + O(n) 则还是 O(n)
-
-```
-    for (let i = 0; i < n; i += 1) {
-      console.log(i)
-    }
-复制代码
-```
-
-- **O(n^2)：** O(n) * O(n), 也就是双层循环，自此类推：O(n^3)...
-
-```
-    for (let i = 0; i < n; i += 1) {
-      for (let j = 0; j < n; j += 1) {
-        console.log(i, j)
-      }
-    }
-复制代码
-```
-
-- **O(logn)：** 就是求 log 以 2 为底的多少次方等于 n
-
-```
-    // 这个例子就是求2的多少次方会大于i，然后就会结束循环。 这就是一个典型的 O(logn)
-    let i = 1
-    while (i < n) {
-      console.log(i)
-      i *= 2
-    }
-复制代码
-```
-
-###  空间复杂度
-
-和时间复杂度一样，空间复杂度也是用大 O 表示，比如 O(1)、 O(n)...
-
-它用来`定义描述算法运行过程中临时占用的存储空间大小`
-
-> 占用越少 代码写的就越好
-
-- **O(1)：** 单个变量，所以占用永远是 O(1)
-
-```
-    let i = 0
-    i += 1
-复制代码
-```
-
-- **O(n)：** 声明一个数组， 添加 n 个值， 相当于占用了 n 个空间单元
-
-```
-    const arr = []
-    for (let i = 0; i < n; i += 1) {
-      arr.push(i)
-    }
-复制代码
-```
-
-- **O(n^2)：** 类似一个矩阵的概念，就是二维数组的意思
-
-```
-    const arr = []
-    for (let i = 0; i < n; i += 1) {
-      arr.push([])
-      for (let j = 0; j < n; j += 1) {
-        arr[i].push(j)
-      }
-    }
-```
-
-### 查找
-
-#### 二分法
-
-二分法查找是一种速度非常快的算法，但是它有固定的应用范围。仅当列表是有序的时候，二分查找才管用。
-
-  > 采用二分法，取出中间数，数组每次和中间数比较，小的放到左边，大的放到右边
-
-### 排序
-
-#### 快速排序
-
-  - （1）在数据集之中，找一个基准点
-  - （2）建立两个数组，分别存储左边和右边的数组
-  - （3）利用递归进行下次比较
-
-```js
-var arr = [3, 1, 4, 6, 5, 7, 2];
-
-function quickSort(arr) {
-    if(arr.length == 0) {
-        return [];    // 返回空数组
-    }
-
-    var cIndex = Math.floor(arr.length / 2);
-    var c = arr.splice(cIndex, 1);
-    var l = [];
-    var r = [];
-
-    for (var i = 0; i < arr.length; i++) {
-        if(arr[i] < c) {
-            l.push(arr[i]);
-        } else {
-            r.push(arr[i]);
-        }
-    }
-
-    return quickSort(l).concat(c, quickSort(r));
-}
-
-console.log(quickSort(arr));
-```
-
-## 深拷贝与浅拷贝
-
-https://mp.weixin.qq.com/s/BQ3_RJQcCZiXphMoyMRaTg
-
-基本数据类型的特点：直接存储在栈(stack)中的数据
-引用数据类型的特点：存储的是该对象在栈中引用地址，真实的数据存放在堆内存里。引用数据类型在栈中存储了指针，指针指向堆中该实体的起始地址
-
-浅拷贝只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存。但深拷贝会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象。
-
-#### 实现浅拷贝
-
-浅拷贝只拷贝基本数据的内容，引用数据虽然栈不同但会共用一个堆
-
-##### Object.assign()
-
-![图片描述](https://segmentfault.com/img/bVbrl7t?w=541&h=138)
-
-注意：当object只有一层的时候，是深拷贝
-
-##### 展开运算符...
-
-```
-let obj1 = { name: 'Kobe', address:{x:100,y:100}}
-let obj2= {... obj1}
-obj1.address.x = 200;
-obj1.name = 'wade'
-console.log('obj2',obj2) // obj2 { name: 'Kobe', address: { x: 200, y: 100 } }
-```
-
-##### concat()
-
-```
-let arr = [1, 3, {
-    username: 'kobe'
-    }];
-let arr2 = arr.concat();    
-arr2[2].username = 'wade';
-console.log(arr); //[ 1, 3, { username: 'wade' } ]
-```
-
-##### slice()
-
-```
-let arr =[1,{username:'kobe'}]
-let arr1 = arr.slice();
-arr1[1].username ='wade'
-console.log(arr); //[ 1, { username: 'wade' } ]
-```
-
-#### 实现深拷贝
-
-![img](https://image-static.segmentfault.com/809/484/809484289-5cb44d922e659_fix732)
-
-```js
-function checkedType(e) {
-  return Object.prototype.toString.call(e).slice(8, -1);
-}
-
-function clone(target) {
-  let result;
-  if (checkedType(target) === 'Object') {
-    result = {};
-  } else if (checkedType(target) === 'Array') {
-    result = [];
-  } else {
-    return target;
-  }
-
-  for (let i in target) {
-    if (
-      checkedType(target[i]) === 'Object' ||
-      checkedType(target[i]) === 'Array'
-    ) {
-      result[i] = clone(target[i]);
-    } else {
-      result[i] = target[i];
-    }
-  }
-  return result;
-}
-let a = { a: { b: 1 } };
-let b = clone(a);
-b.a.b = 2;
-console.log(b);
-
-```
-
-
-
-```js
-function deepClone(obj, newObj) {
-  var newObj = newObj || {};
-  for (let key in obj) {
-    if (typeof obj[key] == 'object') {
-      let isArray = Array.isArray(obj[key]);//判断是否数组
-      newObj[key] = (isArray == true ? [] : {})
-      deepClone(obj[key], newObj[key]);
-    } else {
-      newObj[key] = obj[key]
-    }
-  }
-  console.log(newObj);
-  return newObj;
-}
-
-let a1 = { a: { b: 1 } }
-let a2 = deepClone(a1);
-a1.a.b = 2;
-console.log(a2.a);
-```
-
-
-
-
-```js
-function deepClone(source) {
-    let target;
-    if (typeof source === 'object') {
-      target = Array.isArray(source) ? [] : {}
-      for (let key in source) {
-        if (source.hasOwnProperty(key)) {
-          if (typeof source[key] !== 'object') {
-            target[key] = source[key]
-          } else {
-            target[key] = deepClone(source[key])
-          }
-        }
-      }
-    } else {
-      target = source
-    }
-    return target
-  }
-  let a ={name:['a','b'],age:[10,15],book:{1:[2,3,k]}}
-  let b = deepClone(a)
-  console.log(a)
-  console.log(a == b)
-  let c = a
-  console.log(c)
-  console.log(c == a)
-```
-
-```js
-JSON.parse(JSON.stringify(xxx))
-
-我们在使⽤ JSON.parse(JSON.stringify(xxx))时应该注意⼀下⼏点：
-1、如果obj⾥⾯存在时间对象，JSON.parse(JSON.stringify(obj))之后，时间对象变成了字符串。
-2、如果obj⾥有RegExp、Error对象，则序列化的结果将只得到空对象。
-3、如果obj⾥有函数，undefined，则序列化的结果会把函数， undefined丢失。
-4、如果obj⾥有NaN、Infinity和-Infinity，则序列化的结果会变成null。
-5、JSON.stringify()只能序列化对象的可枚举的⾃有属性。如果obj中的对象是有构造函数⽣成的，则使⽤JSON.parse(JSON.stringify(obj))
-深拷贝后，会丢弃对象的constructor。
-6、如果对象中存在循环引⽤的情况也⽆法正确实现深拷贝。
-```
-
-## 递归
-
-### 阶乘
-
-```js
-  const factorial = function(n) {
-      if (n <= 1) {
-          return 1;
-      }
-      return n * factorial(n - 1);
-  }
-```
-
-f(6) = n * f(5)，所以 f(6) 需要拆解成 f(5) 子问题进行求解，以此类推 f(5) = n * f(4) ，也需要进一步拆分 ... 直到 f(1)，「这是递的过程。」 f(1) 解决后，依次可以解决f(2).... f(n)最后也被解决，「这是归的过程。」
-
-归无非就是把问题拆解成具有相同解决思路的子问题，直到最后被拆解的子问题不能够拆分，这个过程是“递”。当解决了最小粒度可求解的子问题后，在“归”的过程中顺其自然的解决了最开始的问题。
-
-  **复杂度分析**
-
-  - 空间复杂度为 O(n)
-  - 时间复杂度 O(2^n)
-
-```
-  总时间 = 子问题个数 * 解决一个子问题需要的时间
-```
-
-  - 子问题个数即递归树中的节点总数 2^n
-  - 解决一个子问题需要的时间，因为只有一个加法操作 `fib(n-1) + fib(n-2)` ，所以解决一个子问题的时间为 `O(1)`
-
-  二者相乘，得出算法的时间复杂度为 `O(2^n)`
-
-### 实现深拷贝
-
-![img](https://image-static.segmentfault.com/809/484/809484289-5cb44d922e659_fix732)
-
-```js
-function deepClone(obj, newObj) {
-  var newObj = newObj || {};
-  for (let key in obj) {
-    if (typeof obj[key] == 'object') {
-      let isArray = Array.isArray(obj[key]);//判断是否数组
-      newObj[key] = (isArray == true ? [] : {})
-      deepClone(obj[key], newObj[key]);
-    } else {
-      newObj[key] = obj[key]
-    }
-  }
-  console.log(newObj);
-  return newObj;
-}
-
-let a1 = { a: { b: 1 } }
-let a2 = deepClone(a1);
-a1.a.b = 2;
-console.log(a2.a);
-```
-
-
-
-
-```js
-function deepClone(source) {
-    let target;
-    if (typeof source === 'object') {
-      target = Array.isArray(source) ? [] : {}
-      for (let key in source) {
-        if (source.hasOwnProperty(key)) {
-          if (typeof source[key] !== 'object') {
-            target[key] = source[key]
-          } else {
-            target[key] = deepClone(source[key])
-          }
-        }
-      }
-    } else {
-      target = source
-    }
-    return target
-  }
-  let a ={name:['a','b'],age:[10,15],book:{1:[2,3,k]}}
-  let b = deepClone(a)
-  console.log(a)
-  console.log(a == b)
-  let c = a
-  console.log(c)
-  console.log(c == a)
-```
-
-```js
-JSON.parse(JSON.stringify(xxx))
-
-我们在使⽤ JSON.parse(JSON.stringify(xxx))时应该注意⼀下⼏点：
-1、如果obj⾥⾯存在时间对象，JSON.parse(JSON.stringify(obj))之后，时间对象变成了字符串。
-2、如果obj⾥有RegExp、Error对象，则序列化的结果将只得到空对象。
-3、如果obj⾥有函数，undefined，则序列化的结果会把函数， undefined丢失。
-4、如果obj⾥有NaN、Infinity和-Infinity，则序列化的结果会变成null。
-5、JSON.stringify()只能序列化对象的可枚举的⾃有属性。如果obj中的对象是有构造函数⽣成的，则使⽤JSON.parse(JSON.stringify(obj))
-深拷贝后，会丢弃对象的constructor。
-6、如果对象中存在循环引⽤的情况也⽆法正确实现深拷贝。
-```
-
-### 树形结构
-
-```js
-const input = [
-  {
-    name: "浙江",
-    children: [
-      {
-        name: "杭州",
-        children: [
-          { name: "余杭区" },
-          { name: "上城区" },
-          { name: "下城区" },
-          { name: "西湖区" },
-          { name: "拱墅区" },
-        ],
-      },
-      {
-        name: "绍兴",
-        children: [
-          { name: "柯桥区" },
-          { name: "越城区" },
-          { name: "上虞区" },
-          { name: "新昌县" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "湖北",
-    children: [
-      {
-        name: "武汉",
-        children: [
-          { name: "江岸区" },
-          { name: "江汉区" },
-          { name: "硚口区" },
-          { name: "汉阳区" },
-          { name: "武昌区" },
-          { name: "青山区" },
-          { name: "洪山区" },
-        ],
-      },
-    ],
-  },
-];
-```
-
-#### 获取树的叶子节点并赋值到树结构中
-
-```js
-const input = [
-  {
-    name: "浙江",
-    children: [
-      {
-        name: "杭州",
-        children: [
-          { name: "余杭区" },
-          { name: "上城区" },
-          { name: "下城区" },
-          { name: "西湖区" },
-          { name: "拱墅区" },
-        ],
-      },
-      {
-        name: "绍兴",
-        children: [
-          { name: "柯桥区" },
-          { name: "越城区" },
-          { name: "上虞区" },
-          { name: "新昌县" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "湖北",
-    children: [
-      {
-        name: "武汉",
-        children: [
-          { name: "江岸区" },
-          { name: "江汉区" },
-          { name: "硚口区" },
-          { name: "汉阳区" },
-          { name: "武昌区" },
-          { name: "青山区" },
-          { name: "洪山区" },
-        ],
-      },
-    ],
-  },
-];
-function process(input) {
-  function getLeafCountTree(arr) {
-    if (!arr.children) {
-      return 1;
-    } else {
-      arr.leafCount = 0;
-      for (var i = 0; i < arr.children.length; i++) {
-        arr.leafCount = arr.leafCount + getLeafCountTree(arr.children[i]);
-      }
-      //需要将次层的叶子节点return给父级
-      return arr.leafCount;
-    }
-  }
-  function finalQuery() {
-    //因为是数组，不是树形结构，需要以树形结构处理
-    for (var r = 0; r < input.length; r++) {
-      getLeafCountTree(input[r]);
-    }
-  }
-  finalQuery();
-  return input
-}
-console.log(process(input));
-
-const output = [
-  {
-    name: "浙江",
-    path: "浙江",
-    leafCount: 9,
-    children: [
-      {
-        name: "杭州",
-        path: "浙江-杭州",
-        leafCount: 5,
-        children: [
-          { name: "余杭区", path: "浙江-杭州-余杭区" },
-          { name: "上城区", path: "浙江-杭州-上城区" },
-          { name: "下城区", path: "浙江-杭州-下城区" },
-          { name: "西湖区", path: "浙江-杭州-西湖区" },
-          { name: "拱墅区", path: "浙江-杭州-拱墅区" },
-        ],
-      },
-      {
-        name: "绍兴",
-        path: "浙江-绍兴",
-        leafCount: 4,
-        children: [
-          { name: "柯桥区", path: "浙江-绍兴-柯桥区" },
-          { name: "越城区", path: "浙江-绍兴-越城区" },
-          { name: "上虞区", path: "浙江-绍兴-上虞区" },
-          { name: "新昌县", path: "浙江-绍兴-新昌县" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "湖北",
-    path: "湖北",
-    leafCount: 7,
-    children: [
-      {
-        name: "武汉",
-        path: "湖北-武汉",
-        leafCount: 7,
-        children: [
-          { name: "江岸区", path: "湖北-武汉-江岸区" },
-          { name: "江汉区", path: "湖北-武汉-江汉区" },
-          { name: "硚口区", path: "湖北-武汉-硚口区" },
-          { name: "汉阳区", path: "湖北-武汉-汉阳区" },
-          { name: "武昌区", path: "湖北-武汉-武昌区" },
-          { name: "青山区", path: "湖北-武汉-青山区" },
-          { name: "洪山区", path: "湖北-武汉-洪山区" },
-        ],
-      },
-    ],
-  },
-];
-```
-
-#### 根据id，拿到id数组
-
-```js
-// (tree为目标树，targetId为目标节点id)
-function getNodeRoute(tree, targetId) {
-  let nodePathArray = []
-  let fn = (tree, targetId) => {
-    for (let index = 0; index < tree.length; index++) {
-      if (tree[index].children) {
-        let endRecursiveLoop = fn(tree[index].children, targetId)
-        if (endRecursiveLoop) {
-          nodePathArray.push(tree[index].name)
-          return true
-        }
-      }
-      if (tree[index].name === targetId) {
-        nodePathArray.push(tree[index].name)
-        return true
-      }
-    }
-  }
-  fn(tree, targetId)
-  return nodePathArray;
-}
-
-getNodeRoute(input, '余杭区')
-console.log(getNodeRoute(input, '余杭区').reverse());
-//[ '浙江', '杭州', '余杭区' ]
-```
-
-####   案例
-
-- 使用递归实现`getElementsByClassName`
-
-  ```js
-  let arr = [];
-     function byClass(node, className, arr){
-         //得到传入节点的所有子节点
-         var lists = node.childNodes;
-         for(var i = 0;i< lists.length;i++){
-             //判断是否有相同className元素
-             if(arr[i],className == className){
-                 arr.push(arr[i]);
-             }
-             //判断子节点是否还有子节点
-             if(arr[i].childNodes.length > 0){
-                 byClass(arr[i],className,arr);
-             }
-         }
-     }
-  复制代码
-  ```
-
-- 有一堆桃子，每天吃掉一半，挑出一个坏的扔掉，第6天的时候发现还剩1个桃子，问原来有多少个桃子。
-
-
-```js
-  function fn(n) {
-    if (n === 1) {
-      return 1
-    }
-    var a = (fn(n - 1) + 1) * 2
-    return a
-  }
-  console.log(fn(2)) //190
-```
 
