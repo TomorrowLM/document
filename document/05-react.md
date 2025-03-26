@@ -116,7 +116,9 @@ constructor(props) {
 
 ### render
 
-它是一个纯函数，其中不应该包含任何副作用或改变状态的操作。 第一次开始渲染，创建虚拟dom，当render执行完，内存中就有了完整的虚拟DOM了。
+> 它是一个纯函数，其中不应该包含任何副作用或改变状态的操作。
+
+创建虚拟dom，当render执行完，内存中就有了完整的虚拟DOM了
 
 ### componentDidMount
 
@@ -1104,6 +1106,55 @@ export default class MyInput extends React.Component {
 
   但是，你可以在函数式组件中使用ref属性，就像你引用DOM元素和类组件一样。
 
+### useRef
+
+**只能在函数组件中使用**
+
+useRef 用法类似于React.createRef()，区别：https://zhuanlan.zhihu.com/p/105276393
+
+- 像一个变量, 类似于 this , 它就像一个盒子, 你可以存放任何东西，useRef 可以很好的解决闭包带来的不方便性
+- **createRef 每次渲染都会返回一个新的引用，而 useRef 每次都会返回相同的引用**
+- ref 对象在组件的**整个生命周期内保持不变**
+
+```jsx
+import React, { createRef, useEffect, useState } from "react";
+import { Button, Input } from "antd";
+const Different = () => {
+  const [renderIndex, setRenderIndex] = React.useState(1);
+  const refFromUseRef = React.useRef();
+  const refFromCreateRef = createRef();
+  //renderIndex改变后再次render，refFromUseRef.current的值是不会重置
+  if (!refFromUseRef.current) {
+    refFromUseRef.current = renderIndex;
+  }
+  if (!refFromCreateRef.current) {
+    refFromCreateRef.current = renderIndex;
+  }
+  return (
+    <div>
+      <p>Current render index: {renderIndex}</p>
+      <p>
+        <b>refFromUseRef</b> value: {refFromUseRef.current}
+      </p>
+      <p>
+        <b>refFromCreateRef</b> value:{refFromCreateRef.current}
+      </p>
+      <Button onClick={() => setRenderIndex((prev) => prev + 1)}>
+        Cause re-render
+      </Button>
+      {refFromCreateRef.current
+        ? "可以看出createRef 每次渲染都会返回一个新的引用，而 useRef 每次都会返回相同的引用"
+        : ""}
+    </div>
+  );
+};
+
+export default Different;
+
+```
+
+
+
 ### forwardRef 转发/传递
 
 https://github.com/pro-collection/interview-question/issues/741
@@ -1270,36 +1321,6 @@ function App () {
 export default App
 ```
 
-### useRef
-
-**只能在函数组件中使用**
-
-useRef 用法类似于React.createRef()，区别：https://zhuanlan.zhihu.com/p/105276393
-
-- 像一个变量, 类似于 this , 它就像一个盒子, 你可以存放任何东西，useRef 可以很好的解决闭包带来的不方便性
-- **createRef 每次渲染都会返回一个新的引用，而 useRef 每次都会返回相同的引用**
-- ref 对象在组件的**整个生命周期内保持不变**
-
-```jsx
-import React, { useRef } from "react";
-export default function UseRefHookExample() {
-  let inputRef = useRef(null);
-  const handleClick = () => {
-    inputRef.current.focus();
-  };
-  return (
-    <div>
-      使用 useRef() hook:
-      <br />
-      <input type="text" ref={inputRef} />
-      <button onClick={handleClick}>
-        Click
-      </button>
-    </div>
-  );
-}
-```
-
 ### findDOMNode()
 
 当组件加载到页面上之后（mounted），你都可以通过 `react-dom` 提供的 `findDOMNode()` 方法拿到组件对应的 DOM 元素。
@@ -1315,46 +1336,7 @@ componentDidMound() {
 
 `findDOMNode()` 不能用在无状态组件上。
 
-
-
 ## 事件处理
-
-- react 事件的命名采用小驼峰式（camelCase），而不是纯小写。
-
-- 使用 JSX 语法时你需要传入一个函数作为事件处理函数，而不是一个字符串。
-
-- 不能通过返回 `false` 的方式阻止默认行为。你必须显式的使用 `preventDefault`
-
-  ```jsx
-  class Toggle extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {isToggleOn: true};
-  
-      // 为了在回调中使用 `this`，这个绑定是必不可少的
-      this.handleClick = this.handleClick.bind(this);
-    }
-  
-    handleClick() {
-      this.setState(state => ({
-        isToggleOn: !state.isToggleOn
-      }));
-    }
-  
-    render() {
-      return (
-        <button onClick={this.handleClick}>
-          {this.state.isToggleOn ? 'ON' : 'OFF'}
-        </button>
-      );
-    }
-  }
-  
-  ReactDOM.render(
-    <Toggle />,
-    document.getElementById('root')
-  );
-  ```
 
 在 JavaScript 中，class 的方法默认不会[绑定](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_objects/Function/bind) `this`。如果你忘记绑定 `this.handleClick` 并把它传入了 `onClick`，当你调用这个函数的时候 `this` 的值为 `undefined`。
 
@@ -1429,195 +1411,6 @@ class ErrorBoundary extends React.Component {
 
 React在解析所有的标签的时候，是以标签的首字母来区分的，如果标签的首字母是小写，那么就按照 普通的 HTML 标签来解析，如果 首字母是大写，则按照 组件的形式去解析渲染
 
-## 组件渲染机制
-
-`Component`在 `state`改变,`props`改变,调用`this.setState({...})`，的时候都会进行渲染
-
-- 强制React组件重新渲染
-
-  **使用React的`forceUpdate`函数**
-
-  这是一个最明显的方式。在React类组件中，你可以通过调用这个方法，强制重渲染一个组件：
-
-  ```javascript
-  this.forceUpdate();
-  ```
-
-  **在React hooks中强制更新组件**
-
-  在React hooks中，`forceUpdate`函数是无法使用的。你可以使用如下方式强制更新组件，并且不更改组件的state：
-
-  ```javascript
-  const [state, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  ```
-
-- `shouldComponentUpdate`
-
-  ```jsx
-  shouldComponentUpdate(nextProps,nextState) {    
-      if(this.state.name === nextState.name) {        
-          return false    
-      }else {        
-          return true    
-      }
-  }
-  ```
-
-- 通过memo来判断指定的参数变化更新组件
-
-- **componentWillReciveProps**
-
-### 避免不必要的render
-
-#### PureComponent
-
-##### shouldComponentUpdate模拟
-
-https://blog.csdn.net/deng1456694385/article/details/88746797
-
-```jsx
-class demo extent Component {
-    state = {
-        name: ''
-    }
-    componentDidMount() {
-        this.setState({name: ''})
-    }
-    render() {
-        console.log('render')
-        return <div>haha</div>
-    }
-}
-```
-
-上面的组件会在`this.setState`调用后就会重新传染一次,但是我们可以看出`name`状态并没有没被我们用到,也没有改变,这种渲染就是无效渲染,所以为了优化我们通常会使用钩子函数`shouldComponentUpdate`来做一些逻辑判断,来确定是否要重新`render`一次
-
-```jsx
-class demo extent Component {    
-    state = {        
-        name: ''    
-    }
-    componentDidMount() {	
-        this.setState({name: ''})
-    }
-    shouldComponentUpdate(nextProps,nextState) {    
-        if(this.state.name === nextState.name) {        
-            return false    
-        }else {        
-            return true    
-        }
-    }
-	render <div>haha</div>
-}
-```
-
-这样就可以避免无效渲染,优化性能,但是如果这种判断逻辑多到一定程度,光判断逻辑就很复杂,而且每次都要判断也会影响性能,所以才有了 `PureComponent`，**`PureComponent`的区别在于相当于自己写了一个`shouldComponentUpdate`钩子函数处理, 对`props`和`state`进行浅比较,所谓浅比较就是之比较内部第一层的各个属性的值是否相同,像对象和数组这种数据类型,如果只改变内部的元素,就不会造成渲染**
-
-##### PureComponent的浅比较
-
-```
-if (this._compositeType === CompositeTypes.PureClass) {
-	shouldUpdate = !shallowEqual(prevProps, nextProps) || ! shallowEqual(in st.state, nextState);
-}
-```
-
-浅比较通过一个`shallowEqual`函数来完成：
-
-```js
-function is(x, y) {
-  if (x === y) {
-    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-  } else {
-    return x !== x && y !== y;
-  }
-}
-function shallowEqual(objA: mixed, objB: mixed): boolean {
-  // 首先对基本数据类型的比较
-  // !! 若是同引用便会返回 true
-  //其中is函数是自己实现的一个Object.is的功能，排除了===两种不符合预期的情况：
-  // +0 === -0  // true
-  // NaN === NaN // false
-  if (is(objA, objB)) {
-    return true;
-  }
-  // 只有一种情况是误判的，那就是object,所以在判断两个对象都不是object
-  // 之后，就可以返回false了
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-    return false;
-  }
-  // 过滤掉基本数据类型之后，就是对对象的比较了
-  const keysA = Object.keys(objA);
-  const keysB = Object.keys(objB);
-
-  // 首先拿出key值，对key的长度进行对比
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // key相等的情况下，在去循环比较
-  for (let i = 0; i < keysA.length; i++) {
-    // key值相等的时候
-    // 借用原型链上真正的 hasOwnProperty 方法，判断ObjB里面是否有A的key的key值
-    // 属性的顺序不影响结果也就是{name:'daisy', age:'24'} 跟{age:'24'，name:'daisy' }是一样的
-    // 最后，对对象的value进行一个基本数据类型的比较，返回结果
-    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-      return false;
-    }
-  }
-  return true;
-}
-```
-
-##### Component vs PureComponent 总结
-
-PureComponent相较于Component区别就是,对props和state默认进行判断来确定是否渲染,从而减少无效渲染次数. 大部分情况下直接用PureComponent比较好可以提高性能,但是如果遇到需要频繁修改值重新渲染的组件,用Component比较好,因为PureComponent频繁的判断也会影响性能.
-
-#### memo
-
-**针对函数组件的**,减少组件的不必要更新。 `React.memo` 仅检查 props 变更。如果函数组件被 `React.memo` 包裹，且其实现中拥有 [`useState`](https://zh-hans.reactjs.org/docs/hooks-state.html)，[`useReducer`](https://zh-hans.reactjs.org/docs/hooks-reference.html#usereducer) 或 [`useContext`](https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext) 的 Hook，当 state 或 context 发生变化时，它仍会重新渲染。 
-
-```js
-const TextCell = memo(function(props:any) {
-  console.log('我重新渲染了')
-  return (
-    <p onClick={props.click}>ffff</p>
-  )
-})
-
-//父组件
-const fatherComponent = () => {
-const [number,setNumber] = useState(0);
- return(
-    <div>
-      模块{number}
-      <TextCell/>
-      <Button onClick={()=>setNumber(number => number + 1)}>加加加</Button>
-    </div>
-  )
-}
-```
-
-在这里如果没有用到memo 每次父组件重新setNumber,子组件都会重新渲染一次,加上了后**只会在初始化的时候渲染(useMemo会在页面初始化的时候执行一次,并把执行的结果缓存一份)**,减少了子组件渲染的次数
-
-默认情况下其只会对复杂对象做**浅层对比**，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现。 
-
-```jsx
-function MyComponent(props) {
-  /* 使用 props 渲染 */
-}
-function areEqual(prevProps, nextProps) {
-  /*
-  如果把 nextProps 传入 render 方法的返回结果与
-  将 prevProps 传入 render 方法的返回结果一致则返回 true，
-  否则返回 false
-  */
-}
-export default React.memo(MyComponent, areEqual);
-```
-
-
-
 ## 状态组件
 
 #### 状态组件对比
@@ -1635,8 +1428,8 @@ export default React.memo(MyComponent, areEqual);
 
 问题来了：什么时候使用 有状态组件，什么时候使用无状态组件呢？？？
 
-  1. 如果一个组件需要存放自己的私有数据，或者需要在组件的不同阶段执行不同的业务逻辑，此时，非常适合用 class 创建出来的有状态组件；
- 2. 如果一个组件，只需要根据外界传递过来的 props，渲染固定的页面结构就完事儿了，此时，非常适合使用 function 创建出来的 无状态组件；（使用无状态组件的小小好处： 由于剔除了组件的生命周期，所以，运行速度会相对快一丢丢）
+    1. 如果一个组件需要存放自己的私有数据，或者需要在组件的不同阶段执行不同的业务逻辑，此时，非常适合用 class 创建出来的有状态组件；
+   2. 如果一个组件，只需要根据外界传递过来的 props，渲染固定的页面结构就完事儿了，此时，非常适合使用 function 创建出来的 无状态组件；（使用无状态组件的小小好处： 由于剔除了组件的生命周期，所以，运行速度会相对快一丢丢）
 
 #### class组件
 
@@ -1705,7 +1498,7 @@ export default class Hello2 extends React.Component {
 
 #### 函数组件
 
-函数/无状态组件是一个纯函数，它可接受接受参数，并返回react元素。这些都是没有任何副作用的纯函数。这些组件没有状态或生命周期方法
+函数/无状态组件是一个纯函数，它可接受接受参数，并返回react元素。这些都是**没有任何副作用的纯函数**。这些组件没有状态或生命周期方法
 
 ```js
 // 组件的首字母必须是大写
@@ -1717,6 +1510,204 @@ function Hello(props) {
   </div>
 }
 ```
+
+
+
+## 组件渲染
+
+### 渲染条件
+
+#### 初始渲染
+
+当组件首次被挂载到DOM中时，`render`方法会被调用来生成初始的UI结构，通常发生在`componentDidMount`生命周期方法之前。
+
+#### props或state的变化
+
+组件的props或state发生变化，React会重新调用`render`方法来根据新的props和state生成新的UI结构。
+
+#### 父组件重新渲染
+
+#### 强制更新
+
+在React类组件中，你可以通过调用这个方法，强制重渲染一个组件：
+
+```javascript
+this.forceUpdate();
+```
+
+#### 使用React Hooks时的变化
+
+在React函数组件中，`forceUpdate`函数是无法使用的。你可以使用如下方式强制更新组件，并且不更改组件的state：
+
+```javascript
+const [state, updateState] = React.useState();
+const forceUpdate = React.useCallback(() => updateState({}), []);
+```
+
+### 判断更新
+
+#### shouldComponentUpdate
+
+https://blog.csdn.net/deng1456694385/article/details/88746797
+
+```jsx
+class demo extent Component {
+    state = {
+        name: ''
+    }
+    componentDidMount() {
+        this.setState({name: ''})
+    }
+    render() {
+        console.log('render')
+        return <div>haha</div>
+    }
+}
+```
+
+上面的组件会在`this.setState`调用后就会重新传染一次,但是我们可以看出`name`状态并没有没被我们用到,也没有改变,这种渲染就是无效渲染,所以为了优化我们通常会使用钩子函数`shouldComponentUpdate`来做一些逻辑判断,来确定是否要重新`render`一次
+
+```jsx
+class demo extent Component {    
+    state = {        
+        name: ''    
+    }
+    componentDidMount() {	
+        this.setState({name: ''})
+    }
+    shouldComponentUpdate(nextProps,nextState) {    
+        if(this.state.name === nextState.name) {        
+            return false    
+        }else {        
+            return true    
+        }
+    }
+	render <div>haha</div>
+}
+```
+
+这样就可以避免无效渲染,优化性能,但是如果这种判断逻辑多到一定程度,光判断逻辑就很复杂,而且每次都要判断也会影响性能,所以才有了 `PureComponent`
+
+#### PureComponent
+
+当使用component时，父组件的state或prop更新时，无论子组件的state、prop是否更新，都会触发子组件的更新，这会形成很多没必要的render，浪费很多性能；pureComponent的优点在于：pureComponent在shouldComponentUpdate只进行浅层的比较，只要外层对象没变化，就不会触发render,减少了不必要的render，当遇到复杂数据结构时，可以将一个组件拆分成多个pureComponent，以这种方式来实现复杂数据结构
+
+```
+import React, { PureComponent } from 'react'
+export default class List extends PureComponent {
+    render() {
+        console.log('list render')
+        return(
+            <div>{this.props.list.title}</div>
+        )
+    }
+}
+
+```
+
+
+
+##### 浅比较
+
+```
+if (this._compositeType === CompositeTypes.PureClass) {
+	shouldUpdate = !shallowEqual(prevProps, nextProps) || ! shallowEqual(in st.state, nextState);
+}
+```
+
+浅比较通过一个`shallowEqual`函数来完成：
+
+```js
+function is(x, y) {
+  if (x === y) {
+    return x !== 0 || y !== 0 || 1 / x === 1 / y;
+  } else {
+    return x !== x && y !== y;
+  }
+}
+function shallowEqual(objA: mixed, objB: mixed): boolean {
+  // 首先对基本数据类型的比较
+  // !! 若是同引用便会返回 true
+  //其中is函数是自己实现的一个Object.is的功能，排除了===两种不符合预期的情况：
+  // +0 === -0  // true
+  // NaN === NaN // false
+  if (is(objA, objB)) {
+    return true;
+  }
+  // 只有一种情况是误判的，那就是object,所以在判断两个对象都不是object
+  // 之后，就可以返回false了
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+    return false;
+  }
+  // 过滤掉基本数据类型之后，就是对对象的比较了
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+
+  // 首先拿出key值，对key的长度进行对比
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // key相等的情况下，在去循环比较
+  for (let i = 0; i < keysA.length; i++) {
+    // key值相等的时候
+    // 借用原型链上真正的 hasOwnProperty 方法，判断ObjB里面是否有A的key的key值
+    // 属性的顺序不影响结果也就是{name:'daisy', age:'24'} 跟{age:'24'，name:'daisy' }是一样的
+    // 最后，对对象的value进行一个基本数据类型的比较，返回结果
+    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+      return false;
+    }
+  }
+  return true;
+}
+```
+
+
+
+#### memo
+
+**针对函数组件的**,减少组件的不必要更新。 `React.memo` 仅检查 props 变更。如果函数组件被 `React.memo` 包裹，且其实现中拥有 [`useState`](https://zh-hans.reactjs.org/docs/hooks-state.html)，[`useReducer`](https://zh-hans.reactjs.org/docs/hooks-reference.html#usereducer) 或 [`useContext`](https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext) 的 Hook，当 state 或 context 发生变化时，它仍会重新渲染。 
+
+```js
+const TextCell = memo(function(props:any) {
+  console.log('我重新渲染了')
+  return (
+    <p onClick={props.click}>ffff</p>
+  )
+})
+
+//父组件
+const fatherComponent = () => {
+const [number,setNumber] = useState(0);
+ return(
+    <div>
+      模块{number}
+      <TextCell/>
+      <Button onClick={()=>setNumber(number => number + 1)}>加加加</Button>
+    </div>
+  )
+}
+```
+
+在这里如果没有用到memo 每次父组件重新setNumber,子组件都会重新渲染一次,加上了后**只会在初始化的时候渲染(useMemo会在页面初始化的时候执行一次,并把执行的结果缓存一份)**,减少了子组件渲染的次数
+
+默认情况下其只会对复杂对象做**浅层对比**，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现。 
+
+```jsx
+function MyComponent(props) {
+  /* 使用 props 渲染 */
+}
+function areEqual(prevProps, nextProps) {
+  /*
+  如果把 nextProps 传入 render 方法的返回结果与
+  将 prevProps 传入 render 方法的返回结果一致则返回 true，
+  否则返回 false
+  */
+}
+export default React.memo(MyComponent, areEqual);
+```
+
+
 
 ## 内置组件
 
@@ -1822,7 +1813,8 @@ import React from 'react'
 //创建一个 Context 对象，并暴露Consumer和Provide
 const { Consumer, Provider } = React.createContext(null) 
 export { Consumer, Provider }
-//Father
+
+//Father.js
 import { Provider } from './context'
 import React from 'react'
 import Son from './son'
@@ -1833,7 +1825,7 @@ import Son from './son'
     </div>
 </Provider>
     
-//Son
+//Son.js
 import React from 'react'
 import GrandSon from './grandson'
 import { Consumer } from './context'
@@ -2471,6 +2463,48 @@ useLockBodyScroll
 有时候当一些特别的组件在你们的页面中展示时，你想要阻止用户滑动你的页面（想一想modal框或者移动端的全屏菜单）。
 
 # 状态管理器
+
+## 区别
+
+https://blog.csdn.net/weixin_45644335/article/details/138888155
+
+Redux
+
+- **优势**:
+  - 一致的状态管理模式，有利于代码的可维护性和可预测性。
+  - 方便状态共享和同步，使得大型应用中的状态管理变得容易。
+- **劣势**:
+  - 可能会产生较多的样板代码。
+  - 状态的更新通常需要遵循一定的流程，可能导致更新流程变得复杂。
+- **适用场景**:
+  - 大型应用或需求强一致性的应用。
+
+hox
+
+- 特点：
+
+  - 基于 React Hooks：Hox 的状态管理是基于 React Hooks 的，与 React 的编程模型高度一致。
+
+
+  - 简洁：Hox 的 API 非常简洁，只需要了解几个函数和概念就可以开始使用。
+
+  - 轻量：Hox 的代码量非常小，对项目的影响较小。
+
+- 优点：
+
+  - 易于上手：Hox 的 API 简单直观，学习曲线平缓。
+
+  - 与 React 集成：Hox 的 API 设计和 React Hooks 非常相似，可以与 React 无缝集成。
+
+  - 状态共享：Hox 支持跨组件共享状态，可以轻松地管理全局状态。
+
+- 缺点：
+
+  - 社区和生态：相较于一些成熟的状态管理库（如 Redux、MobX），Hox 的社区和生态相对较小。
+
+  - 不适用于非 React 项目：Hox 是专为 React 设计的，无法在非 React 项目中使用。
+
+
 
 ## Redux
 
@@ -3118,11 +3152,9 @@ const store = createStore(
 )
 ```
 
-## **Mobx**
+## Mobx
 
-作为了解的内容，在项⽬中使⽤redux的情况更多。
 
-Mobx是⼀个功能强⼤，上⼿⾮常容易的状态管理⼯具。redux的作者也曾经向⼤家推荐过它，在不少情况下可以使⽤Mobx来替代掉redux。
 
 ## hox
 

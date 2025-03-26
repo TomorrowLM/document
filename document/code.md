@@ -235,6 +235,112 @@ const dateOaHandle = (e, index) => {
 
 JSON.stringify() 方法用于将 JavaScript 值转换为 JSON 字符串。
 
+## 切片
+
+```
+  async handleChange(file: any) {
+    this.handleDel();
+    if (!file.name.endsWith('.exe')) {
+      this.$message.error('仅支持上传exe格式的文件');
+      this.statusUp = 'fail';
+      return;
+    }
+    await ws.send({ uid: 'W0001_' + this.userUuid });
+    console.log(file);
+    this.fileData = file;
+    this.fileData.fileSize = parseInt((file.size / 1024) as any);
+    if (file.size > 5 * 1024 * 1024) {
+      let splitIndex = 1;
+      const totalSize = Math.ceil(file.size / (5 * 1024 * 1024));
+      let successCount = 0;
+      while (splitIndex <= totalSize) {
+        const promiseArr = [...Array(7).keys()].slice(1).map((val, index) => {
+          return new Promise((resolved) => {
+            if (splitIndex > totalSize) {
+              return;
+            }
+            const start = 5 * 1024 * 1024 * (splitIndex - 1);
+            let end = 5 * 1024 * 1024 * splitIndex;
+            if (end > file.size) {
+              end = file.size;
+            }
+            this.formData = new FormData(); // 新建一个FormData()对象，这就相当于你新建了一个表单
+            this.formData.append('file', file.raw.slice(start, end)); // 将文件保存到formData对象中
+            // console.log(23, start, end, index, splitIndex);
+            upload({
+              userUuid: this.userUuid,
+              file: this.formData,
+              splitIndex,
+              totalSize,
+              fileName: file.name
+            }).then((res: any) => {
+              if (res.code !== 0) {
+                console.log(res);
+                this.$message.error(res.message);
+                this.statusUp = 'fail';
+              } else {
+                console.log(777, res);
+                resolved(true);
+                successCount++;
+                if (res.data.md5FileName) {
+                  if (successCount == totalSize) {
+                    this.formState.fileName = res.data.md5FileName;
+                    this.$message.success(res.message);
+                    this.statusUp = 'success';
+                  } else {
+                    this.$message.error('上传失败');
+                    this.statusUp = 'fail';
+                  }
+                }
+              }
+            });
+            splitIndex++;
+          });
+        });
+        await Promise.all(promiseArr).then((res) => {
+          console.log(res);
+        });
+        // await upload({ userUuid: this.userUuid, file: this.formData, splitIndex, totalSize, fileName: file.name }).then(
+        //   (res: any) => {
+        //     if (res.code !== 0) {
+        //       this.$message.error(res.message);
+        //       this.statusUp = 'fail';
+        //     } else {
+        //       successCount++;
+        //       if (res.data.md5FileName) {
+        //         if (successCount == totalSize) {
+        //           this.formState.fileName = res.data.md5FileName;
+        //           this.$message.success(res.message);
+        //           this.statusUp = 'success';
+        //         } else {
+        //           this.$message.error('上传失败');
+        //           this.statusUp = 'fail';
+        //         }
+        //       }
+        //     }
+        //   }
+        // );
+        // splitIndex++;
+      }
+    } else {
+      this.formData = new FormData(); // 新建一个FormData()对象，这就相当于你新建了一个表单
+      this.formData.append('file', file.raw); // 将文件保存到formData对象中
+      await uploadSmall({ userUuid: this.userUuid, file: this.formData }).then((res: any) => {
+        if (res.code === 0) {
+          this.formState.fileName = res.data.md5FileName;
+          this.$message.success(res.message);
+          this.statusUp = 'success';
+        } else {
+          this.$message.error(res.message);
+          this.statusUp = 'fail';
+        }
+      });
+    }
+  }
+```
+
+
+
 ## 语法
 
 

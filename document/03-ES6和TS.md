@@ -15,6 +15,705 @@ swiper_desc: ES6,TS,设计模式
 
 http://caibaojian.com/es6/
 
+# 编程题
+
+## 时间空间复杂度
+
+log：https://blog.csdn.net/weixin_39888180/article/details/111268391
+
+### 时间复杂度
+
+其实就是一个函数，用大 O 表示， 比如 O(1)、 O(n)...
+
+它的作用就是用来`定义描述算法的运行时间`
+
+- **O(1)**
+
+```
+    let i = 0
+    i += 1
+复制代码
+```
+
+- **O(n)：** 如果是 O(1) + O(n) 则还是 O(n)
+
+```
+    for (let i = 0; i < n; i += 1) {
+      console.log(i)
+    }
+复制代码
+```
+
+- **O(n^2)：** O(n) * O(n), 也就是双层循环，自此类推：O(n^3)...
+
+```
+    for (let i = 0; i < n; i += 1) {
+      for (let j = 0; j < n; j += 1) {
+        console.log(i, j)
+      }
+    }
+复制代码
+```
+
+- **O(logn)：** 就是求 log 以 2 为底的多少次方等于 n
+
+```
+    // 这个例子就是求2的多少次方会大于i，然后就会结束循环。 这就是一个典型的 O(logn)
+    let i = 1
+    while (i < n) {
+      console.log(i)
+      i *= 2
+    }
+复制代码
+```
+
+###  空间复杂度
+
+和时间复杂度一样，空间复杂度也是用大 O 表示，比如 O(1)、 O(n)...
+
+它用来`定义描述算法运行过程中临时占用的存储空间大小`
+
+> 占用越少 代码写的就越好
+
+- **O(1)：** 单个变量，所以占用永远是 O(1)
+
+```
+    let i = 0
+    i += 1
+复制代码
+```
+
+- **O(n)：** 声明一个数组， 添加 n 个值， 相当于占用了 n 个空间单元
+
+```
+    const arr = []
+    for (let i = 0; i < n; i += 1) {
+      arr.push(i)
+    }
+复制代码
+```
+
+- **O(n^2)：** 类似一个矩阵的概念，就是二维数组的意思
+
+```
+    const arr = []
+    for (let i = 0; i < n; i += 1) {
+      arr.push([])
+      for (let j = 0; j < n; j += 1) {
+        arr[i].push(j)
+      }
+    }
+```
+
+### 查找
+
+#### 二分法
+
+二分法查找是一种速度非常快的算法，但是它有固定的应用范围。仅当列表是有序的时候，二分查找才管用。
+
+  > 采用二分法，取出中间数，数组每次和中间数比较，小的放到左边，大的放到右边
+
+### 排序
+
+#### 快速排序
+
+  - （1）在数据集之中，找一个基准点
+  - （2）建立两个数组，分别存储左边和右边的数组
+  - （3）利用递归进行下次比较
+
+```js
+var arr = [3, 1, 4, 6, 5, 7, 2];
+
+function quickSort(arr) {
+    if(arr.length == 0) {
+        return [];    // 返回空数组
+    }
+
+    var cIndex = Math.floor(arr.length / 2);
+    var c = arr.splice(cIndex, 1);
+    var l = [];
+    var r = [];
+
+    for (var i = 0; i < arr.length; i++) {
+        if(arr[i] < c) {
+            l.push(arr[i]);
+        } else {
+            r.push(arr[i]);
+        }
+    }
+
+    return quickSort(l).concat(c, quickSort(r));
+}
+
+console.log(quickSort(arr));
+```
+
+## 深拷贝与浅拷贝
+
+https://mp.weixin.qq.com/s/BQ3_RJQcCZiXphMoyMRaTg
+
+### 概念
+
+基本数据类型的特点：直接存储在栈(stack)中的数据
+
+引用数据类型的特点：存储的是该对象在栈中引用地址，真实的数据存放在堆内存里。引用数据类型在栈中存储了指针，指针指向堆中该实体的起始地址
+
+- 浅拷贝是创建一个新对象，这个对象有着原始对象属性值的一份精确拷贝。如果属性是基本类型，拷贝的就是基本类型的值，如果属性是引用类型，拷贝的就是内存地址 ，所以**如果其中一个对象改变了这个地址，就会影响到另一个对象**。
+
+  注意：当对象只有一层的时候，就是深拷贝
+
+- 深拷贝是将一个对象从内存中完整的拷贝一份出来,从堆内存中开辟一个新的区域存放新对象,且**修改新对象不会影响原对象**。
+
+```
+var a1 = {b: {c: {}};
+
+var a2 = shallowClone(a1); // 浅拷贝方法
+a2.b.c === a1.b.c // true 新旧对象还是共享同一块内存
+
+var a3 = deepClone(a3); // 深拷贝方法
+a3.b.c === a1.b.c // false 新对象跟原对象不共享内存
+```
+
+### 实现浅拷贝
+
+#### Object.assign()
+
+Object.assign() 方法可以把任意多个的源对象自身的可枚举属性拷贝给目标对象，然后返回目标对象。
+
+![图片描述](https://segmentfault.com/img/bVbrl7t?w=541&h=138)
+
+
+
+#### 展开运算符...
+
+```
+let obj1 = { name: 'Kobe', address:{x:100,y:100}}
+let obj2= {... obj1}
+obj1.address.x = 200;
+obj1.name = 'wade'
+console.log('obj2',obj2) // obj2 { name: 'Kobe', address: { x: 200, y: 100 } }
+```
+
+#### Array.prototype.concat()
+
+```
+let arr = [1, 3, {
+    username: 'kobe'
+    }];
+let arr2 = arr.concat();    
+arr2[2].username = 'wade';
+console.log(arr); //[ 1, 3, { username: 'wade' } ]
+```
+
+#### Array.prototype.slice()
+
+```
+let arr = [1, 3, {
+    username: ' kobe'
+    }];
+let arr3 = arr.slice();
+arr3[2].username = 'wade'
+console.log(arr); // [ 1, 3, { username: 'wade' } ]
+```
+
+### 实现深拷贝
+
+#### JSON.parse(JSON.stringify())
+
+```
+let arr = [1, 3, {
+    username: ' kobe'
+}];
+let arr4 = JSON.parse(JSON.stringify(arr));
+arr4[2].username = 'duncan'; 
+console.log(arr, arr4)
+```
+
+
+
+![img](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/7/30/164e6d5f642d440a~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
+
+这也是利用JSON.stringify将对象转成JSON字符串，再用JSON.parse把字符串解析成对象，一去一来，新的对象产生了，而且对象会开辟新的栈，实现深拷贝。
+
+**这种方法虽然可以实现数组或对象深拷贝,但不能处理函数和正则**，因为这两者基于JSON.stringify和JSON.parse处理后，得到的正则就不再是正则（变为空对象），得到的函数就不再是函数（变为null）了。
+
+比如下面的例子：
+
+```
+let arr = [1, 3, {
+    username: ' kobe'
+},function(){}];
+let arr4 = JSON.parse(JSON.stringify(arr));
+arr4[2].username = 'duncan'; 
+console.log(arr, arr4)
+```
+
+
+
+![img](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/7/30/164e6daa14a1f8be~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
+
+
+
+### 递归
+
+![img](https://image-static.segmentfault.com/809/484/809484289-5cb44d922e659_fix732)
+
+```js
+function deepClone(obj, newObj) {
+  var newObj = newObj || {};
+  for (let key in obj) {
+    if (typeof obj[key] == 'object') {
+      let isArray = Array.isArray(obj[key]);//判断是否数组
+      newObj[key] = (isArray == true ? [] : {})
+      deepClone(obj[key], newObj[key]);
+    } else {
+      newObj[key] = obj[key]
+    }
+  }
+  console.log(newObj);
+  return newObj;
+}
+
+let a1 = { a: { b: 1 } }
+let a2 = deepClone(a1);
+a1.a.b = 2;
+console.log(a2.a);
+```
+
+
+
+
+```js
+function deepClone(source) {
+    let target;
+    if (typeof source === 'object') {
+      target = Array.isArray(source) ? [] : {}
+      for (let key in source) {
+        if (source.hasOwnProperty(key)) {
+          if (typeof source[key] !== 'object') {
+            target[key] = source[key]
+          } else {
+            target[key] = deepClone(source[key])
+          }
+        }
+      }
+    } else {
+      target = source
+    }
+    return target
+  }
+  let a ={name:['a','b'],age:[10,15],book:{1:[2,3,k]}}
+  let b = deepClone(a)
+  console.log(a)
+  console.log(a == b)
+  let c = a
+  console.log(c)
+  console.log(c == a)
+```
+
+```js
+JSON.parse(JSON.stringify(xxx))
+
+我们在使⽤ JSON.parse(JSON.stringify(xxx))时应该注意⼀下⼏点：
+1、如果obj⾥⾯存在时间对象，JSON.parse(JSON.stringify(obj))之后，时间对象变成了字符串。
+2、如果obj⾥有RegExp、Error对象，则序列化的结果将只得到空对象。
+3、如果obj⾥有函数，undefined，则序列化的结果会把函数， undefined丢失。
+4、如果obj⾥有NaN、Infinity和-Infinity，则序列化的结果会变成null。
+5、JSON.stringify()只能序列化对象的可枚举的⾃有属性。如果obj中的对象是有构造函数⽣成的，则使⽤JSON.parse(JSON.stringify(obj))
+深拷贝后，会丢弃对象的constructor。
+6、如果对象中存在循环引⽤的情况也⽆法正确实现深拷贝。
+```
+
+## 递归
+
+### 阶乘
+
+```js
+  const factorial = function(n) {
+      if (n <= 1) {
+          return 1;
+      }
+      return n * factorial(n - 1);
+  }
+```
+
+f(6) = n * f(5)，所以 f(6) 需要拆解成 f(5) 子问题进行求解，以此类推 f(5) = n * f(4) ，也需要进一步拆分 ... 直到 f(1)，「这是递的过程。」 f(1) 解决后，依次可以解决f(2).... f(n)最后也被解决，「这是归的过程。」
+
+归无非就是把问题拆解成具有相同解决思路的子问题，直到最后被拆解的子问题不能够拆分，这个过程是“递”。当解决了最小粒度可求解的子问题后，在“归”的过程中顺其自然的解决了最开始的问题。
+
+  **复杂度分析**
+
+  - 空间复杂度为 O(n)
+  - 时间复杂度 O(2^n)
+
+```
+  总时间 = 子问题个数 * 解决一个子问题需要的时间
+```
+
+  - 子问题个数即递归树中的节点总数 2^n
+  - 解决一个子问题需要的时间，因为只有一个加法操作 `fib(n-1) + fib(n-2)` ，所以解决一个子问题的时间为 `O(1)`
+
+  二者相乘，得出算法的时间复杂度为 `O(2^n)`
+
+### 实现深拷贝
+
+![img](https://image-static.segmentfault.com/809/484/809484289-5cb44d922e659_fix732)
+
+```js
+function deepClone(obj, newObj) {
+  var newObj = newObj || {};
+  for (let key in obj) {
+    if (typeof obj[key] == 'object') {
+      let isArray = Array.isArray(obj[key]);//判断是否数组
+      newObj[key] = (isArray == true ? [] : {})
+      deepClone(obj[key], newObj[key]);
+    } else {
+      newObj[key] = obj[key]
+    }
+  }
+  console.log(newObj);
+  return newObj;
+}
+
+let a1 = { a: { b: 1 } }
+let a2 = deepClone(a1);
+a1.a.b = 2;
+console.log(a2.a);
+```
+
+
+
+
+```js
+function deepClone(source) {
+    let target;
+    if (typeof source === 'object') {
+      target = Array.isArray(source) ? [] : {}
+      for (let key in source) {
+        if (source.hasOwnProperty(key)) {
+          if (typeof source[key] !== 'object') {
+            target[key] = source[key]
+          } else {
+            target[key] = deepClone(source[key])
+          }
+        }
+      }
+    } else {
+      target = source
+    }
+    return target
+  }
+  let a ={name:['a','b'],age:[10,15],book:{1:[2,3,k]}}
+  let b = deepClone(a)
+  console.log(a)
+  console.log(a == b)
+  let c = a
+  console.log(c)
+  console.log(c == a)
+```
+
+```js
+JSON.parse(JSON.stringify(xxx))
+
+我们在使⽤ JSON.parse(JSON.stringify(xxx))时应该注意⼀下⼏点：
+1、如果obj⾥⾯存在时间对象，JSON.parse(JSON.stringify(obj))之后，时间对象变成了字符串。
+2、如果obj⾥有RegExp、Error对象，则序列化的结果将只得到空对象。
+3、如果obj⾥有函数，undefined，则序列化的结果会把函数， undefined丢失。
+4、如果obj⾥有NaN、Infinity和-Infinity，则序列化的结果会变成null。
+5、JSON.stringify()只能序列化对象的可枚举的⾃有属性。如果obj中的对象是有构造函数⽣成的，则使⽤JSON.parse(JSON.stringify(obj))
+深拷贝后，会丢弃对象的constructor。
+6、如果对象中存在循环引⽤的情况也⽆法正确实现深拷贝。
+```
+
+
+
+### 查找路径
+
+//给定节点关系[A:['B',’C'],B:[' D'],C:['D'], D:[]}
+//返回所有从A到D的路径（如[’A->B->D',’A->C->D']）
+function findAllPaths(graph){/*实现*/}
+
+```
+let path = { a: ['b', 'c', 'e'], b: ['d', 'f'], c: ['d'], e: ['f'], f: ['d'], d: [] }
+
+function findPath(path, param1, param2) {
+  let stack = [];
+  for (let key in path[param1]) {
+    console.log(path[param1][key])
+    stack[key] = []
+    fn(path, path[param1][key], param2, stack[key])
+    stack[key].push(path[param1][key])
+    console.log(stack[key])
+  }
+  function fn(path, param1, param2, stack) {
+    if (path[param1]) {
+      for (let key in path[param1]) {
+        console.log(path[param1][key])
+        if (path[param1][key] === param2) {
+          stack.push(path[param1][key])
+          return true
+        }
+        else {
+          console.log(path[param1][key])
+          const status = fn(path, path[param1][key], param2, stack);
+          console.log(status)
+          if (status) {
+            stack.push(path[param1][key])
+            return true
+          }
+        }
+      }
+    }
+  }
+
+  return stack
+}
+
+console.log(findPath(path, 'a', 'd'))
+```
+
+
+
+### 树形结构
+
+```js
+const input = [
+  {
+    name: "浙江",
+    children: [
+      {
+        name: "杭州",
+        children: [
+          { name: "余杭区" },
+          { name: "上城区" },
+          { name: "下城区" },
+          { name: "西湖区" },
+          { name: "拱墅区" },
+        ],
+      },
+      {
+        name: "绍兴",
+        children: [
+          { name: "柯桥区" },
+          { name: "越城区" },
+          { name: "上虞区" },
+          { name: "新昌县" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "湖北",
+    children: [
+      {
+        name: "武汉",
+        children: [
+          { name: "江岸区" },
+          { name: "江汉区" },
+          { name: "硚口区" },
+          { name: "汉阳区" },
+          { name: "武昌区" },
+          { name: "青山区" },
+          { name: "洪山区" },
+        ],
+      },
+    ],
+  },
+];
+```
+
+#### 获取树的叶子节点并赋值到树结构中
+
+```js
+const input = [
+  {
+    name: "浙江",
+    children: [
+      {
+        name: "杭州",
+        children: [
+          { name: "余杭区" },
+          { name: "上城区" },
+          { name: "下城区" },
+          { name: "西湖区" },
+          { name: "拱墅区" },
+        ],
+      },
+      {
+        name: "绍兴",
+        children: [
+          { name: "柯桥区" },
+          { name: "越城区" },
+          { name: "上虞区" },
+          { name: "新昌县" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "湖北",
+    children: [
+      {
+        name: "武汉",
+        children: [
+          { name: "江岸区" },
+          { name: "江汉区" },
+          { name: "硚口区" },
+          { name: "汉阳区" },
+          { name: "武昌区" },
+          { name: "青山区" },
+          { name: "洪山区" },
+        ],
+      },
+    ],
+  },
+];
+function process(input) {
+  function getLeafCountTree(arr) {
+    if (!arr.children) {
+      return 1;
+    } else {
+      arr.leafCount = 0;
+      for (var i = 0; i < arr.children.length; i++) {
+        arr.leafCount = arr.leafCount + getLeafCountTree(arr.children[i]);
+      }
+      //需要将次层的叶子节点return给父级
+      return arr.leafCount;
+    }
+  }
+  function finalQuery() {
+    //因为是数组，不是树形结构，需要以树形结构处理
+    for (var r = 0; r < input.length; r++) {
+      getLeafCountTree(input[r]);
+    }
+  }
+  finalQuery();
+  return input
+}
+console.log(process(input));
+
+const output = [
+  {
+    name: "浙江",
+    path: "浙江",
+    leafCount: 9,
+    children: [
+      {
+        name: "杭州",
+        path: "浙江-杭州",
+        leafCount: 5,
+        children: [
+          { name: "余杭区", path: "浙江-杭州-余杭区" },
+          { name: "上城区", path: "浙江-杭州-上城区" },
+          { name: "下城区", path: "浙江-杭州-下城区" },
+          { name: "西湖区", path: "浙江-杭州-西湖区" },
+          { name: "拱墅区", path: "浙江-杭州-拱墅区" },
+        ],
+      },
+      {
+        name: "绍兴",
+        path: "浙江-绍兴",
+        leafCount: 4,
+        children: [
+          { name: "柯桥区", path: "浙江-绍兴-柯桥区" },
+          { name: "越城区", path: "浙江-绍兴-越城区" },
+          { name: "上虞区", path: "浙江-绍兴-上虞区" },
+          { name: "新昌县", path: "浙江-绍兴-新昌县" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "湖北",
+    path: "湖北",
+    leafCount: 7,
+    children: [
+      {
+        name: "武汉",
+        path: "湖北-武汉",
+        leafCount: 7,
+        children: [
+          { name: "江岸区", path: "湖北-武汉-江岸区" },
+          { name: "江汉区", path: "湖北-武汉-江汉区" },
+          { name: "硚口区", path: "湖北-武汉-硚口区" },
+          { name: "汉阳区", path: "湖北-武汉-汉阳区" },
+          { name: "武昌区", path: "湖北-武汉-武昌区" },
+          { name: "青山区", path: "湖北-武汉-青山区" },
+          { name: "洪山区", path: "湖北-武汉-洪山区" },
+        ],
+      },
+    ],
+  },
+];
+```
+
+#### 根据id，拿到id数组
+
+```js
+// (tree为目标树，targetId为目标节点id)
+function getNodeRoute(tree, targetId) {
+  let nodePathArray = []
+  let fn = (tree, targetId) => {
+    for (let index = 0; index < tree.length; index++) {
+      if (tree[index].children) {
+        let endRecursiveLoop = fn(tree[index].children, targetId)
+        if (endRecursiveLoop) {
+          nodePathArray.push(tree[index].name)
+          return true
+        }
+      }
+      if (tree[index].name === targetId) {
+        nodePathArray.push(tree[index].name)
+        return true
+      }
+    }
+  }
+  fn(tree, targetId)
+  return nodePathArray;
+}
+
+getNodeRoute(input, '余杭区')
+console.log(getNodeRoute(input, '余杭区').reverse());
+//[ '浙江', '杭州', '余杭区' ]
+```
+
+####   案例
+
+- 使用递归实现`getElementsByClassName`
+
+  ```js
+  let arr = [];
+     function byClass(node, className, arr){
+         //得到传入节点的所有子节点
+         var lists = node.childNodes;
+         for(var i = 0;i< lists.length;i++){
+             //判断是否有相同className元素
+             if(arr[i],className == className){
+                 arr.push(arr[i]);
+             }
+             //判断子节点是否还有子节点
+             if(arr[i].childNodes.length > 0){
+                 byClass(arr[i],className,arr);
+             }
+         }
+     }
+  复制代码
+  ```
+
+- 有一堆桃子，每天吃掉一半，挑出一个坏的扔掉，第6天的时候发现还剩1个桃子，问原来有多少个桃子。
+
+
+```js
+  function fn(n) {
+    if (n === 1) {
+      return 1
+    }
+    var a = (fn(n - 1) + 1) * 2
+    return a
+  }
+  console.log(fn(2)) //190
+```
+
 # ES6
 
 ## let和const
@@ -1632,60 +2331,67 @@ Math.sign(undefined)  // NaN
 
 #### from
 
-`Array.from`方法用于将两类对象转为真正的数组：**类似数组的对象（array-like object）和可遍历（iterable）的对象**（包括ES6新增的数据结构Set和Map）。
+`Array.from`方法用于将两类对象转为真正的数组：
 
-```javascript
-//类似数组的对象
-let arrayLike = {
-    '0': 'a',
-    '1': 'b',
-    '2': 'c',
-    length: 3
-};
+- **类似数组的对象（array-like object）**
 
-// ES5的写法
-var arr1 = [].slice.call(arrayLike); // ['a', 'b', 'c']
+  ```
+  //类似数组的对象
+  let arrayLike = {
+      '0': 'a',
+      '1': 'b',
+      '2': 'c',
+      length: 3
+  };
+  
+  // ES5的写法
+  var arr1 = [].slice.call(arrayLike); // ['a', 'b', 'c']
+  
+  // ES6的写法
+  let arr2 = Array.from(arrayLike); // ['a', 'b', 'c']
+  ```
 
-// ES6的写法
-let arr2 = Array.from(arrayLike); // ['a', 'b', 'c']
-```
+  
 
-实际应用中，常见的类似数组的对象是DOM操作返回的NodeList集合，以及函数内部的`arguments`对象。`Array.from`都可以将它们转为真正的数组。
+- **可遍历（iterable）的对象**（包括ES6新增的数据结构Set和Map）。
 
-只要是部署了**Iterator**接口的数据结构，`Array.from`都能将其转为数组。
+  - 实际应用中，常见的类似数组的对象是DOM操作返回的NodeList集合，以及函数内部的`arguments`对象。`Array.from`都可以将它们转为真正的数组。
 
-```js
-// 可遍历（iterable）
-Array.from('123123')
-// ['1', '2', '3', '1', '2', '3']
+  - 只要是部署了**Iterator**接口的数据结构，`Array.from`都能将其转为数组。
 
-let namesSet = new Set(['a', 'b'])
-Array.from(namesSet) // ['a', 'b']
-```
+    ```
+    // 可遍历（iterable）
+    Array.from('123123')
+    // ['1', '2', '3', '1', '2', '3']
+    
+    let namesSet = new Set(['a', 'b'])
+    Array.from(namesSet) // ['a', 'b']
+    ```
 
-**值得提醒的是，扩展运算符（...）也可以将某些数据结构转为数组。**
+    **值得提醒的是，扩展运算符（...）也可以将某些数据结构转为数组。**扩展运算符背后调用的是遍历器接口（`Symbol.iterator`），如果一个对象没有部署这个接口，就无法转换。
 
-```javascript
-// arguments对象
-function foo() {
-  console.log(arguments); //{ [Iterator]  0: 1, 1: 2 }
-  var args = [...arguments];
-  return args
-}
-foo(1,2)
+    ```javascript
+    // arguments对象
+    function foo() {
+      console.log(arguments); //{ [Iterator]  0: 1, 1: 2 }
+      var args = [...arguments];
+      return args
+    }
+    foo(1,2)
+    
+    // NodeList对象
+    [...document.querySelectorAll('div')]
+    ```
 
-// NodeList对象
-[...document.querySelectorAll('div')]
-```
 
-扩展运算符背后调用的是遍历器接口（`Symbol.iterator`），如果一个对象没有部署这个接口，就无法转换。`Array.from`方法则是还支持类似数组的对象。所谓类似数组的对象，本质特征只有一点，即必须有`length`属性。因此，任何有`length`属性的对象，都可以通过`Array.from`方法转为数组，而此时扩展运算符就无法转换。
+`Array.from`方法则是还支持类似数组的对象。所谓类似数组的对象，本质特征只有一点，即必须有`length`属性。因此，任何有`length`属性的对象，都可以通过`Array.from`方法转为数组，而此时扩展运算符就无法转换。
 
 ```javascript
 Array.from({ length: 3 });
 // [ undefined, undefined, undefined ]
 ```
 
-`Array.from`还可以接受第二个参数，作用类似于数组的`map`方法，用来对每个元素进行处理，将处理后的值放入返回的数组。
+**`Array.from`还可以接受第二个参数，作用类似于数组的`map`方法，用来对每个元素进行处理，将处理后的值放入返回的数组。**
 
 ```javascript
 Array.from(arrayLike, x => x * x);
@@ -2337,8 +3043,6 @@ obj.foo() // "world"
 上面代码中，`super.foo`指向原型对象`proto`的`foo`方法，但是绑定的`this`却还是当前对象`obj`，因此输出的就是`world`。
 
 #### 属性描述对象
-
-> 对象的每个属性都有一个描述对象（Descriptor），用来控制该属性的行为。`Object.getOwnPropertyDescriptor`方法可以获取该属性的描述对象。
 
 JavaScript 提供了一个内部数据结构，用来描述对象的属性，控制它的行为，比如该属性是否可写、可遍历等等。这个内部数据结构称为“属性描述对象”（attributes object）。每个属性都有自己对应的属性描述对象，保存该属性的一些元信息。属性描述对象提供6个元属性。
 
@@ -3855,28 +4559,63 @@ https://es6.ruanyifeng.com/#docs/class-extends
 
 ### class和构造函数区别
 
-- 语法糖:
-  - **Class:** `class` 语法是 ES6 引入的，本质上是构造函数的语法糖。它提供了一种更简洁、更面向对象的语法来定义对象蓝图。
-  - **构造函数:** 传统的构造函数使用 `function` 关键字定义，并通过 `new` 关键字来创建对象实例。
-- 使用上
-  - 类的构造函数，不使用`new`是没法调用的，会报错。这是它跟普通构造函数的一个主要区别，后者不用`new`也可以执行。
-  - 方法定义
-    - **Class:** 在 `class` 中定义方法更加简洁，不需要使用 `prototype` 属性。方法默认会被添加到类的原型上。
-    - **构造函数:** 需要将方法显式地添加到构造函数的 `prototype` 属性上，才能被所有实例共享。
-  - 静态
-    - **Class:** 使用 `static` 关键字可以定义静态方法，静态方法属于类本身，而不是类的实例。
-    - **构造函数:** 可以通过将方法直接添加到构造函数本身上来模拟静态方法，但不如 `class` 语法清晰。
-  - `super` 关键字:
-    - **Class:** 在子类中，可以使用 `super` 关键字来调用父类的方法或构造函数，方便实现继承和扩展。
-    - **构造函数:** 在构造函数中，需要通过 `Parent.call(this, ...)` 的方式来调用父类的构造函数。
-  - `new.target`:
-    - **Class:** 支持 `new.target`，可以检测构造函数是否通过 `new` 关键字调用。
-    - **构造函数:** 也支持 `new.target`。
+- 方法定义
+  - **Class:** 在 `class` 中定义方法更加简洁，不需要使用 `prototype` 属性。**方法默认会被添加到类的原型上**。
+  - **构造函数:** 需要将方法显式地添加到构造函数的 `prototype` 属性上，才能被所有实例共享。
+
+- 静态
+  - **Class:** 使用 `static` 关键字可以定义静态方法，静态方法属于类本身，而不是类的实例。
+
+    ```
+    class A {
+      static data = 1
+    } 
+    const a = new A()
+    console.log(A.data, a.data) //[ 1, undefined ]
+    ```
+
+  - **构造函数:** 可以通过将方法直接添加到构造函数本身上来模拟静态方法，但不如 `class` 语法清晰。
+
+    ```
+     // 构造函数
+     function Person(name, age) {
+       this.name = name
+       this.age = age
+     }
+    
+    //静态属性
+    Person.eyes = 2
+    Person.arms = 2
+    
+    // 静态方法
+    Person.walk = function () {
+      console.log('人都会走路') // 人都会走路
+      // this 指向 person
+      console.log(this.eyes) // 2
+    }
+    
+    
+    const gentle = new Person('gentle', 18)
+    console.log(gentle) // Person {name: 'gentle', age: 18}
+    console.log(gentle.eyes) // undefined
+    console.log(Person.eyes) // 2
+    Person.walk() //人都会走路    // 2
+    ```
+
+- `super` 关键字:
+
+  - **Class:** 在子类中，可以使用 `super` 关键字来调用父类的方法或构造函数，方便实现继承和扩展。
+  - **构造函数:** 在构造函数中，需要通过 `Parent.call(this, ...)` 的方式来调用父类的构造函数。
+
+- `new.target`:
+  - **Class:** 支持 `new.target`，可以检测构造函数是否通过 `new` 关键字调用。
+  - **构造函数:** 也支持 `new.target`。
+
 - 原型继承:
   - **Class:** 使用 `class` 定义的类，其原型继承关系更加清晰。通过 `extends` 关键字可以方便地实现继承，子类的原型会指向父类的原型。
   - **构造函数:** 使用构造函数实现继承需要手动操作原型链，例如**将子类的原型指向父类的实例**，并设置 `constructor` this指向。相对来说比较繁琐，容易出错。
 
-- **类的内部所有定义的方法，都是不可枚举的**（non-enumerable）。
+- **类的内部所有定义的方法（即原型对象下的方法），都是不可枚举的**（non-enumerable）。
 
   ```javascript
   class Point {
@@ -3895,7 +4634,7 @@ https://es6.ruanyifeng.com/#docs/class-extends
   // ["constructor","toString"]
   ```
 
-  **这一点与ES5的行为不一致。**
+  **这一点与构造函数行为不一致。**
 
   ```javascript
   var Point = function (x, y) {
@@ -4235,7 +4974,7 @@ class Foo {
 }
 ```
 
-静态属性是MyClass本身的属性, 而不是定义在实例对象this上的属性, 只能通过 MyClass.prop 访问。静态属性是可以继承的。
+只能通过 MyClass.prop 访问。静态属性是可以继承的。
 
 ```
 class MyClass {
@@ -4474,107 +5213,6 @@ class Animal {
 }
 ```
 
-#### 抽象类
-
-`abstract` 用于定义抽象类和其中的抽象方法。
-
-什么是抽象类？
-
-首先，抽象类是不允许被实例化的：
-
-```ts
-abstract class Animal {
-  public name;
-  public constructor(name) {
-    this.name = name;
-  }
-  public abstract sayHi();
-}
-
-let a = new Animal('Jack');
-
-// index.ts(9,11): error TS2511: Cannot create an instance of the abstract class 'Animal'.
-```
-
-上面的例子中，我们定义了一个抽象类 `Animal`，并且定义了一个抽象方法 `sayHi`。在实例化抽象类的时候报错了。
-
-其次，抽象类中的抽象方法必须被子类实现：
-
-```ts
-abstract class Animal {
-  public name;
-  public constructor(name) {
-    this.name = name;
-  }
-  public abstract sayHi();
-}
-
-class Cat extends Animal {
-  public eat() {
-    console.log(`${this.name} is eating.`);
-  }
-}
-
-let cat = new Cat('Tom');
-
-// index.ts(9,7): error TS2515: Non-abstract class 'Cat' does not implement inherited abstract member 'sayHi' from class 'Animal'.
-```
-
-上面的例子中，我们定义了一个类 `Cat` 继承了抽象类 `Animal`，但是没有实现抽象方法 `sayHi`，所以编译报错了。
-
-下面是一个正确使用抽象类的例子：
-
-```ts
-abstract class Animal {
-  public name;
-  public constructor(name) {
-    this.name = name;
-  }
-  public abstract sayHi();
-}
-
-class Cat extends Animal {
-  public sayHi() {
-    console.log(`Meow, My name is ${this.name}`);
-  }
-}
-
-let cat = new Cat('Tom');
-```
-
-上面的例子中，我们实现了抽象方法 `sayHi`，编译通过了。
-
-需要注意的是，即使是抽象方法，TypeScript 的编译结果中，仍然会存在这个类，上面的代码的编译结果是：
-
-```javascript
-var __extends =
-  (this && this.__extends) ||
-  function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
-  };
-var Animal = (function () {
-  function Animal(name) {
-    this.name = name;
-  }
-  return Animal;
-})();
-var Cat = (function (_super) {
-  __extends(Cat, _super);
-  function Cat() {
-    _super.apply(this, arguments);
-  }
-  Cat.prototype.sayHi = function () {
-    console.log('Meow, My name is ' + this.name);
-  };
-  return Cat;
-})(Animal);
-var cat = new Cat('Tom');
-```
-
 #### 属性表达式
 
 ```
@@ -4593,44 +5231,42 @@ class Square {
 
 #### new.target属性
 
-**new是从构造函数生成实例的命令**。
+**new是从构造函数生成实例的命令**。ES6为`new`命令**引入了一个`new.target`属性，（在构造函数中）返回`new`命令作用于的那个构造函数**。如果构造函数不是通过`new`命令调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
 
-ES6为`new`命令**引入了一个`new.target`属性，（在构造函数中）返回`new`命令作用于的那个构造函数**。如果构造函数不是通过`new`命令调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
+- class
 
-```
-class A {
-  constructor() {
-    console.log(new.target.name);
+  ```
+  class A {
+    constructor() {
+      console.log(new.target.name);
+    }
   }
-}
-class B extends A {
-  constructor() {
-    super();
+  class B extends A {
+    constructor() {
+      super();
+    }
   }
-}
-new A() // A
-new B() // B
-```
+  new A() // A
+  new B() // B
+  ```
 
+- 构造函数
 
-
-```javascript
-// 另一种写法
-function Person(name) {
-  if (new.target === Person) {
-    this.name = name;
-  } else {
-    // throw new Error("必须使用new生成实例");
+  ```
+  // 另一种写法
+  function Person(name) {
+    if (new.target === Person) {
+      this.name = name;
+    } else {
+      // throw new Error("必须使用new生成实例");
+    }
   }
-}
-
-var person = new Person("张三"); // 正确
-var notAPerson = Person.call(person, "张三"); // 报错
-console.log(person.name);//张三
-console.log(notAPerson.name); //Cannot read property 'name' of undefined 
-```
-
-上面代码确保构造函数只能通过`new`命令调用。
+  
+  var person = new Person("张三"); // 正确
+  var notAPerson = Person.call(person, "张三"); // 报错
+  console.log(person.name);//张三
+  console.log(notAPerson.name); //Cannot read property 'name' of undefined 
+  ```
 
 需要注意的是，子类继承父类时，`new.target`会返回子类。
 
@@ -4649,7 +5285,7 @@ class Square extends Rectangle {
   }
 }
 
-var obj = new Square(3); // 输出 false
+var obj = new Square(3)
 
 ```
 
@@ -4947,7 +5583,7 @@ class Point { /*...*/ }
 
 class ColorPoint extends Point { /*...*/ }
 
-Object.getPrototypeOf(ColorPoint) === Point
+console.log(Object.getPrototypeOf(ColorPoint) === Point)
 // true
 ```
 
@@ -6325,20 +6961,153 @@ b()
 
 JavaScript 的 [Symbol](https://so.csdn.net/so/search?q=Symbol&spm=1001.2101.3001.7020) 类型是一种原始数据类型，可以用来表示独一无二的值。
 
-Symbol 类型的主要用途是创建对象的唯一属性名，因此可以用来防止属性名冲突，保证属性名的独特性。例如：
+### 基本概念
 
-```js
-const id = Symbol();
- 
-const user = {
-  name: 'John',
-  [id]: 123,
+- 创建 Symbol
+
+  ```
+  // 基本创建方式
+  const s1 = Symbol();
+  const s2 = Symbol('description');
+  
+  // 每个 Symbol 都是唯一的
+  console.log(Symbol() === Symbol()); // false
+  console.log(Symbol('key') === Symbol('key')); // false
+  
+  ```
+
+- Symbol.for() 和 Symbol.keyFor()
+
+  ```
+  // 使用 Symbol.for() 创建共享的 Symbol
+  const s1 = Symbol.for('shared');
+  const s2 = Symbol.for('shared');
+  console.log(s1 === s2); // true
+  
+  // 使用 Symbol.keyFor() 获取共享 Symbol 的键
+  console.log(Symbol.keyFor(s1)); // 'shared'
+  console.log(Symbol.keyFor(Symbol('not shared'))); // undefined
+  
+  ```
+
+### Symbol 作为对象属性
+
+```
+const mySymbol = Symbol('mySymbol');
+
+// 作为对象的属性键
+const obj = {
+  [mySymbol]: 'Hello Symbol'
 };
- 
-console.log(user[id]);  // 123
+
+// 访问 Symbol 属性
+console.log(obj[mySymbol]); // 'Hello Symbol'
+
+// 添加 Symbol 属性
+obj[Symbol('anotherSymbol')] = 'Another value';
+
 ```
 
-还可以用来做为私有属性，因为 Symbol 类型的值是不能被枚举的(即不能被 Object.keys()、Object.getOwnPropertyNames() 和 for
+Symbol 类型的值是不能被枚举的，即不能被 Object.keys()、Object.getOwnPropertyNames() 和 for
+
+```
+const obj = {
+  [Symbol('name')]: 'John',
+  age: 25
+};
+
+// Symbol 属性不会出现在常规的属性枚举中
+console.log(Object.keys(obj)); // ['age']
+console.log(Object.getOwnPropertyNames(obj)); // ['age']
+
+// 获取 Symbol 属性
+console.log(Object.getOwnPropertySymbols(obj)); // [Symbol(name)]
+
+// 获取所有属性，包括 Symbol
+console.log(Reflect.ownKeys(obj)); // ['age', Symbol(name)]
+
+```
+
+### Symbol 的遍历方法
+
+```
+const obj = {
+  name: 'John',
+  age: 25,
+  [Symbol('id')]: 1,
+  [Symbol('key')]: 'value'
+};
+
+// 1. Object.keys() - 只返回常规属性名
+console.log(Object.keys(obj));  
+// ['name', 'age']
+
+// 2. Object.getOwnPropertyNames() - 只返回常规属性名
+console.log(Object.getOwnPropertyNames(obj));  
+// ['name', 'age']
+
+// 3. Object.getOwnPropertySymbols() - 只返回 Symbol 属性
+console.log(Object.getOwnPropertySymbols(obj));  
+// [Symbol(id), Symbol(key)]
+
+// 4. Reflect.ownKeys() - 返回所有属性，包括 Symbol
+console.log(Reflect.ownKeys(obj));  
+// ['name', 'age', Symbol(id), Symbol(key)]
+
+```
+
+
+
+### 实际应用场景
+
+#### 私有属性
+
+```
+const privateProperty = Symbol('privateProperty');
+const privateMethod = Symbol('privateMethod');
+
+class MyClass {
+  constructor() {
+    this[privateProperty] = 'private value';
+  }
+
+  [privateMethod]() {
+    return 'private method';
+  }
+
+  publicMethod() {
+    return this[privateMethod]();
+  }
+}
+
+const instance = new MyClass();
+console.log(instance[privateProperty]); // undefined（如果不知道 Symbol）
+
+```
+
+#### 防止属性名冲突
+
+#### 实现特定的接口或协议
+
+```
+const protocol = {
+  connect: Symbol('connect'),
+  disconnect: Symbol('disconnect')
+};
+
+class Device {
+  [protocol.connect]() {
+    console.log('Device connected');
+  }
+
+  [protocol.disconnect]() {
+    console.log('Device disconnected');
+  }
+}
+
+```
+
+
 
 ## set和map
 
@@ -6348,12 +7117,10 @@ https://juejin.cn/post/70800667426422784
 
 #### 简介
 
-Set是ES6新增的数据结构，类似于数组，但它的一大特性就是所有元素都是唯一的，没有重复的值，我们一般称为集合。Set是一个构造函数，用来生成set的数据结构。
-
-set打印出来的数据结构，是一个对象
+Set是一个构造函数，用来生成set的数据结构，我们一般称为集合，类似于数组，但它的一大特性就是所有元素都是唯一的，没有重复的值。set打印出来的数据结构，是一个对象
 
 ```
-var set=new Set([1,2,3])
+var set=new Set([1,2,3,3])
 console.log(set)  // Set(3) {1,2,3}
 ```
 
@@ -6414,25 +7181,24 @@ b = new Set([2, 3, 4]);
 
 //并集
 var res1 = new Set([...a, ...b]);
-console.log('并集：', res1);
+console.log('并集：', res1); //并集 Set(4) {1,2,3,4}
 
 //交集
 var res2 = new Set([...a].filter(x => b.has(x)));
-console.log('交集：', res2);
+console.log('交集：', res2);//交集 Set(2) {2,3}
 
 //差集（a 相对于 b）
 var res3 = new Set([...a].filter(x => !b.has(x)));
-console.log('差集：', res3);
+console.log('差集：', res3); //差集 Set(1) {1}
 
-//并集 Set(4) {1,2,3,4}
-//交集 Set(2) {2,3}
-//差集 Set(1) {1}
 ```
 
 #### 遍历方法
 
 Set结构的实例有四个遍历方法，可用于遍历成员。
+
 keys(), values(), entries()返回的都是遍历器对象。
+
 Set结构没有键名，只有键值，所以keys()和values()方法的行为完全一致
 
 - keys()：返回键名的遍历器
@@ -6471,7 +7237,7 @@ JS的对象有个小问题，就是**键必须是字符串**。但实际上Numbe
 
 Map类似于对象，数据结构是一个键值对的结构，但是**“键”的范围不限制于字符串，各种类型的值（包含对象）都可以当作键。**
 
-Map 也可以接受一个数组作为参数，数组的成员是一个个表示键值对的数组。注意Map里面也不可以放重复的项。
+Map也可以接受一个数组作为参数，数组的成员是一个个表示键值对的数组。注意Map里面也不可以放重复的项。
 
 #### 常用语法
 
@@ -6499,15 +7265,38 @@ map.get('Amy') //undefined  删除成功
 
 ### 区别
 
-map和set一样是关联式容器,它们的底层容器都是红黑树
+- 存储方式
 
-两种方法具有极快的查找速度
+  - ‌**Set**‌：存储唯一值的集合，成员值是唯一的，没有键，每个值只能出现一次。‌
 
-Map 和 Set 都不允许键重复
+  - ‌**Map**‌：存储键值对的集合，键和值可以是任意类型，允许重复的键。
 
-初始化需要值不一样，Map需要的是一个二维数组，而Set 需要的是一维 Array 数组
+- 遍历方式
 
-Map 是键值对的存在，键和值是分开的；Set 没有 value 只有 key，value 就是 key；
+  - ‌**Set**‌：可以通过for...of或者forEach方法进行遍历。‌
+
+  - ‌**Map**‌：除了for...of和forEach外，还可以通过keys()、values()和entries()方法来分别遍历键、值或键值对。‌
+
+- 主要方法
+
+  - ‌**Set**‌：
+    - `add(value)`: 添加一个新元素到Set对象中。
+    - `delete(value)`: 从Set对象中移除指定的元素。
+    - `has(value)`: 返回一个布尔值，表示某个元素是否存在于Set对象中。
+    - `clear()`: 清空Set对象中的所有元素。
+    - `size`: 返回Set对象中元素的数量。
+  - ‌**Map**‌：
+    - `set(key, value)`: 在Map对象中设置键/值对。
+    - `get(key)`: 从Map对象中获取指定键的值。
+    - `has(key)`: 返回一个布尔值，表示Map对象中是否存在指定的键。
+    - `delete(key)`: 从Map对象中移除指定键的键/值对。
+    - `clear()`: 清空Map对象中的所有键/值对。
+    - `size`: 返回Map对象中键/值对的数量。
+
+- 应用场景
+
+  - ‌**Set**‌：适用于需要确保元素唯一性的场景，例如去重。
+  - ‌**Map**‌：适用于需要存储键值对并根据键快速查找对应值的场景，例如实现缓存机制。
 
 ## Proxy 和 Reflect
 
@@ -7023,6 +7812,106 @@ console.log(objProxy.name);
 # TS
 
 TypeScript 是一门基于 JavaScript 拓展的语言，它是 JavaScript 的超集，并且给 JavaScript 添加了静态类型检查系统。TypeScript 能让我们在开发时发现程序中类型定义不一致的地方，及时消除隐藏的风险，大大增强了代码的可读性以及可维护性。
+
+### TypeScript编译
+
+https://zhuanlan.zhihu.com/p/45898674
+
+- 将`TypeScript`代码编译为 `TypeScript-AST`
+- 检查`AST`代码上**类型检查**
+- 类型检查后，编译为`JavaScript`代码
+- `JavaScript`代码转换为`JavaScript-AST`
+- 将`AST`代码转换为字节码
+- 运算时计算字节码
+
+![preview](https://pic1.zhimg.com/v2-4f4017f944fb4ef89084df4bcdc79d3c_r.jpg)
+
+#### ****预处理器处理****
+
+预处理器（preprocessing）负责根据`待编译文件`计算参与编译的文件，生成`源文件`列表，构成`编译上下文` 和 `Program`
+
+<img src="https://pic2.zhimg.com/80/v2-d130e0803514d7562191618337a74b2d_720w.jpg" alt="img" style="zoom:50%;" />
+
+**编译列表中的文件 = 待编译文件 + 依赖文件 + @types 文件**
+
+**待编译文件**:默认为项目目录下所有的 .ts、.tsx、.d.ts 为待编译文件(tsconfig.json)
+
+**依赖文件** :
+
+1. `<reference path=... />` 标签引入的依赖声明文件
+2. `import` 表达式引入的文件
+
+> 注意：
+> 当解析 import 导入的的时候，会优先选择 .ts/.tsx文件而不是 .d.ts 文件，以确保处理的是最新的文件
+
+**@types**:
+
+所有可见的 `@types` 目录下的所有文件
+
+> 如：`node_modules/@types`、`./node_modules/@types/`等等
+
+#### 语法分析器处理
+
+语法分析器（parser）将`预处理器`得到的`源文件列表`中的文件解析生成包含抽象语法树（AST）Node 的 `SourceFile` 对象
+
+**`SourceFile`对象 = `源文件 AST` + `额外信息` (如文件名及文件信息等)**
+
+https://blog.csdn.net/qq_41257129/article/details/100901729
+
+> 类似：
+>
+> var myDiv = React.createElement('div', { title: 'this is a div', id: 'mydiv' }, '这是一个div', myH1)
+
+#### 联合器处理
+
+联合器（Binder）遍历并处理`语法分析器`生成的 `AST`，并将 AST 中的声明结合放到一个 `Symbol` 中。
+
+然后通过 `createSourceFile` API 生成带有 `Symbol`的 `SourceFile`
+
+**`SourceFile对象` = `源文件 AST` + `Symbol` + `额外信息` (如文件名及文件信息等)**
+
+> 此时的 Symobl 仅表示**单个文件**的声明信息
+
+#### 类型解析器与检查器处理
+
+**4.1、生成 `Program`**
+
+通过调用 `createProgramAPI` 来创建 `Program`
+
+```
+Program = All SourceFile + CompilerOptions
+```
+
+**4.2、生成 `TypeChecker` 进行处理**
+
+通过 `Program` 实例创建 `TypeChecker`
+
+> TypeChecker是TypeScript类型系统的核心，它负责计算出不同文件里的Symbols之间的关系，将Type赋值给Symbol，并生成任何语义Diagnostic（比如：error）
+
+处理内容：
+
+1. `TypeChecker` **合并**不同的 `SourceFile` 里的 `Symbol` 到一个单独的视图，创建单一的`Symbol`表（囊括所有文件的全局Symbol视图 ）
+
+2. 类型检查
+
+   > Symbol 合并到一张表后，TypeChecker就可以解决关于这个程序的任何问题了。 这些“问题”可以是：
+   >
+   > 1. 这个Node的Symbol是什么？
+   >
+   > 2. 这个Symbol的Type是什么？
+   >
+   > 3. 在AST的某个部分里有哪些Symbol是可见的？
+   >
+   > 4. 某个函数声明的Signature都有哪些？
+   > 5. 针对某个文件应该报哪些错误？
+
+#### 生成器处理
+
+通过 Program 创建一个生成器 **（Emitter）**
+
+Emitter 将给定的 SourceFile 生成编译后文件（`.js`，`.jsx`，`.d.ts`和`.js.map`）
+
+
 
 ## TS和JS
 
