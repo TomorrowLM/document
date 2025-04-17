@@ -19,29 +19,29 @@ http://caibaojian.com/es6/
 
 ## 时间空间复杂度
 
-log：https://blog.csdn.net/weixin_39888180/article/details/111268391
+https://blog.csdn.net/weixin_39888180/article/details/111268391
 
-### 时间复杂度
+### 复杂度
 
-其实就是一个函数，用大 O 表示， 比如 O(1)、 O(n)...
+ $O(1)<O(logn)<O(n)<O(n*logn)<O(n^2)<O(2^n)<O(n!)$
 
-它的作用就是用来`定义描述算法的运行时间`
+![img](img/前端/ES和TS/2123)
 
 - **O(1)**
 
 ```
-    let i = 0
-    i += 1
-复制代码
+let i = 0
+i += 1
+
 ```
 
 - **O(n)：** 如果是 O(1) + O(n) 则还是 O(n)
 
 ```
-    for (let i = 0; i < n; i += 1) {
-      console.log(i)
-    }
-复制代码
+for (let i = 0; i < n; i += 1) {
+	console.log(i)
+}
+
 ```
 
 - **O(n^2)：** O(n) * O(n), 也就是双层循环，自此类推：O(n^3)...
@@ -52,7 +52,7 @@ log：https://blog.csdn.net/weixin_39888180/article/details/111268391
         console.log(i, j)
       }
     }
-复制代码
+
 ```
 
 - **O(logn)：** 就是求 log 以 2 为底的多少次方等于 n
@@ -64,46 +64,18 @@ log：https://blog.csdn.net/weixin_39888180/article/details/111268391
       console.log(i)
       i *= 2
     }
-复制代码
+
 ```
 
-###  空间复杂度
+#### 时间复杂度
 
-和时间复杂度一样，空间复杂度也是用大 O 表示，比如 O(1)、 O(n)...
+它的作用就是用来`定义描述算法的运行时间`，用大 O 表示， 
+
+#### 空间复杂度
 
 它用来`定义描述算法运行过程中临时占用的存储空间大小`
 
 > 占用越少 代码写的就越好
-
-- **O(1)：** 单个变量，所以占用永远是 O(1)
-
-```
-    let i = 0
-    i += 1
-复制代码
-```
-
-- **O(n)：** 声明一个数组， 添加 n 个值， 相当于占用了 n 个空间单元
-
-```
-    const arr = []
-    for (let i = 0; i < n; i += 1) {
-      arr.push(i)
-    }
-复制代码
-```
-
-- **O(n^2)：** 类似一个矩阵的概念，就是二维数组的意思
-
-```
-    const arr = []
-    for (let i = 0; i < n; i += 1) {
-      arr.push([])
-      for (let j = 0; j < n; j += 1) {
-        arr[i].push(j)
-      }
-    }
-```
 
 ### 查找
 
@@ -115,38 +87,246 @@ log：https://blog.csdn.net/weixin_39888180/article/details/111268391
 
 ### 排序
 
+https://www.cnblogs.com/L-xmin/p/12699190.html
+
+![img](img/前端/ES和TS/d81ccea56411427cb1224374d1364724.png)
+
 #### 快速排序
 
-  - （1）在数据集之中，找一个基准点
-  - （2）建立两个数组，分别存储左边和右边的数组
-  - （3）利用递归进行下次比较
+-  复杂度计算
+
+  假设数组的长度为n。在平均情况下，每次选择的基准元素能够将数组大致均匀地划分为两个子数组。
+
+  - 对于深度为d 的递归调用，子问题的规模大致为$\frac{n}{2^d}$。当子问题规模为 1 时递归终止，即$\frac{n}{2^d}=1$，求解可得$d = \log n$，这意味着平均情况下递归树的深度为$O(\log n)$。
+
+
+  - 在每一层递归中，划分操作需要遍历当前子数组中的所有元素，时间复杂度为O(n) 。因为每一层都要对该层对应的子数组元素进行处理，例如在最顶层对整个长度为n 的数组进行划分，下一层对两个长度约为$\frac{n}{2}$ 的子数组分别进行划分，它们的元素总数加起来还是n，以此类推。
+
+
+  - 由于递归树的深度平均为O(\log n)，每一层的时间复杂度为O(n)，根据乘法原理，快速排序的平均时间复杂度就是O(n \log n) 。
+
+- **平均情况**：在每次分区后，大约有 n/2 个元素会被放置到一边，因此每次递归调用处理的数据量大约减半。这样，大约需要进行 log n 次递归调用才能达到最底层的递归（每次调用都处理大约 n/2 的数据），因此平均时间复杂度为 O(n log n)。
+- **最坏情况**：最坏的情况发生在每次分区操作都导致一个子数组为空，而另一个子数组包含 n-1 个元素。这种情况下，快速排序的时间复杂度退化为 O(n^2)。这通常发生在数组已经有序或者所有元素都相同时。
+
+  - 首先，选择一个基准元素（pivot），可以选择数组的第一个元素、最后一个元素或者数组中的随机元素。
+  - 将数组分成两个子数组，小于基准元素的放在左边，大于基准元素的放在右边，相同的元素可以放在任意一边。
+  - 对左右两个子数组分别递归地进行快速排序。
+  - 最后，将左子数组、基准元素和右子数组合并起来，得到排序后的数组。
 
 ```js
 var arr = [3, 1, 4, 6, 5, 7, 2];
 
 function quickSort(arr) {
-    if(arr.length == 0) {
-        return [];    // 返回空数组
+  if (arr.length == 0) {
+    return [];    // 返回空数组
+  }
+
+  var cIndex = Math.floor(arr.length / 2);
+  var c = arr.splice(cIndex, 1); // 返回数组中间项
+
+  var l = [];
+  var r = [];
+
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] < c) {
+      l.push(arr[i]);
+    } else {
+      r.push(arr[i]);
     }
+  }
 
-    var cIndex = Math.floor(arr.length / 2);
-    var c = arr.splice(cIndex, 1);
-    var l = [];
-    var r = [];
-
-    for (var i = 0; i < arr.length; i++) {
-        if(arr[i] < c) {
-            l.push(arr[i]);
-        } else {
-            r.push(arr[i]);
-        }
-    }
-
-    return quickSort(l).concat(c, quickSort(r));
+  return quickSort(l).concat(c, quickSort(r));
 }
 
 console.log(quickSort(arr));
 ```
+
+
+
+## 数组
+
+### 根据数组长度创建一个一样长度的数组并初始化值为0
+
+```
+const arr = new Array(5).fill(0)
+```
+
+### 选择一个随机值
+
+```
+const random = (arr) => arr[Math.floor(Math.random() * arr.length)]
+random([1, 2, 3, 4, 5, 6])
+```
+
+### 数组去重
+
+https://zhuanlan.zhihu.com/p/90017508
+
+```js
+function removeDuplicate(arr) {
+  return Array.from(new Set([1,2,3,4,5,2,2,2,4,5]))
+}
+```
+
+```js
+let arr = ['one','two','three','one','three','two','four'];
+let el = arr.filter((item,index)=>arr.indexOf(item)===index);
+console.log(el); // ['one','two','three','four'];
+```
+
+```js
+/* 
+   1. 和上面方法一致，只不过是使用了 forEach
+*/
+var arr = ['one','two','three','one','three','two','four'];
+var obj = {};
+arr.forEach(function(ele,index,arr){
+    obj[arr[index]] = arr[index];
+});
+var el =  Object.keys(obj);
+console.log(el) // ['one','two','three','four'];
+```
+
+
+
+### 数组中最大元素的下标
+
+```js
+function maxValIndex(arr){
+  var max=Math.max(...arr);
+  var index = arr.map(item => item).indexOf(max);
+  return index
+}
+```
+
+### 找出数组中出现最多的元素和次数
+
+```js
+function findMost(arr) {
+    if (!arr.length) return
+    if (arr.length === 1) return 1
+    let res = {}
+    let maxName, maxNum = 0
+    // 遍历数组
+    arr.forEach((item) => {
+      res[item] ? res[item] += 1 : res[item] = 1
+    })
+    // 遍历 res
+    for (let r in res) {
+      if (res[r] > maxNum) {
+        maxNum = res[r]
+        maxName = r
+      }
+    }
+    return '出现次数最多的元素为:' + maxName + ', 出现次数为:' + maxNum;
+}
+ 
+function findMost (arr) {
+  if (!arr.length) return;
+  if (arr.length === 1) return 1;
+  let res = {};
+  let maxName, maxNum = 0
+  // 遍历数组
+  arr.forEach((item) => {
+    res[item] ? res[item] += 1 : res[item] = 1
+    if (res[item] > maxNum) {
+      maxName = item
+      maxNum = res[item]
+    }
+  })
+  return '出现次数最多的元素为:' + maxName + ', 出现次数为:' + maxNum;
+}
+ 
+ 
+function findMost (arr) {
+  if (!arr.length) return;
+  if (arr.length === 1) return 1;
+  let maxName, maxNum = 0
+  let res = arr.reduce((res, currentNum) => {
+    res[currentNum] ? res[currentNum] += 1 : res[currentNum] = 1
+    if (res[currentNum] > maxNum) {
+      maxNum = res[currentNum]
+      maxName = currentNum
+    }
+    return res
+  }, {})
+  return '出现次数最多的元素为:' + maxName + ', 出现次数为:' + maxNum;
+}
+ 
+ const str = 'jshdjsihh';
+     const obj = str.split('').reduce((pre,item) => {
+         pre[item] ? pre[item] ++ : pre[item] = 1
+         return pre
+     },{})
+ console.log(obj) // {j: 2, s: 2, h: 3, d: 1, i: 1}
+```
+
+### 数组对象
+
+#### 数组对象排序
+
+- 双重循环：O(n^2)
+
+  ```
+  const data = [{ num: 4 }, { num: 2 }, { num: 3 }]
+  
+  const data1 = Array.from({ length: data.length }).fill({})
+  
+  data.forEach((item1, index1) => {
+    let index = 1
+    data.forEach((item2, index2) => {
+      if (item1.num > item2.num) {
+        index += 1
+      } else if (item1.num === item2.num) {
+        index += 0
+      }
+    })
+    data1[index - 1] = item1
+  })
+  
+  console.log(data1) // [{ num: 2 }, { num: 3 }, { num: 4 }]
+  ```
+
+- sort
+
+  ```
+  data.sort((a, b) => a.num - b.num)
+  ```
+
+  
+
+#### 数组对象去重
+
+```js
+tempArr1 = tempArr1.filter((item,index) =>{
+	return tempArr1.findIndex(item1 =>item1.id==item.id) == index
+})
+```
+
+```
+const array = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 1, name: 'Alice' },
+  { id: 3, name: 'Charlie' },
+];
+ 
+const uniqueArray = array.reduce((accumulator, current) => {
+  const existingItem = accumulator.find(item => item.id === current.id);
+  if (!existingItem) {
+    return [...accumulator, current];
+  }
+  return accumulator;
+}, []);
+ 
+console.log(uniqueArray);
+```
+
+
+
+#### 判断两个数组对象是否相等
+
+
 
 ## 深拷贝与浅拷贝
 
@@ -750,9 +930,9 @@ console.log(getNodeRoute(input, '余杭区').reverse());
 2. `安全性`： 变量不会被外部访问，保证了变量值不会被随意修改。你定义在函数内的变量，如果能在几千行之后不小心被修改，脚趾头想想也知道是种折磨。
 3. `更高级的语法`：封装、面向对象等的实现离不开对变量的隔离，这是依靠作用域所达到的。
 
-为什么需要块级作用域
+**为什么需要块级作用域**
 
-- //1.变量提升,内层变量可能会覆盖外层变量。 
+- 变量提升,内层变量可能会覆盖外层变量。 
 
   ```
   var tmp = 1;
@@ -775,7 +955,7 @@ console.log(getNodeRoute(input, '余杭区').reverse());
   f();
   ```
 
-- //2.用来计数的循环变量泄露为全局变量。
+- 用来计数的循环变量泄露为全局变量。
 
   ```
   var s = 'hello';
@@ -833,7 +1013,7 @@ console.log(getNodeRoute(input, '余杭区').reverse());
 
 ### 不存在变量提升
 
-暂时性死区: 区级作用域中存在`let`和`const`命令，这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。**凡是在声明之前就使用这些变量，就会报错。** 
+**凡是在声明之前就使用这些变量，就会报错。** 
 
 ```javascript
 function bar(x = y, y = 2) {
@@ -846,7 +1026,7 @@ bar(); // 报错。参数x默认值等于另一个参数y，而此时y还没有�
 
 ### 暂时性死区
 
-只要块级作用域内存在`let`命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的影响。
+暂时性死区: 区级作用域中存在`let`和`const`命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的影响，形成了封闭作用域。
 
 ```javascript
 var tmp = 123;
@@ -873,8 +1053,6 @@ function () {
 ### const命令
 
  `const`声明一个只读的常量。一旦声明，常量的值就不能改变。
-
- 只在声明所在的块级作用域内有效 
 
  对于**复合类型**的变量，变量名不指向数据，而是指向数据所在的地址。`const`命令只是保证变量名指向的地址不变，并不保证该地址的数据不变  
 
@@ -1180,7 +1358,7 @@ const {first,second} = require('xxx');
 
 ##### 注意
 
-- 解构赋值必须是最后一个参数，否则会报错。
+- 解构赋值rest必须是最后一个参数，否则会报错。
 
   ```javascript
   let { ...x, y, z } = obj; // 句法错误
@@ -1425,7 +1603,7 @@ b **= 3;
 // 等同于 b = b * b * b;
 ```
 
-#### 链判断运算符
+#### ?.链判断运算符
 
 编程实务中，如果读取对象内部的某个属性，往往需要判断一下，属性的上层对象是否存在。比如，读取`message.body.user.firstName`这个属性，安全的写法是写成下面这样。
 
@@ -1536,7 +1714,7 @@ a?.b = c
 
 为了保证兼容以前的代码，允许`foo?.3:0`被解析成`foo ? .3 : 0`，因此规定如果`?.`后面紧跟一个十进制数字，那么`?.`不再被看成是一个完整的运算符，而会按照三元运算符进行处理，也就是说，那个小数点会归属于后面的十进制数字，形成一个小数。
 
-#### Null 判断运算符
+#### ??判断运算符
 
 读取对象属性的时候，如果某个属性的值是`null`或`undefined`，有时候需要为它们指定默认值。常见做法是通过`||`运算符指定默认值。
 
@@ -1548,7 +1726,7 @@ const showSplashScreen = response.settings.showSplashScreen || true;
 
 上面的三行代码都通过`||`运算符指定默认值，但是这样写是错的。开发者的原意是，只要属性的值为`null`或`undefined`，默认值就会生效，**但是属性的值如果为空字符串或`false`或`0`，默认值也会生效。**
 
-为了避免这种情况，[ES2020](https://github.com/tc39/proposal-nullish-coalescing) 引入了一个新的 Null 判断运算符`??`。它的行为类似`||`，但是只有运算符左侧的值为`null`或`undefined`时，才会返回右侧的值。
+为了避免这种情况，[ES2020](https://github.com/tc39/proposal-nullish-coalescing) 引入了一个新的 Null 判断运算符`??`。**它的行为类似`||`，但是只有运算符左侧的值为`null`或`undefined`时，才会返回右侧的值。**
 
 ```javascript
 const headerText = response.settings.headerText ?? 'Hello, world!';
@@ -2272,7 +2450,7 @@ Number.isInteger(25) // true
 Number.isInteger(25.0) // true
 ```
 
-#### Math对象的扩展
+### Math对象的扩展
 
 ##### Math.trunc()
 
@@ -2330,6 +2508,14 @@ Math.sign(undefined)  // NaN
 ### 数组的扩展
 
 #### from
+
+avaScript 中的 `Array.from` 方法是一个强大的工具，可以轻松地将类数组对象或可迭代对象（包括ES6新增的数据结构Set和Map）转换为数组，并通过可选的[回调函数](https://so.csdn.net/so/search?q=回调函数&spm=1001.2101.3001.7020)对每个元素进行自定义处理。
+
+Array.from(arrayLike, mapFunction, thisArg)
+
+- arrayLike：要转换为数组的类数组对象或可迭代对象。
+- mapFunction（可选）：一个函数，对每个元素执行转换。
+- thisArg（可选）：执行 mapFunction 时的 this 值。
 
 `Array.from`方法用于将两类对象转为真正的数组：
 
@@ -2414,7 +2600,7 @@ let names1 = Array.prototype.map.call(spans, s => s.textContent);
 let names2 = Array.from(spans, s => s.textContent)
 ```
 
-#### Array.of
+#### of
 
 `Array.of`方法用于将一组值，转换为数组。
 
@@ -2441,6 +2627,19 @@ Array.of(undefined) // [undefined]
 Array.of(1) // [1]
 Array.of(1, 2) // [1, 2]
 ```
+
+#### flat扁平
+
+```
+const nestedArray = [1, [2, [3, 4]], 5];
+const flatArray = nestedArray.flat(); // 默认深度为1，结果为 [1, 2, [3, 4], 5]
+const deeplyFlatArray = nestedArray.flat(2); // 深度为2，结果为 [1, 2, 3, 4, 5]
+const completelyFlatArray = nestedArray.flat(Infinity); // 完全展开，结果为 [1, 2, 3, 4, 5]
+
+console.log(flatArray, deeplyFlatArray, completelyFlatArray); // 输出: [1, 2, [3, 4], 5] [1, 2, 3, 4, 5] [1, 2, 3, 4, 5]
+```
+
+
 
 #### copyWithin
 
@@ -2473,44 +2672,25 @@ Array.prototype.copyWithin(target, start = 0, end = this.length)
 
 #### find和findIndex
 
-数组实例的`find()`方法，用于找出第一个符合条件的数组成员。它的参数是一个回调函数，所有数组成员依次执行该回调函数，直到找出第一个返回值为`true`的成员，然后返回该成员。如果没有符合条件的成员，则返回`undefined`。
+- find：**用于找出第一个符合条件的数组成员**。它的参数是一个回调函数，所有数组成员依次执行该回调函数，直到找出第一个返回值为`true`的成员，然后返回该成员。如果没有符合条件的成员，则返回`undefined`。
 
-```javascript
-[1, 4, -5, 10].find((n) => n < 0)
-// -5
-```
+  `find`方法的回调函数可以接受三个参数，依次为当前的值、当前的位置和原数组。
 
-上面代码找出数组中第一个小于 0 的成员。
+  ```
+  [1, 5, 10, 15].find(function(value, index, arr) {
+    return value > 9;
+  }) // 10
+  ```
 
-```javascript
-[1, 5, 10, 15].find(function(value, index, arr) {
-  return value > 9;
-}) // 10
-```
+- findIndex：**返回第一个符合条件的数组成员的位置**，如果所有成员都不符合条件，则返回`-1`。
 
-上面代码中，`find()`方法的回调函数可以接受三个参数，依次为当前的值、当前的位置和原数组。
+  ```
+  [1, 5, 10, 15].findIndex(function(value, index, arr) {
+    return value > 9;
+  }) // 2
+  ```
 
-数组实例的`findIndex()`方法的用法与`find()`方法非常类似，返回第一个符合条件的数组成员的位置，如果所有成员都不符合条件，则返回`-1`。
-
-```javascript
-[1, 5, 10, 15].findIndex(function(value, index, arr) {
-  return value > 9;
-}) // 2
-```
-
-这两个方法都可以接受第二个参数，用来绑定回调函数的`this`对象。
-
-```javascript
-function f(v){
-  return v > this.age;
-}
-let person = {name: 'John', age: 20};
-[10, 12, 26, 15].find(f, person);    // 26
-```
-
-上面的代码中，`find()`函数接收了第二个参数`person`对象，回调函数中的`this`对象指向`person`对象。
-
-另外，这两个方法都可以发现`NaN`，弥补了数组的`indexOf()`方法的不足。
+另外，这两个方法都可以发现`NaN`，弥补了数组的`IndexOf`方法的不足。
 
 ```javascript
 [NaN].indexOf(NaN)
@@ -2519,24 +2699,6 @@ let person = {name: 'John', age: 20};
 [NaN].findIndex(y => Object.is(NaN, y))
 // 0
 ```
-
-上面代码中，`indexOf()`方法无法识别数组的`NaN`成员，但是`findIndex()`方法可以借助`Object.is()`方法做到。
-
-`find()`和`findIndex()`都是从数组的0号位，依次向后检查。[ES2022](https://github.com/tc39/proposal-array-find-from-last) 新增了两个方法`findLast()`和`findLastIndex()`，从数组的最后一个成员开始，依次向前检查，其他都保持不变。
-
-```javascript
-const array = [
-  { value: 1 },
-  { value: 2 },
-  { value: 3 },
-  { value: 4 }
-];
-
-array.findLast(n => n.value % 2 === 1); // { value: 3 }
-array.findLastIndex(n => n.value % 2 === 1); // 2
-```
-
-上面示例中，`findLast()`和`findLastIndex()`从数组结尾开始，寻找第一个`value`属性为奇数的成员。结果，该成员是`{ value: 3 }`，位置是2号位。
 
 #### fill()
 
@@ -2975,7 +3137,7 @@ console.log(person.sayName.name);   // "sayName"
 
 #### super 关键字
 
-我们知道，`this`关键字总是指向函数所在的当前对象，ES6 又新增了另一个类似的关键字`super`，指向当前对象的原型对象。
+`this`关键字总是指向函数所在的上下文对象，ES6 又新增了另一个类似的关键字`super`，指向当前对象的原型对象。
 
 ```javascript
 const proto = {
@@ -2991,6 +3153,7 @@ const obj = {
 
 Object.setPrototypeOf(obj, proto);
 console.log(obj.find()) // "hello"
+console.log(obj.foo) // "world"
 ```
 
 上面代码中，对象`obj.find()`方法之中，通过`super.foo`引用了原型对象`proto`的`foo`属性。
@@ -3064,8 +3227,6 @@ JavaScript 提供了一个内部数据结构，用来描述对象的属性，控
 
 - `enumerable`
 
-  
-
   `enumerable`是一个布尔值，**表示该属性是否可遍历**，默认为`true`。如果设为`false`，会使得某些操作（比如`for...in`循环、`Object.keys()`）跳过该属性。
 
   ```
@@ -3073,7 +3234,7 @@ JavaScript 提供了一个内部数据结构，用来描述对象的属性，控
   Object.defineProperty(a, 'a', { value: 2, enumerable: false });
   console.log(Object.keys(a)); // []
   ```
-
+  
 - configurable
 
   `configurable`是一个布尔值，表示属性的可配置性，默认为`true`。如果设为`false`，将阻止某些操作改写属性描述对象，比如无法删除该属性，也不得改变各种元属性（`value`属性除外）。也就是说，`configurable`属性控制了属性描述对象的可写性。
@@ -3088,30 +3249,68 @@ JavaScript 提供了一个内部数据结构，用来描述对象的属性，控
 
 ##### 属性的可枚举性
 
-```javascript
-const obj = { foo: 123 };
-console.log(Object.getOwnPropertyDescriptor(obj, "foo"));
-
-//  {
-//    value: 123,
-//    writable: true,
-//    enumerable: true,
-//    configurable: true
-//  }
-```
-
 描述对象的`enumerable`属性，称为”可枚举性“，如果该属性为`false`，就表示某些操作会忽略当前属性。
 
-ES5有三个操作会台跳过`enumerable`为`false`的属性。
+```
+const obj = {
+  a: 1,
+  b: 2
+};
 
-- `for...in`循环：只遍历对象自身的和**继承**的可枚举的属性
-- `Object.keys()`：返回对象自身的所有可枚举的属性的键名
-- `JSON.stringify()`：只串行化对象自身的可枚举的属性
-- ES6新增了一个操作`Object.assign()`，会忽略`enumerable`为`false`的属性，只拷贝对象自身的可枚举的属性。
+Object.defineProperty(obj, 'c', {
+  value: 3,
+  enumerable: true
+});
+Object.defineProperty(obj, 'd', {
+  value: 3,
+  enumerable: false
+});
+Object.setPrototypeOf(obj, { e: 4 })
+```
 
-**这四个操作之中，只有`for...in`会返回继承的属性。实际上，引入`enumerable`的最初目的，就是让某些属性可以规避掉`for...in`操作。**
+- 不管是否枚举
 
-比如，对象原型的`toString`方法，以及数组的`length`属性，就通过这种手段，不会被`for...in`遍历到。
+  - **`Object.getOwnPropertyNames(obj)`**：返回对象**自身**的所有属性名（无论是否可枚举）组成的数组
+
+    ```
+    console.log(Object.getOwnPropertyNames(obj)); //'a', 'b', 'c', 'd'
+    ```
+
+  - hasOwnProperty：判断对象**自身**的属性（无论是否可枚举）是否存在
+  - Reflect–获取对象的所有自身属性，不管是否枚举，symbol 属性也可以
+
+- 只包括可枚举
+
+  - `for...in`循环：只会**遍历对象自身的和在其原型链**上可枚举的属性
+
+    ```
+    for (const key in obj) {
+      console.log(key);//a,b,c,e
+    }
+    ```
+
+  - `Object.keys/values/entries`：返回对象**自身**的所有可枚举的属性的键名
+
+    ```
+    console.log(Object.keys(obj)); //a,b,c
+    ```
+
+  - `JSON.stringify()`：只串行化对象**自身**的可枚举的属性
+
+    ```
+    console.log(JSON.stringify(obj))'{"a":1,"b":2,"c":3}'
+    ```
+
+  - `Object.assign()`，会忽略`enumerable`为`false`的属性，只拷贝对象**自身**的可枚举的属性。
+
+    ```
+    const newObj = Object.assign({}, obj)
+    console.log(newObj)//{ a: 1, b: 2, c: 3 }
+    console.log(Object.getOwnPropertyNames(newObj))[ 'a', 'b', 'c']
+    ```
+
+
+**这四个操作之中，只有`for...in`会返回继承的属性。实际上，引入`enumerable`的最初目的，就是让某些属性可以规避掉`for...in`操作。**比如，对象原型的`toString`方法，以及数组的`length`属性，就通过这种手段，不会被`for...in`遍历到。
 
 ```javascript
 Object.getOwnPropertyDescriptor(Object.prototype, 'toString').enumerable
@@ -3351,7 +3550,7 @@ delete obj.toString // true
 obj.toString // function toString() { [native code] }
 ```
 
-##### 属性是否存在：in
+##### 属性是否存在in
 
 ```js
 var obj = { p: 1 };
@@ -3435,7 +3634,7 @@ https://wangdoc.com/javascript/stdlib/attributes.html
 
 ##### Object.is
 
-ES5比较两个值是否相等，只有两个运算符：相等运算符（`==`）和严格相等运算符（`===`）。它们都有缺点，前者会**自动转换数据类型**，后者的`NaN`不等于自身，以及`+0`等于`-0`。JavaScript缺乏一种运算，在所有环境中，只要两个值是一样的，它们就应该相等。
+ES5比较两个值是否相等，只有两个运算符：相等运算符（`==`）和严格相等运算符（`===`）。它们都有缺点，**前者会自动转换数据类型，后者的`NaN`不等于自身，以及`+0`等于`-0`**。JavaScript缺乏一种运算，在所有环境中，只要两个值是一样的，它们就应该相等。
 
 ES6提出“Same-value equality”（同值相等）算法，用来解决这个问题。`Object.is`就是部署这个算法的新方法**。它用来比较两个值是否严格相等，与严格比较运算符（===）的行为基本一致。**
 
@@ -3476,6 +3675,8 @@ Object.defineProperty(Object, 'is', {
 
 ##### Object.create
 
+允许我们指定新对象的原型，并为新对象设置属性
+
 ```js
 Object.create(proto，[propertiesObject])
 ```
@@ -3501,11 +3702,11 @@ let obj = Object.create({a:1}, {b:3})
 
 let obj = Object.create({ a: 1 }, { b: { value: 2 } });
 console.log(Object.getPrototypeOf(obj));//{ a: 1 }
-console.log(obj); // {},b默认为不可枚举
+console.log(obj); // {b:2}
 console.log(obj.a, obj.b); // 1，2
 obj.b = 3;
 console.log(obj.b); // 2，b默认为不可写
-console.log(Object.keys(obj)); // []
+console.log(Object.keys(obj)); // [],b默认不可枚举
  
  
 let obj = Object.create(
@@ -3928,9 +4129,10 @@ Object.defineProperty(obj, prop, descriptor)
 ```js
 const object1 = {};
 object1.property1 = 42;
+object1.__proto__.property2 = 44;
 
-console.log(object1.hasOwnProperty('property1'));
-// expected output: true
+console.log(object1.hasOwnProperty('property1')); //true
+console.log(object1.hasOwnProperty('property2')); //false
 ```
 
 即使属性的值是 null 或 undefined，只要属性存在，hasOwnProperty 依旧会返回 true。
@@ -4270,9 +4472,7 @@ var getTempItem = id => ({ id: id, name: "Temp" });
 
 ##### 注意点
 
-- 函数体内的`this`对象，就是定义时所在的对象，而不是使用时所在的对象。
-
-  **箭头函数没有自己的作用域，没有自己的this值，绑定的是父级作用域的上下文**
+- **箭头函数没有自己的上下文对象this, 它的this是绑定的是父级作用域的上下文; 默认指向在定义它时所处的对象(宿主对象)，不是调用时的对象**
 
   ```js
   var name = 'window'; // 其实是window.name = 'window'
@@ -4299,7 +4499,7 @@ var getTempItem = id => ({ id: id, name: "Temp" });
   }
   A.sayHello();// 还是以为输出A ? 错啦，其实输出的是window
   ```
-
+  
 - 不可以当作构造函数，也就是说，不可以使用`new`命令，否则会抛出一个错误。
 
 - 不可以使用`arguments`对象，该对象在函数体内不存在。如果要用，可以用Rest参数代替。
@@ -4560,7 +4760,7 @@ https://es6.ruanyifeng.com/#docs/class-extends
 ### class和构造函数区别
 
 - 方法定义
-  - **Class:** 在 `class` 中定义方法更加简洁，不需要使用 `prototype` 属性。**方法默认会被添加到类的原型上**。
+  - **Class:** 在 `class` 中定义方法更加简洁，不需要使用 `prototype` 属性。**方法默认会被添加到类的原型上，所有Class的原型的方法都是不可枚举的。**。
   - **构造函数:** 需要将方法显式地添加到构造函数的 `prototype` 属性上，才能被所有实例共享。
 
 - 静态
@@ -4602,11 +4802,6 @@ https://es6.ruanyifeng.com/#docs/class-extends
     Person.walk() //人都会走路    // 2
     ```
 
-- `super` 关键字:
-
-  - **Class:** 在子类中，可以使用 `super` 关键字来调用父类的方法或构造函数，方便实现继承和扩展。
-  - **构造函数:** 在构造函数中，需要通过 `Parent.call(this, ...)` 的方式来调用父类的构造函数。
-
 - `new.target`:
   - **Class:** 支持 `new.target`，可以检测构造函数是否通过 `new` 关键字调用。
   - **构造函数:** 也支持 `new.target`。
@@ -4615,6 +4810,11 @@ https://es6.ruanyifeng.com/#docs/class-extends
   - **Class:** 使用 `class` 定义的类，其原型继承关系更加清晰。通过 `extends` 关键字可以方便地实现继承，子类的原型会指向父类的原型。
   - **构造函数:** 使用构造函数实现继承需要手动操作原型链，例如**将子类的原型指向父类的实例**，并设置 `constructor` this指向。相对来说比较繁琐，容易出错。
 
+- `super` 关键字:
+  
+  - **Class:** 在子类中，可以使用 `super` 关键字来调用父类的方法或构造函数，方便实现继承和扩展。
+  - **构造函数:** 在构造函数中，需要通过 `Parent.call(this, ...)` 的方式来调用父类的构造函数。
+  
 - **类的内部所有定义的方法（即原型对象下的方法），都是不可枚举的**（non-enumerable）。
 
   ```javascript
@@ -4895,7 +5095,248 @@ console.log(new Foo() instanceof Foo);//false
 
   
 
-#### 私有属性
+#### 静态
+
+##### 属性
+
+静态属性指的是Class本身的属性，即`Class.myStaticProp`，而不是定义在实例对象（`this`）上的属性。只能通过 MyClass.prop 访问。
+
+```js
+// 老写法
+class Foo {
+}
+Foo.prop = 1;
+
+// 新写法
+class Foo {
+  static prop = 1;
+}
+const ins = new Foo();
+console.log(ins.prop) // undefined
+```
+
+**静态属性是可以继承的。**
+
+```
+class MyClass {
+  static myStaticProp = 42;
+
+  constructor() {
+    console.log(MyClass.age, MyClass.myStaticProp); // 2 42
+  }
+}
+MyClass.age = 2;
+class MyClass1 extends MyClass {
+  constructor() {
+    super();
+    console.log(MyClass1.age, MyClass1.myStaticProp); // 2 42
+  }
+}
+const foo = new MyClass1();
+console.log(foo.age, foo.myStaticProp); //undefined  undefined
+```
+
+##### 方法
+
+如果在一个方法前，加上`static`关键字，就表示该方法不会被实例继承，而是直接通过类来调用，这就称为“静态方法”。
+
+```javascript
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+console.log(Foo.classMethod()); // 'hello'
+
+var foo = new Foo();
+foo.classMethod()
+// TypeError: foo.classMethod is not a function
+```
+
+上面代码中，`Foo`类的`classMethod`方法前有`static`关键字，表明该方法是一个静态方法，可以直接在`Foo`类上调用（`Foo.classMethod()`），而不是在`Foo`类的实例上调用。如果在实例上调用静态方法，会抛出一个错误，表示不存在该方法。
+
+**父类的静态方法，可以被子类继承。**
+
+```javascript
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo {
+}
+
+Bar.classMethod(); // 'hello'
+```
+
+上面代码中，父类`Foo`有一个静态方法，子类`Bar`可以调用这个方法。
+
+静态方法也是可以从`super`对象上调用的。
+
+```javascript
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo {
+  static classMethod() {
+    return super.classMethod() + ', too';
+  }
+}
+
+Bar.classMethod();
+```
+
+#### 访问修饰符
+
+访问修饰符（Access Modifiers），分别是 `public`、`private` 和 `protected`。
+
+##### public
+
+`public` 修饰的属性或方法是公有的，可以在任何地方被访问到，默认所有的属性和方法都是 `public` 的
+
+```ts
+class Animal {
+  public name;
+  public constructor(name) {
+    this.name = name;
+  }
+}
+
+let a = new Animal('Jack');
+console.log(a.name); // Jack
+a.name = 'Tom';
+console.log(a.name); // Tom
+```
+
+上面的例子中，`name` 被设置为了 `public`，所以直接访问实例的 `name` 属性是允许的。
+
+
+
+##### private
+
+当一个类的成员被标记为 private 时，它只能在该类内部被访问。换句话说，private 成员对于该类的实例或子类都是不可见的，也不能被访问。
+
+```js
+class Animal {
+  private name;
+  public constructor(name) {
+    this.name = name;
+  }
+  private getName() {
+    console.log(this.name)
+  }
+}
+
+let a = new Animal('Jack');
+console.log(a.name); // Jack
+a.name = 'Tom';
+console.log(a.name); // Tom
+a.getName();
+// 属性“name”和getName为私有属性，只能在类“Animal”中访问。
+
+```
+
+当构造函数修饰为 `private` 时，该类不允许被继承或者实例化：
+
+```ts
+class Animal {
+  public name;
+  private constructor(name) {
+    this.name = name;
+  }
+}
+class Cat extends Animal {
+  constructor(name) {
+    super(name);
+  }
+}
+
+let a = new Animal('Jack');
+
+// 无法扩展类“Animal”。类构造函数标记为私有。
+```
+
+##### protected
+
+protected 成员对于该类及其子类是可见的，但对于该类的实例或外部代码是不可见的。这意味着子类可以访问和修改 protected 成员，但类外部的代码不能。
+
+```ts
+class Animal {
+  protected name;
+  public constructor(name) {
+    this.name = name;
+  }
+}
+
+class Cat extends Animal {
+  constructor(name) {
+    super(name);
+    console.log(this.name); //Tom
+  }
+}
+const ins = new Cat('Tom');
+console.log(ins.name); //Tom
+//属性“name”受保护，只能在类“Animal”及其子类中访问。
+```
+
+当构造函数修饰为 `protected` 时，该类只允许被继承：
+
+```ts
+class Animal {
+  public name;
+  protected constructor(name) {
+    this.name = name;
+    console.log(this.name); //Jack
+  }
+}
+class Cat extends Animal {
+  constructor(name) {
+    super(name);
+    console.log(this.name);//报错
+  }
+}
+
+let a = new Animal('Jack');// 类“Animal”的构造函数是受保护的，仅可在类声明中访问
+```
+
+
+
+##### readonly
+
+只读属性关键字，只允许出现在属性声明或索引签名或构造函数中。
+
+```ts
+class Animal {
+  readonly name;
+  public constructor(name) {
+    this.name = name;
+  }
+}
+
+let a = new Animal('Jack');
+console.log(a.name); // Jack
+a.name = 'Tom';
+
+// index.ts(10,3): TS2540: Cannot assign to 'name' because it is a read-only property.
+```
+
+注意如果 `readonly` 和其他访问修饰符同时存在的话，需要写在其后面。
+
+```ts
+class Animal {
+  // public readonly name;
+  public constructor(public readonly name) {
+    // this.name = name;
+  }
+}
+```
+
+##### 私有属性
 
 [ES2022](https://github.com/tc39/proposal-class-fields)正式为`class`添加了私有属性，方法是在属性名之前使用`#`表示。
 
@@ -4958,260 +5399,7 @@ class Counter {
 }
 ```
 
-#### 类的静态属性
 
-静态属性指的是Class本身的属性，即`Class.myStaticProp`，而不是定义在实例对象（`this`）上的属性。
-
-```js
-// 老写法
-class Foo {
-}
-Foo.prop = 1;
-
-// 新写法
-class Foo {
-  static prop = 1;
-}
-```
-
-只能通过 MyClass.prop 访问。静态属性是可以继承的。
-
-```
-class MyClass {
-  static myStaticProp = 42;
-
-  constructor() {
-    console.log(MyClass.age, MyClass.myStaticProp); // 2 42
-  }
-}
-MyClass.age = 2;
-const foo = new MyClass();
-console.log(foo.age, foo.myStaticProp); //undefined  undefined
-```
-
-#### 类的静态方法
-
-类相当于实例的原型，所有在类中定义的方法，都会被实例继承。如果在一个方法前，加上`static`关键字，就表示该方法不会被实例继承，而是直接通过类来调用，这就称为“静态方法”。
-
-```javascript
-class Foo {
-  static classMethod() {
-    return 'hello';
-  }
-}
-
-console.log(Foo.classMethod()); // 'hello'
-
-var foo = new Foo();
-foo.classMethod()
-// TypeError: foo.classMethod is not a function
-```
-
-上面代码中，`Foo`类的`classMethod`方法前有`static`关键字，表明该方法是一个静态方法，可以直接在`Foo`类上调用（`Foo.classMethod()`），而不是在`Foo`类的实例上调用。如果在实例上调用静态方法，会抛出一个错误，表示不存在该方法。**静态属性指的是Class本身的属性，即`Class.propname`，而不是定义在实例对象（`this`）上的属性。**
-
-**父类的静态方法，可以被子类继承。**
-
-```javascript
-class Foo {
-  static classMethod() {
-    return 'hello';
-  }
-}
-
-class Bar extends Foo {
-}
-
-Bar.classMethod(); // 'hello'
-```
-
-上面代码中，父类`Foo`有一个静态方法，子类`Bar`可以调用这个方法。
-
-静态方法也是可以从`super`对象上调用的。
-
-```javascript
-class Foo {
-  static classMethod() {
-    return 'hello';
-  }
-}
-
-class Bar extends Foo {
-  static classMethod() {
-    return super.classMethod() + ', too';
-  }
-}
-
-Bar.classMethod();
-```
-
-#### 访问修饰符
-
-访问修饰符（Access Modifiers），分别是 `public`、`private` 和 `protected`。
-
-- `public` 修饰的属性或方法是公有的，可以在任何地方被访问到，默认所有的属性和方法都是 `public` 的
-- `private` 修饰的属性或方法是私有的，不能在声明它的类的外部访问
-- `protected` 修饰的属性或方法是受保护的，它和 `private` 类似，区别是它在子类中也是允许被访问的
-
-下面举一些例子：
-
-```ts
-class Animal {
-  public name;
-  public constructor(name) {
-    this.name = name;
-  }
-}
-
-let a = new Animal('Jack');
-console.log(a.name); // Jack
-a.name = 'Tom';
-console.log(a.name); // Tom
-```
-
-上面的例子中，`name` 被设置为了 `public`，所以直接访问实例的 `name` 属性是允许的。
-
-很多时候，我们希望有的属性是无法直接存取的，这时候就可以用 `private` 了：
-
-```ts
-class Animal {
-  private name;
-  public constructor(name) {
-    this.name = name;
-  }
-}
-
-let a = new Animal('Jack');
-console.log(a.name); // Jack
-a.name = 'Tom';
-
-// index.ts(9,13): error TS2341: Property 'name' is private and only accessible within class 'Animal'.
-// index.ts(10,1): error TS2341: Property 'name' is private and only accessible within class 'Animal'.
-```
-
-需要注意的是，TypeScript 编译之后的代码中，并没有限制 `private` 属性在外部的可访问性。
-
-上面的例子编译后的代码是：
-
-```javascript
-var Animal = (function () {
-  function Animal(name) {
-    this.name = name;
-  }
-  return Animal;
-})();
-var a = new Animal('Jack');
-console.log(a.name);
-a.name = 'Tom';
-```
-
-使用 `private` 修饰的属性或方法，在子类中也是不允许访问的：
-
-```ts
-class Animal {
-  private name;
-  public constructor(name) {
-    this.name = name;
-  }
-}
-
-class Cat extends Animal {
-  constructor(name) {
-    super(name);
-    console.log(this.name);
-  }
-}
-
-// index.ts(11,17): error TS2341: Property 'name' is private and only accessible within class 'Animal'.
-```
-
-而如果是用 `protected` 修饰，则允许在子类中访问：
-
-```ts
-class Animal {
-  protected name;
-  public constructor(name) {
-    this.name = name;
-  }
-}
-
-class Cat extends Animal {
-  constructor(name) {
-    super(name);
-    console.log(this.name);
-  }
-}
-```
-
-当构造函数修饰为 `private` 时，该类不允许被继承或者实例化：
-
-```ts
-class Animal {
-  public name;
-  private constructor(name) {
-    this.name = name;
-  }
-}
-class Cat extends Animal {
-  constructor(name) {
-    super(name);
-  }
-}
-
-let a = new Animal('Jack');
-
-// index.ts(7,19): TS2675: Cannot extend a class 'Animal'. Class constructor is marked as private.
-// index.ts(13,9): TS2673: Constructor of class 'Animal' is private and only accessible within the class declaration.
-```
-
-当构造函数修饰为 `protected` 时，该类只允许被继承：
-
-```ts
-class Animal {
-  public name;
-  protected constructor(name) {
-    this.name = name;
-  }
-}
-class Cat extends Animal {
-  constructor(name) {
-    super(name);
-  }
-}
-
-let a = new Animal('Jack');
-
-// index.ts(13,9): TS2674: Constructor of class 'Animal' is protected and only accessible within the class declaration.
-```
-
-#### readonly
-
-只读属性关键字，只允许出现在属性声明或索引签名或构造函数中。
-
-```ts
-class Animal {
-  readonly name;
-  public constructor(name) {
-    this.name = name;
-  }
-}
-
-let a = new Animal('Jack');
-console.log(a.name); // Jack
-a.name = 'Tom';
-
-// index.ts(10,3): TS2540: Cannot assign to 'name' because it is a read-only property.
-```
-
-注意如果 `readonly` 和其他访问修饰符同时存在的话，需要写在其后面。
-
-```ts
-class Animal {
-  // public readonly name;
-  public constructor(public readonly name) {
-    // this.name = name;
-  }
-}
-```
 
 #### 属性表达式
 
@@ -7953,7 +8141,7 @@ JavaScript 是一门解释型语言，没有编译阶段，所以它是动态类
 
 https://blog.csdn.net/qiwoo_weekly/article/details/108557466
 
-### ?. 运算符
+### ?. 可选链
 
 可选链（Optional Chaining）运算符是一种先检查属性是否存在，再尝试访问该属性的运算符
 
@@ -7972,7 +8160,7 @@ a?.b();
 // 如果 a.b 不是函数的话，会抛类型错误异常，否则计算 a.b() 的结果
 ```
 
-### ?:
+### ?:可选链
 
 在 TypeScript 中使用 `interface` 关键字就可以声明一个接口：
 
@@ -8013,7 +8201,7 @@ let lolo: Person  = {
 
 
 
-### | 分隔符
+### | 联合类型
 
 在 TypeScript 中联合类型（Union Types）表示取值可以为多种类型中的一种，联合类型使用 `|` 分隔每个类型。联合类型通常与 `null` 或 `undefined` 一起使用：
 
@@ -8022,6 +8210,18 @@ const sayHello = (name: string | undefined) => { /* ... */ };
 ```
 
 以上示例中 `name` 的类型是 `string | undefined` 意味着可以将 `string` 或 `undefined` 的值传递给 `sayHello` 函数。
+
+### typeof
+
+#### 基本用法
+
+在TypeScript中，`typeof`运算符可以获取一个值的类型。这与JavaScript中的`typeof`运算符不同，JavaScript中的`typeof`返回的是字符串，而TypeScript中的`typeof`返回的是类型的描述。例如：
+
+```
+const a = { x: 0 };
+type T0 = typeof a; // { x: number }
+type T1 = typeof a.x; // number
+```
 
 ### keyof
 
@@ -8039,18 +8239,6 @@ interface Person {
 
 ```
 type KeysOfPerson = keyof Person; // 'id' | 'name' | 'age'
-```
-
-### typeof
-
-#### 基本用法
-
-在TypeScript中，`typeof`运算符可以获取一个值的类型。这与JavaScript中的`typeof`运算符不同，JavaScript中的`typeof`返回的是字符串，而TypeScript中的`typeof`返回的是类型的描述。例如：
-
-```
-const a = { x: 0 };
-type T0 = typeof a; // { x: number }
-type T1 = typeof a.x; // number
 ```
 
 #### 结合对象使用
@@ -8151,7 +8339,6 @@ type Record<K extends string | number | symbol, T> = { [P in K]: T; };
 const obj: Record<string, string> = { "a": "1" };
 interface Person { name: string; age: number; }
 const obj: Record<string, Person> = { "a": { name: "dj", age: 12 } };
-
 ```
 
 #### Record的应用场景
@@ -8195,6 +8382,26 @@ const obj: Record<string, Person> = { "a": { name: "dj", age: 12 } };
        agreeTerms: { type: 'checkbox', label: 'Agree to terms', required: false },
    };
    ```
+
+### import type
+
+1. ‌**仅导入类型信息**‌：import type仅引入类型信息，如接口、类型别名、枚举等。这种导入方式不会影响生成的JavaScript代码，因为类型信息在编译时会被移除‌。
+2. ‌**避免循环依赖和副作用**‌：使用import type可以避免循环依赖问题，并且不会引入模块的副作用，因为运行时的代码不会被包含在生成的JavaScript文件中‌。
+3. ‌**减小输出文件大小**‌：由于import type不包含实际执行的代码，因此可以减少最终打包文件的大小‌
+
+```
+// someTypes.ts
+export type Foo = { bar: string; };
+
+// main.ts
+import type { Foo } from './someTypes';
+
+let obj: Foo = { bar: 'value' }; // 使用Foo类型定义一个对象
+```
+
+在这个例子中，`import type { Foo } from './someTypes';`仅导入Foo类型的声明。
+
+##### 
 
 ## 基础类型
 
@@ -8269,7 +8476,9 @@ let num: number = u;
 
 ### 数组
 
-TypeScript像JavaScript一样可以操作数组元素。 有两种方式可以定义数组。 第一种，可以在**元素类型**后面接上 `[]`，表示由此类型元素组成的一个数组：
+TypeScript像JavaScript一样可以操作数组元素。 有两种方式可以定义数组。 
+
+第一种，可以在**元素类型**后面接上 `[]`，表示由此类型元素组成的一个数组：
 
 ```ts
 let list: number[] = [1, 2, 3];
@@ -8396,32 +8605,47 @@ let unusable: void = undefined;
 
 ### Never
 
-never 是其它类型（包括 null 和 undefined）的子类型，代表那些永不存在的值的类型。这意味着声明为 never 类型的变量只能被 never 类型所赋值。 例如， `never`类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型；
+‌**[TypeScript](https://www.baidu.com/s?rsv_dl=re_dqa_generate&sa=re_dqa_generate&wd=TypeScript&rsv_pq=aad593db02231572&oq=ts Never&rsv_t=7dceWfAlHpuFHoV89MOKUW8hC0HGHSVeycOE5+N+dwKGJJRq1FwO2kL0xJl1qUERLlw2wxFbmt67&tn=62095104_41_oem_dg&ie=utf-8)中的`never`类型表示那些永远不会发生的值，主要用于表示不会发生的场景，如死循环或总是抛出错误的函数。**
 
-```ts
-let x: never;
-let y: number;
+‌
 
-// 运行错误，数字类型不能转为 never 类型
-x = 123;
-y = 123;
+#### never类型的定义和用途
 
-// 运行正确，never 类型可以赋值给 never类型
-x = (()=>{ throw new Error('exception')})();
+`never`类型用于表示那些永远不会返回值的函数或永远不会执行到的代码块。例如：
 
-// 运行正确，never 类型可以赋值给 数字类型
-y = (()=>{ throw new Error('exception')})();
+- ‌**死循环**‌：一个包含`while(true)`的函数永远不会正常返回，其返回类型为`never`。
+- ‌**总是抛出错误的函数**‌：一个总是抛出异常的函数，其返回类型也是`never`。
 
-// 返回值为 never 的函数可以是抛出异常的情况
-function error(message: string): never {
-    throw new Error(message);
-}
+#### never类型的应用场景
 
-// 返回值为 never 的函数可以是无法被执行到的终止点的情况
-function loop(): never {
-    while (true) {}
-}
+1. ‌**异常处理**‌：在异常处理函数中，可以使用`never`类型明确标注抛出异常的函数返回类型，这样编译器会提示调用该函数后的代码不可达，从而避免无效代码的编写。
+2. ‌**无限循环控制流**‌：用于表示那些永不终止的循环，如事件循环或守护进程。
+3. ‌**穷尽性检查**‌：在处理联合类型的场景中，使用`never`类型可以在编译时检查是否覆盖了所有可能的分支，确保代码的完整性。
+
 ```
+function error(msg: string): never {
+    throw new Error(msg);
+}
+
+function loop(): never {
+    while (true) {
+        // 处理事件队列
+    }
+}
+
+type HttpMethod = 'GET' | 'POST' | 'PUT';
+function handleRequest(method: HttpMethod) {
+    switch (method) {
+        case 'GET': return fetchData();
+        case 'POST': return submitData();
+        case 'PUT': return updateData();
+        default: const exhaustiveCheck: never = method; // 类型守卫，确保覆盖所有可能
+    }
+}
+
+```
+
+
 
 ### 类型断言
 
@@ -8606,12 +8830,12 @@ myFavoriteNumber = 7;
 
 - interface
 
-  - 只能定义对象类型
+  - 只能定义对象，函数，类类型
   - 多次声明一个同名的接口，TypeScript 会将它们合并到一个声明中，并将它们视为一个接口。这称为**声明合并**
 
 - type
 
-  - 可以定义基本类型，元组，组合类型，交叉类型
+  - 可以定义基本类型，元组，联合类型，交叉类型
 
     ```
     // 基本类型别名
@@ -8767,23 +8991,25 @@ let mySquare = createSquare({ colour: "red", width: 100 });
 
 - 最简便的方法是使用**类型断言**：
 
-```ts
-let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
-```
+  ```
+  let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
+  ```
 
-- 加上额外属性声明，允许对象引用除可选属性以外的其他属性
+- 加上**可索引的类型**，允许对象引用除可选属性以外的其他属性
 
-```ts
-interface SquareConfig {
-    color?: string;
-    width?: number;
-    [propName: string]: any;//加上额外属性声明，允许对象引用除可选属性以外的其他属性
-}
-```
+  ```
+  interface SquareConfig {
+      color?: string;
+      width?: number;
+      [propName: string]: any;//加上额外属性声明，允许对象引用除可选属性以外的其他属性
+  }
+  ```
+
+  
 
 #### 可索引的类型
 
-与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如`a[10]`或`ageMap["daniel"]`。 可索引类型具有一个 *索引签名*，它描述了对象索引的类型，还有相应的索引返回值类型。 
+它描述了对象索引的类型，还有相应的索引返回值类型。 
 
 ```ts
 // 数字索引——约束数组
@@ -8831,33 +9057,6 @@ myArray[2] = "Mallory"; // error!
 
 你不能设置`myArray[2]`，因为索引签名是只读的。
 
-**Element implicitly has an ‘any‘ type because expression of type ‘string‘ can‘t be used to index type**
-英文报错：Element implicitly has an ‘any’ type because expression of type ‘string’ can’t be used to index type
-
-中文报错：元素隐式具有 “any” 类型，因为类型为 “string” 的表达式不能用于索引类型 “UserInfo”。
-
-```
-interface UserInfo {
-  name: string;
-  age: number;
-  address: string;
-}
-```
-
-```
-let userInfo: UserInfo = {
-  name: "刘德华",
-  age: 18,
-  address: "吉林市长春市九台区其塔木镇",
-};
-let coontent = userInfo[v.value]
-解决方法：
-let content = userInfo[v.value as keyof typeof userInfo]
-原因分析：
-
-根据英文分析，是断言 v.value 的值是对象 userInfo 的 key
-```
-
 #### 函数类型
 
 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 具体的格式是一个只有**参数列表**和**返回值类型**的函数定义。**参数列表**里的每个参数都需要名字和类型。
@@ -8889,45 +9088,6 @@ const myFunc: Func = function(param2, param3){
 };
 
 myFunc('1',2)
-```
-
-#### 继承接口
-
-和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
-
-```ts
-interface Shape {
-    color: string;
-}
-
-interface SquareSquare extends Shape {
-    sideLength: number;
-}
-
-const square ={} as SquareSquare;
-square.color = "blue";
-square.sideLength = 10;
-```
-
-一个接口可以继承多个接口，创建出多个接口的合成接口。
-
-```ts
-interface Shape {
-    color: string;
-}
-
-interface PenStroke {
-    penWidth: number;
-}
-
-interface Square extends Shape, PenStroke {
-    sideLength: number;
-}
-
-let square = <Square>{};
-square.color = "blue";
-square.sideLength = 10;
-square.penWidth = 5.0;
 ```
 
 #### 类类型
@@ -9075,29 +9235,50 @@ point3d.point()
 
 所以我们既可以将 `Point` 当做一个类来用（使用 `new Point` 创建它的实例）,也可以将 `Point` 当做一个类型来用（使用 `: Point` 表示参数的类型）
 
+#### 继承接口
+
+和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
+
+```ts
+interface Shape {
+    color: string;
+}
+
+interface SquareSquare extends Shape {
+    sideLength: number;
+}
+
+const square ={} as SquareSquare;
+square.color = "blue";
+square.sideLength = 10;
+```
+
+一个接口可以继承多个接口，创建出多个接口的合成接口。
+
+```ts
+interface Shape {
+    color: string;
+}
+
+interface PenStroke {
+    penWidth: number;
+}
+
+interface Square extends Shape, PenStroke {
+    sideLength: number;
+}
+
+let square = <Square>{};
+square.color = "blue";
+square.sideLength = 10;
+square.penWidth = 5.0;
+```
+
+
+
 ### 类型别名type 
 
-#### 使用场景和优势
-
-1. ‌**仅导入类型信息**‌：import type用于导入类型声明，如接口、类型别名、枚举等。这种导入方式不会影响生成的JavaScript代码，因为类型信息在编译时会被移除‌。
-2. ‌**避免循环依赖和副作用**‌：使用import type可以避免循环依赖问题，并且不会引入模块的副作用，因为运行时的代码不会被包含在生成的JavaScript文件中‌。
-3. ‌**减小输出文件大小**‌：由于import type不包含实际执行的代码，因此可以减少最终打包文件的大小‌
-
-##### 导入类型信息
-
-```
-// someTypes.ts
-export type Foo = { bar: string; };
-
-// main.ts
-import type { Foo } from './someTypes';
-
-let obj: Foo = { bar: 'value' }; // 使用Foo类型定义一个对象
-```
-
-在这个例子中，`import type { Foo } from './someTypes';`仅导入Foo类型的声明。
-
-##### 泛型
+#### 泛型
 
 同接口一样，类型别名也可以是泛型 - axios举例
 
@@ -9814,9 +9995,14 @@ function reverse(x: number | string): number | string {
 
 ### 介绍
 
-> 考虑可重用性。 组件不仅能够支持当前的数据类型，同时也能支持未来的数据类型
+泛型（Generics）是指在定义函数、接口、type或类的时候，**不预先指定具体的类型，而是使用一个占位符（通常用字母 T、U 等表示）来表示类型，并在使用的时候再指定类型的一种特性。**
 
-泛型（Generics）是指在定义函数、接口或类的时候，**不预先指定具体的类型，而在使用的时候再指定类型的一种特性**。当我们需要写一个传入什么类型就得到什么类型的函数
+泛型的优势在于：
+
+1. **类型安全**：泛型允许我们在编译时检查类型，减少了类型错误的风险。比如我传入的是 string，但是使用了 number 上的方法，就应该报错。
+2. **提升代码复用性**：可以编写与特定类型无关的通用代码，极大地提升了代码的复用性，减少代码冗余。比如编写一个打印的函数，如果指定类型，则需要联合类型去定义入参，但是如果用any就会有类型错误的风险。
+
+
 
 - 使用`any`类型会导致这个函数可以接收任何类型的`arg`参数，这样就丢失了一些信息
   
@@ -9841,10 +10027,8 @@ function reverse(x: number | string): number | string {
   function one<T>(a: T) : T{
       return a;
   }
-  let a1 = one<number>(1)
-  let a2 = one(520)
-  //描述T是什么类型的时候，可以在<number>描述它是一个number类型，
-  //也可以类型推论
+  let a1 = one<number>(1)//描述T是什么类型的时候，可以在<number>描述它是一个number类型，
+  let a2 = one(520)//也可以类型推论
   ```
 
 ### 泛型类型

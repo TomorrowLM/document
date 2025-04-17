@@ -1,182 +1,3 @@
-# 对象
-
-> 数据一一复制到响应式对象中
-
-```
-function checkedType(e) {
-  return Object.prototype.toString.call(e).slice(8, -1);
-}
-const replaceFormfield = (data, replaceData) => {
-  // // let result;
-  // if (checkedType(replaceData) === 'Object') {
-  //   // data = {};
-  // } else if (checkedType(replaceData) === 'Array') {
-  //   // data = [];
-  // } else {
-  //   return data ?? replaceData;
-  // }
-  // console.log(data, replaceData);
-  for (let i in replaceData) {
-    console.log(i, replaceData[i], checkedType(replaceData[i]) === 'Object' || checkedType(replaceData[i]) === 'Array');
-    if (checkedType(replaceData[i]) === 'Object' || checkedType(replaceData[i]) === 'Array') {
-      console.log(data[i]);
-      replaceFormfield(data[i], replaceData[i]);
-    } else {
-      console.log(data?.[i], replaceData?.[i]);
-      replaceData[i] = data?.[i] ?? replaceData?.[i];
-    }
-  }
-  // return data;
-};
-```
-
-# URL
-
-> url param转对象
-
-```
-function get_parse_link(link){
-// new URL().searchParams 得到的是一个 URLSearchParams 对象
-const urlObj = new URL(link);
-const urlSearchParams = urlObj.searchParams;
-// 配合 Object.fromEntries 将查询参数转换为对象
-const paramObj = Object.fromEntries(urlSearchParams);
-return paramObj
-}
-```
-
-# cookie
-
-> cookie
-
-```
-if (!navigator.cookieEnabled && window.location.href.includes('login')) {
-console.log(window.location,window.parent.frames[0])
-alert("您的浏览器限制了第三方Cookie，这将影响您正常登录，您可以更改浏览器的隐私设置，解除限制后重试。");
-}
-```
-
-
-
-# 组件
-
-## 导入
-
-```
-
-```
-
-
-
-## 导出
-
-```
-const createFile = async res => {
-  const { fileData, type, fileName } = res;
-  // 创建一个blob链接
-  // const blob1 = new Blob([data], { type: 'application/vnd.ms-excel' });
-  const blob1 = new Blob([fileData]);
-  console.log(blob1);
-  const url = URL.createObjectURL(blob1);
-  const a = document.createElement('a');
-  a.setAttribute('download', url);
-  a.href = url;
-  a.style.display = 'none';
-  a.setAttribute('download', fileName);
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  // 每次调用URL.createObjectURL,都会创建一个新的URL对象，浏览器内存中会保持对该对象的引用
-  // 只有在document销毁时，才会释放此部分内存
-  // 在考虑性能的情况下，在url使用结束后，最好释放此部分内存
-  URL.revokeObjectURL(url);
-  return true;
-};
-
-/**
- * 下载文件
- * @param fileName
- * @param blob
- */
-export function downLoadBlobFile(fileName: string, blob: any) {
-  if ('download' in document.createElement('a')) {
-    // 非IE下载
-    const eLink = document.createElement('a');
-    eLink.download = fileName;
-    eLink.style.display = 'none';
-    eLink.href = URL.createObjectURL(blob);
-    document.body.appendChild(eLink);
-    eLink.click();
-    URL.revokeObjectURL(eLink.href);
-    document.body.removeChild(eLink);
-  } else if ((window as any).navigator) {
-    // IE10+下载
-    (window as any).navigator.msSaveBlob(blob, fileName);
-  } else {
-    Message.error('浏览器不支持下载');
-  }
-}
-```
-
-```
-export function downloadExcel(blobParts: BlobPart, fileName = `${Date.now()}.xlsx`) {
-  const blob = new Blob([blobParts], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-  const elink = document.createElement('a');
-  elink.download = fileName;
-  elink.style.display = 'none';
-  elink.href = window.URL.createObjectURL(blob);
-  document.body.appendChild(elink);
-  elink.click();
-  window.URL.revokeObjectURL(elink.href);
-  document.body.removeChild(elink);
-}
-```
-
-
-
-## form表单
-
-通过循环配置项实现表单渲染。通过递归实现表单属性值多层嵌套（对象或者数组）下任然能同步数据
-
-![image-20240218163612847](code-img/image-20240218163612847.png)
-
-
-
-- style
-
-  - visible是否显示逻辑，配合联动
-
-- model绑定表单值
-
-  - 嵌套obj(a.b / a[0].b)，通过递归组件，从而递归表单值实现对表单值的绑定
-
-  - 联动
-
-    开始使用对象的配置项
-
-    ```
-    'attrDto.attrName': {
-    label: '属性名称',
-    type: 'input',
-    methods: [
-    {
-    methodType: 'required',
-    message: '请输入属性名称',
-    trigger: 'blur'
-    }
-    ]
-    },
-    ```
-
-    - 若有两个表单属性值一样，对象就会重复并合并
-    - 对象属性值不一定就是表单值
-
-- 规则
-
-  - required
-
 # js
 
 ## 代码合集收藏
@@ -184,15 +5,6 @@ export function downloadExcel(blobParts: BlobPart, fileName = `${Date.now()}.xls
 https://mp.weixin.qq.com/s/w9iLd56H4xyXSlRwiKs04g
 
 ## 正则
-
-### 空白符判断
-
-```
-  private isEmptyOrWhitespace(str) {
-    return !str || /^\s*$/.test(str);
-  }
-
-```
 
 ## 占位
 
@@ -203,8 +15,6 @@ https://mp.weixin.qq.com/s/w9iLd56H4xyXSlRwiKs04g
     color: gray;
   }
 ```
-
-
 
 ## 时间
 
@@ -337,6 +147,32 @@ JSON.stringify() 方法用于将 JavaScript 值转换为 JSON 字符串。
       });
     }
   }
+```
+
+## URL
+
+> url param转对象
+
+```
+function get_parse_link(link){
+// new URL().searchParams 得到的是一个 URLSearchParams 对象
+const urlObj = new URL(link);
+const urlSearchParams = urlObj.searchParams;
+// 配合 Object.fromEntries 将查询参数转换为对象
+const paramObj = Object.fromEntries(urlSearchParams);
+return paramObj
+}
+```
+
+## cookie
+
+> cookie
+
+```
+if (!navigator.cookieEnabled && window.location.href.includes('login')) {
+console.log(window.location,window.parent.frames[0])
+alert("您的浏览器限制了第三方Cookie，这将影响您正常登录，您可以更改浏览器的隐私设置，解除限制后重试。");
+}
 ```
 
 
@@ -485,6 +321,123 @@ console.log(newUrl); // 输出: http://example.com/?key1=value1&key3=value3
 
 # 组件
 
+## 导入
+
+```
+
+```
+
+
+
+## 导出
+
+```
+const createFile = async res => {
+  const { fileData, type, fileName } = res;
+  // 创建一个blob链接
+  // const blob1 = new Blob([data], { type: 'application/vnd.ms-excel' });
+  const blob1 = new Blob([fileData]);
+  console.log(blob1);
+  const url = URL.createObjectURL(blob1);
+  const a = document.createElement('a');
+  a.setAttribute('download', url);
+  a.href = url;
+  a.style.display = 'none';
+  a.setAttribute('download', fileName);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // 每次调用URL.createObjectURL,都会创建一个新的URL对象，浏览器内存中会保持对该对象的引用
+  // 只有在document销毁时，才会释放此部分内存
+  // 在考虑性能的情况下，在url使用结束后，最好释放此部分内存
+  URL.revokeObjectURL(url);
+  return true;
+};
+
+/**
+ * 下载文件
+ * @param fileName
+ * @param blob
+ */
+export function downLoadBlobFile(fileName: string, blob: any) {
+  if ('download' in document.createElement('a')) {
+    // 非IE下载
+    const eLink = document.createElement('a');
+    eLink.download = fileName;
+    eLink.style.display = 'none';
+    eLink.href = URL.createObjectURL(blob);
+    document.body.appendChild(eLink);
+    eLink.click();
+    URL.revokeObjectURL(eLink.href);
+    document.body.removeChild(eLink);
+  } else if ((window as any).navigator) {
+    // IE10+下载
+    (window as any).navigator.msSaveBlob(blob, fileName);
+  } else {
+    Message.error('浏览器不支持下载');
+  }
+}
+```
+
+```
+export function downloadExcel(blobParts: BlobPart, fileName = `${Date.now()}.xlsx`) {
+  const blob = new Blob([blobParts], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const elink = document.createElement('a');
+  elink.download = fileName;
+  elink.style.display = 'none';
+  elink.href = window.URL.createObjectURL(blob);
+  document.body.appendChild(elink);
+  elink.click();
+  window.URL.revokeObjectURL(elink.href);
+  document.body.removeChild(elink);
+}
+```
+
+
+
+## form表单
+
+通过循环配置项实现表单渲染。通过递归实现表单属性值多层嵌套（对象或者数组）下任然能同步数据
+
+![image-20240218163612847](code-img/image-20240218163612847.png)
+
+
+
+- style
+
+  - visible是否显示逻辑，配合联动
+
+- model绑定表单值
+
+  - 嵌套obj(a.b / a[0].b)，通过递归组件，从而递归表单值实现对表单值的绑定
+
+  - 联动
+
+    开始使用对象的配置项
+
+    ```
+    'attrDto.attrName': {
+    label: '属性名称',
+    type: 'input',
+    methods: [
+    {
+    methodType: 'required',
+    message: '请输入属性名称',
+    trigger: 'blur'
+    }
+    ]
+    },
+    ```
+
+    - 若有两个表单属性值一样，对象就会重复并合并
+    - 对象属性值不一定就是表单值
+
+- 规则
+
+  - required
+
 ## 空页面
 
 ```vue
@@ -550,7 +503,7 @@ console.log(props);
 
 
 
-# ele
+# element
 
 ## tree
 

@@ -150,9 +150,8 @@ json:{
 
 性能优化
 
-- **使用 `key`**：如前所述，为 `v-for` 中的每个元素提供一个唯一的 `key` 是非常重要的，这有助于 Vue 在数据变化时高效地识别和更新具体的元素。
-- **避免大型列表的全量更新**：如果列表非常大，考虑使用 `v-if` 或计算属性来控制哪些项应该被渲染，从而减少需要比较的节点数量。
-- **使用稳定的 key**：确保用于 `v-for` 的 `key` 是稳定的（例如，使用数据库 ID 或唯一标识符），这有助于 Vue 更有效地进行节点的复用和重排序。
+- ‌**唯一性标识**‌：key的主要目的是为每个列表项提供一个唯一的标识。在Vue中，key帮助Vue识别和区分不同的节点，确保每个节点都有唯一的身份标识。这有助于Vue通过key值来识别哪些节点需要被重新渲染，哪些可以复用，从而提升渲染效率‌。
+- ‌**优化性能**‌：使用key可以显著提升渲染性能。通过key，Vue能够更智能地判断哪些节点需要更新、添加或删除，从而最小化对DOM的操作。例如，当列表项的顺序发生变化时，使用key可以让Vue只需移动必要的节点，而不是重新渲染整个列表，这大大提高了渲染效率‌
 
 ### v-if 和 v-show
 
@@ -1618,11 +1617,147 @@ https://segmentfault.com/a/1190000019208626
 
 #### provide/inject
 
-允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效。
+在 Vue 2 中，依赖注入是一种在应用程序的不同组件之间共享状态或功能的方法，而无需通过组件树层层传递 props 或通过全局事件总线。这种方式特别适用于那些需要在多个组件之间共享但又不想直接引用彼此的情况。
 
-一言而蔽之：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
+Vue 2 提供了 `provide` 和 `inject` 选项，允许一个祖先组件向其所有子孙组件提供数据。
 
-provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。
+```
+//祖先组件
+<template>
+ <div>
+   父组件传的值：{{num}}
+</div>
+</template>
+ 
+<script>
+//导入子组件
+import Son from '@/component/Son'
+export default{
+ data(){
+   return{
+     num:10
+   }
+  },
+ 
+//祖先级组件把要传递的数据放入provide里
+provide(){  
+   return{
+      num:this.num
+  },
+}
+}
+</script>
+ 
+```
+
+```
+//儿子组件
+<template>
+  <div>
+    子组件接收传来的值:{{num}}
+  </div>
+</template>
+ 
+<script>
+//导入孙子级别组件
+import Grandson from '@/component/Grandson'
+  export default{
+   //后代组件可以通过inject拿到数据
+   inject:['num']
+}
+</script>
+```
+
+```
+//孙子组件
+<template>
+   <div>
+    孙子组件接收传来的值:{{num}}
+  </div>
+</template>
+ 
+<script>
+ export default{
+   //后代组件可以通过inject拿到数据
+  inject:['num']
+ 
+}
+</script>
+```
+
+**但是[依赖注入](https://so.csdn.net/so/search?q=依赖注入&spm=1001.2101.3001.7020)的数据默认不是响应式的**，祖先级别组件或者子孙组件修改数据，其他使用到这个数据的组件不会同步。
+
+使依赖注入的数据成为响应式
+
+-  第一种方法(把要传的数据放在对象里)：
+
+  ```
+  <template>
+    <div>
+      父组件传的值：{{ obj.num }} <br />
+      <Son></Son>
+      <button @click="addNum">+1</button>
+    </div>
+  </template>
+   
+  //再祖先组件里把要穿的数据放在一个对象里
+  export default{
+   
+   data(){
+      return{
+        obj:{
+            num:10   
+          }      
+      }
+   },
+   
+  provide(){
+     return{
+       //把这个对象传过去
+       obj:this.obj
+     }
+   },
+   
+  methods: {
+      addNum () {
+        this.obj.num++
+      }
+  }
+  ```
+
+- 第二种方法，传递一个参数用方法返回
+
+  ```
+  //祖先组件
+  export default{
+    data(){
+      return{
+        age:6
+      }
+    },
+   
+   provide(){
+     return{
+       age(): => this.age
+     }
+    }
+  }
+  
+  //孙子组件
+  <template>
+    <div>
+      {{age()}}
+   </div>
+  </template>
+   
+  export default{
+    inject:['age']
+  }
+  ```
+
+  
+
+
 
 ### 子组件向父组件通信
 
@@ -1986,6 +2121,8 @@ Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模�
 
 父beforeCreate -> 父created -> **父beforeMount -> 子beforeCreate** -> 子created -> 子beforeMount -> **子mounted -> 父mounted-**>父beforeUpdate->子beforeUpdate->子updated->父updated->父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
 
+beforeCreate->watch->created->beforeMount
+
 ## 初始化阶段
 
 ### beforeCreate
@@ -2058,7 +2195,7 @@ deactivated	keep-alive 组件停用时调用。
 
 https://juejin.cn/post/7195540736908869692
 
-## **hash 和 history**
+## hash 和 history
 
 ```js
 const router = new VueRouter({
@@ -2283,7 +2420,7 @@ export default [
 
 ### router-view
 
-`router-view` 将显示与 url 对应的组件。你可以把它放在任何地方，以适应你的布局。`<router-view>` 渲染的组件还可以内嵌自己的 `<router-view>`，**根据嵌套路径，渲染嵌套组件**。
+`router-view` 将显示与 url 对应的组件。你可以把它放在任何地方，以适应你的布局**。`<router-view>` 渲染的组件还可以内嵌自己的 `<router-view>`，根据嵌套路径，渲染嵌套组件。**
 
 因为它也是个组件，所以可以配合 `<transition>` 和 `<keep-alive>` 使用。如果两个结合一起用，要确保在内层使用 `<keep-alive>`：
 
@@ -2336,14 +2473,20 @@ router.push({ name: 'user', params: { userId: 123 } })
 
 ### 动态路由匹配 
 
+动态路径参数：一个“路径参数”使用冒号 `:` 标记。当匹配到一个路由时，参数值会被设置到 `this.$route.params`，可以在每个组件内使用。
+
 | 模式                          | 匹配路径            | $route.params                          |
 | ----------------------------- | ------------------- | -------------------------------------- |
 | /user/: username               | /user/evan          | `{ username: 'evan' }`                 |
 | /user/: username/post/: post_id | /user/evan/post/123 | `{ username: 'evan', post_id: '123' }` |
 
-除了 `$route.params` 外，[API 文档](https://router.vuejs.org/zh/api/#路由对象)
+####  响应路由参数的变化
 
 当使用路由参数时，例如从 `/user/foo` 导航到 `/user/bar`，**原来的组件实例会被复用**。因为两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。**不过，这也意味着组件的生命周期钩子不会再被调用**。
+
+```
+console.log(this.$route.params.username); // 获取动态参数id
+```
 
 复用组件时，想对路由参数的变化作出响应的话，你可以简单地 watch (监测变化) `$route` 对象
 
@@ -4264,12 +4407,80 @@ export default {
 
 [setup](https://cn.vuejs.org/api/composition-api-setup.html#basic-usage)
 
-#### setup钩子
+
+
+### [组合式 API](https://cn.vuejs.org/guide/introduction.html#composition-api)
+
+```
+<script setup>
+import { ref, onMounted } from 'vue'
+
+// 响应式状态
+const count = ref(0)
+
+// 用来修改状态、触发更新的函数
+function increment() {
+  count.value++
+}
+
+// 生命周期钩子
+onMounted(() => {
+  console.log(`The initial count is ${count.value}.`)
+})
+</script>
+```
+
+组合式 API (Composition API) 是一系列 API 的集合，使我们可以使用函数而不是声明选项的方式书写 Vue 组件。与选项式 API 不同，组合式 API 更加灵活和可重用。以下是组合式 API 的一些关键点
+
+- **使用 `setup` 函数**：组件的逻辑在 `setup` 函数中定义。`setup` 函数在组件实例创建之前调用，因此没有 `this` 上下文。
+
+- **响应式数据**：使用 `ref` 和 `reactive` 创建响应式数据。
+
+- **生命周期钩子**：使用 `onMounted`、`onUnmounted` 等函数来处理生命周期事件。
+
+- **自定义组合式 API**：组合逻辑，可以将逻辑提取到独立的函数中，并在多个组件中重用。并且能共用外部定义的响应式变量
+
+  ```js
+  import { ref, onMounted } from 'vue';
+  const globalData = ref({})
+  export function useQbeeOpenApi() {
+    const data = ref(null);
+    const error = ref(null);
+    const loading = ref(false);
+  
+    const fetchData = async () => {
+      loading.value = true;
+      try {
+        const response = await fetch('https://api.example.com/data');
+        data.value = await response.json();
+      } catch (err) {
+        error.value = err;
+      } finally {
+        loading.value = false;
+      }
+    };
+  
+    onMounted(() => {
+      fetchData();
+    });
+  
+    return {
+      data,
+      error,
+      loading,
+      fetchData,
+    };
+  }
+  ```
+
+### setup钩子
 
 `setup()` 钩子是在组件中使用组合式 API 的入口，通常只在以下情况下使用：
 
-1. 需要在非单文件组件中使用组合式 API 时。
+1. 需要在非单文件组件（一个文件中包含有多个组件）中使用组合式 API 时。
 2. 需要在基于选项式 API 的组件中集成基于组合式 API 的代码时。
+
+`setup` 函数是组合式 API 的核心，组件初始化时被调用，用于替代Vue 2中的`beforeCreate`和`created`生命周期钩子。在组件的生命周期内只被调用一次。
 
 ```
 <script>
@@ -4296,11 +4507,14 @@ export default {
 </template>
 ```
 
-在模板中访问从 `setup` 返回的 [ref](https://cn.vuejs.org/api/reactivity-core.html#ref) 时，它会[自动浅层解包](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#deep-reactivity)，因此你无须再在模板中为它写 `.value`。当通过 `this` 访问时也会同样如此解包。
+- 在模板中访问从 `setup` 返回的 [ref](https://cn.vuejs.org/api/reactivity-core.html#ref) 时，它会[自动浅层解包](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#deep-reactivity)，因此你无须再在模板中为它写 `.value`。当通过 `this` 访问时也会同样如此解包。
 
-`setup()` 自身并不含对组件实例的访问权，即在 `setup()` 中访问 `this` 会是 `undefined`。你可以在选项式 API 中访问组合式 API 暴露的值，但反过来则不行。
 
-`setup()` 应该*同步地*返回一个对象。唯一可以使用 `async setup()` 的情况是，该组件是 [Suspense](https://cn.vuejs.org/guide/built-ins/suspense.html) 组件的后裔。
+- **`setup()` 自身并不含对组件实例的访问权，即在 `setup()` 中访问 `this` 会是 `undefined`。你可以在选项式 API 中访问组合式 API 暴露的值，但反过来则不行。**
+
+  Vue2 的配置（data、methos......）中可以访问到 setup中的属性、方法。但在setup中不能访问到Vue2的配置（data、methos......）
+
+- `setup()` 应该***同步地*返回一个对象**。唯一可以使用 `async setup()` 的情况是，该组件是 [Suspense](https://cn.vuejs.org/guide/built-ins/suspense.html) 组件的后裔。
 
 ##### 访问 Props
 
@@ -4432,78 +4646,63 @@ export default {
 
 此时父组件可以通过模板引用来访问这个 `increment` 方法。
 
-### [组合式 API](https://cn.vuejs.org/guide/introduction.html#composition-api)
-
-```
-<script setup>
-import { ref, onMounted } from 'vue'
-
-// 响应式状态
-const count = ref(0)
-
-// 用来修改状态、触发更新的函数
-function increment() {
-  count.value++
-}
-
-// 生命周期钩子
-onMounted(() => {
-  console.log(`The initial count is ${count.value}.`)
-})
-</script>
-```
-
-组合式 API (Composition API) 是一系列 API 的集合，使我们可以使用函数而不是声明选项的方式书写 Vue 组件。与选项式 API 不同，组合式 API 更加灵活和可重用。以下是组合式 API 的一些关键点
-
-- **使用 `setup` 函数**：组件的逻辑在 `setup` 函数中定义。`setup` 函数在组件实例创建之前调用，因此没有 `this` 上下文。
-
-- **响应式数据**：使用 `ref` 和 `reactive` 创建响应式数据。
-
-- **生命周期钩子**：使用 `onMounted`、`onUnmounted` 等函数来处理生命周期事件。
-
-- **自定义组合式 API**：组合逻辑，可以将逻辑提取到独立的函数中，并在多个组件中重用。并且能共用外部定义的响应式变量
-
-  ```js
-  import { ref, onMounted } from 'vue';
-  const globalData = ref({})
-  export function useQbeeOpenApi() {
-    const data = ref(null);
-    const error = ref(null);
-    const loading = ref(false);
-  
-    const fetchData = async () => {
-      loading.value = true;
-      try {
-        const response = await fetch('https://api.example.com/data');
-        data.value = await response.json();
-      } catch (err) {
-        error.value = err;
-      } finally {
-        loading.value = false;
-      }
-    };
-  
-    onMounted(() => {
-      fetchData();
-    });
-  
-    return {
-      data,
-      error,
-      loading,
-      fetchData,
-    };
-  }
-  ```
-
 ### 对比
 
 <script setup> 是在单文件组件 (SFC) 中使用组合式 API 的编译时语法糖。当同时使用 SFC 与组合式 API 时该语法是默认推荐。相比于普通的 <script> 语法，它具有更多优势：
 
-- 更少的样板内容，更简洁的代码。
-- 能够使用纯 TypeScript 声明 props 和自定义事件。
-- **更好的运行时性能 (其模板会被编译成同一作用域内的渲染函数，避免了渲染上下文代理对象)。**
-- 更好的 IDE 类型推导性能 (减少了语言服务器从代码中抽取类型的工作)。
+- 代码组织方式
+
+  - **选项式API**采用**横向切割**的代码组织方式，按照代码类型（数据、方法、计算属性等）而非功能进行分组。这种组织方式导致**同一功能的代码分散在不同选项**中，当组件复杂时不利于查阅
+  - **组合式API**采用**纵向切割**的方式，可以按照功能模块组织代码。对于复杂组件，可以进一步将不同功能拆分为独立代码块
+
+- 逻辑复用机制
+
+  - **选项式API**主要通过**mixins**实现逻辑复用，这种方式存在几个严重问题：
+    1. **命名冲突风险**：不同mixin可能定义相同名称的属性或方法
+    2. **数据来源不清晰**：难以追踪某个属性来自哪个
+    3. **隐式依赖**：mixin可能依赖特定的组件选项，形成隐式耦合
+  - **组合式API**通过**组合式函数**(Composables)实现逻辑复用，这是一种更先进的复用模式
+
+    - **无命名冲突**：通过解构重命名避免冲突
+    - **数据来源清晰**：所有输入输出都明确声明
+    - **灵活组合**：可以自由组合多个函数，形成更复杂的逻辑
+- TypeScript
+
+  - **选项式API**在TypeScript支持方面存在一些挑战：
+    1. **this类型推断困难**：需要类型扩展来推断选项中的this类型
+    2. **mixins类型复杂**：mixin合并的类型定义较为复杂
+    3. **选项类型限制**：某些选项如`data`必须返回特定类型
+  - **组合式API**天然适合TypeScript：
+    1. **显式类型定义**：变量和函数可以直接添加类型注解
+    2. **更好的类型推断**：setup函数返回值类型可以精确推断
+    3. **组合式函数类型明确**：输入输出类型可以明确定义
+- 性能与优化
+  - 选项式API的性能优化主要依赖于Vue内部机制：
+
+    - 全量响应式转换：data()返回的对象会被完全响应化
+    - 模板编译依赖this：需要保留属性名称以便模板访问
+
+  - 组合式API提供了更多优化可能性：
+
+    - 细粒度响应式：可以精确控制哪些数据需要响应式
+    - 更小的打包体积：<script setup>编译后的代码更紧凑
+    - 更好的压缩：局部变量名可以被压缩，而对象属性名不能
+
+
+### 场景
+
+- 适合选项式API的场景
+  1. **小型项目或简单组件**：结构清晰，上手容易
+  2. **Vue2迁移项目**：减少迁移成本
+  3. **团队熟悉选项式API**：避免学习曲线影响进度
+  4. **快速原型开发**：可以快速搭建简单页面
+
+- 适合组合式API的场景
+  1. **大型复杂组件**：需要更好的代码组织
+  2. **需要逻辑复用**：通过组合式函数共享逻辑
+  3. **TypeScript项目**：获得更好的类型支持
+  4. **需要精细控制响应式**：优化性能关键路径
+  5. **长期维护的项目**：提高代码可维护性
 
 ## 基础
 
