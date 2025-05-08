@@ -30,8 +30,29 @@ https://blog.csdn.net/weixin_39888180/article/details/111268391
 - **O(1)**
 
 ```
-let i = 0
-i += 1
+只要没有循环或递归等复杂逻辑，无论代码执行多少行，代码复杂度都为O(1)，如下：
+  1.function sum() {
+	  const a = 1;
+	  const b = 2;
+	  return a + b;
+	}
+  2.int x = 0;
+	int y = 1;
+	int temp = x;
+	x = y;
+	y = temp;
+上述代码在执行的时候，所消耗的时间不会随着特定变量的增长而增长，即使有几万行这样的代码，我们都可以用O(1)来表示它的时间复杂度。
+```
+
+- **O(logn)：** 在下面的循环中，每次i都会被乘以2，也意味着每次 i 都离 n 更进一步。那需要多少次循环 i 才能等于或大于 n 呢，也就是求解：2^x =n，答案x=log2^n。也就是说循环 log2^n次之后，i会大于等于n，这段代码就结束了。所以此代码的复杂度为：O(logN)。
+
+```
+    // 这个例子就是求2的多少次方会大于i，然后就会结束循环。 这就是一个典型的 O(logn)
+    let i = 1
+    while (i < n) {
+      console.log(i)
+      i *= 2
+    }
 
 ```
 
@@ -44,28 +65,73 @@ for (let i = 0; i < n; i += 1) {
 
 ```
 
-- **O(n^2)：** O(n) * O(n), 也就是双层循环，自此类推：O(n^3)...
+- **O(n^2)：** O(n) * O(n), 也就是双层循环，自此类推：平方型 O(n^2)、立方型 O(n^3)、K 次方型 O(n^k)
 
 ```
-    for (let i = 0; i < n; i += 1) {
-      for (let j = 0; j < n; j += 1) {
-        console.log(i, j)
+O(n²)就是将循环次数为n的代码再循环n遍：
+for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+        x++;
+    }
+}
+O(n²)的本质就是n * n，如果我们将内层的循环次数改为m,复杂度就变为 n * m = O(n * m)
+for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= m; j++) {
+        x++;
+    }
+}
+O(n^3)就是将循环次数为n的代码再循环3遍：
+for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+         for (int j = 1; j <= n; j++) {
+	        x++;
+	    }
+    }
+}
+O(n^k)就是将循环次数为n的代码再循环k遍：
+
+```
+
+- 线性对数阶O(nlogN)
+
+  ```
+  线性对数阶O(nlogN)很好理解，也就是将复杂度为O(logN)的代码循环n遍：
+  function fun(n) {
+    for (let j = 0; j < n; j++) {
+      let i = 1;
+      while (i < n) {
+        i = i * 2;
       }
     }
+  }
+  因为每次循环的复杂度为O(logN)，所以n * logN = O(nlogN)
+  
+  ```
 
-```
+- 平方底指数型 O(2^n)
 
-- **O(logn)：** 就是求 log 以 2 为底的多少次方等于 n
+  斐波那契，使用递归的情况下，因为使用了两次递归，时间复杂度为 O(2^n) 
 
-```
-    // 这个例子就是求2的多少次方会大于i，然后就会结束循环。 这就是一个典型的 O(logn)
-    let i = 1
-    while (i < n) {
-      console.log(i)
-      i *= 2
-    }
+  ```
+  - function fib(n) {
+  -   if (n <= 1) return n;
+  -   return fib(n - 1) + fib(n - 2);
+  - }
+  ```
 
-```
+- 阶乘型 O(n!)
+
+  ```
+  - 下例，时间复杂度为 O(n!)，基本不能称作为算法，n 越大，就容易卡死，小心尝试
+  - function fun(n) {
+  -   console.log(n);
+  -   for (let i = 0; i < n; i++) {
+  - ​    fun(n - 1);
+  -   }
+  - }
+  ```
+
+  
 
 #### 时间复杂度
 
@@ -97,13 +163,8 @@ https://www.cnblogs.com/L-xmin/p/12699190.html
 
   假设数组的长度为n。在平均情况下，每次选择的基准元素能够将数组大致均匀地划分为两个子数组。
 
-  - 对于深度为d 的递归调用，子问题的规模大致为$\frac{n}{2^d}$。当子问题规模为 1 时递归终止，即$\frac{n}{2^d}=1$，求解可得$d = \log n$，这意味着平均情况下递归树的深度为$O(\log n)$。
+  - 对于深度为d 的递归调用，子问题的规模大致为$\frac{n}{2^d}$。当子问题规模为 1 时递归终止，即$\frac{n}{2^d}=1$，求解可得$d = \log n$，这意味着平均情况下递归树的深度为$O(\log n)$。。
 
-
-  - 在每一层递归中，划分操作需要遍历当前子数组中的所有元素，时间复杂度为O(n) 。因为每一层都要对该层对应的子数组元素进行处理，例如在最顶层对整个长度为n 的数组进行划分，下一层对两个长度约为$\frac{n}{2}$ 的子数组分别进行划分，它们的元素总数加起来还是n，以此类推。
-
-
-  - 由于递归树的深度平均为O(\log n)，每一层的时间复杂度为O(n)，根据乘法原理，快速排序的平均时间复杂度就是O(n \log n) 。
 
 - **平均情况**：在每次分区后，大约有 n/2 个元素会被放置到一边，因此每次递归调用处理的数据量大约减半。这样，大约需要进行 log n 次递归调用才能达到最底层的递归（每次调用都处理大约 n/2 的数据），因此平均时间复杂度为 O(n log n)。
 - **最坏情况**：最坏的情况发生在每次分区操作都导致一个子数组为空，而另一个子数组包含 n-1 个元素。这种情况下，快速排序的时间复杂度退化为 O(n^2)。这通常发生在数组已经有序或者所有元素都相同时。
@@ -139,6 +200,63 @@ function quickSort(arr) {
 }
 
 console.log(quickSort(arr));
+```
+
+## 字符串
+
+##### 找到第一个不重复的字符，并返回它的索引
+
+```js
+const firstUniqChar = (s) => {
+  const position = new Map();
+  for (let i of s) {
+    if (position.has(i)) {
+      position.set(i, position.get(i) + 1);
+    } else {
+      position.set(i, 1)
+    }
+  }
+  for(let i = 0; i < s.length; i++) {  
+    if (position.get(s[i]) === 1) 
+      return i
+  }
+  return -1
+};
+//s = "leetcode"
+返回 0
+
+//s = "loveleetcode"
+返回 2
+
+```
+
+##### 插入
+
+方法一：
+
+```javascript
+var str = 'aaa_bbb';
+var reg = /_/g;
+var insertStr = "ccc_"
+console.log(str.replace(reg,"_"+insertStr))//aaa_ccc_bbb
+```
+
+方法二：
+
+```javascript
+String.prototype.splice = function(start, newStr) {
+    return this.slice(0, start) + newStr + this.slice(start);
+};
+var index = 'aaa_bbb'.indexOf('_');
+var str = 'aaa_bbb'.splice(index+1, 'ccc_');
+```
+
+##### 匹配所在位置
+
+```
+var reg = new RegExp('\\[(.+?)\\]\\[(.+?)\\]', 'g')
+console.log(reg.exec('123[1][2]123[1][92]123'),reg.exec('123[1][2]123[1][92]123'),1);
+console.log('123[1][2]123[1][2]123'.indexOf(reg,0));
 ```
 
 
@@ -434,7 +552,7 @@ console.log(arr, arr4)
 
 
 
-### 递归
+#### 递归
 
 ![img](https://image-static.segmentfault.com/809/484/809484289-5cb44d922e659_fix732)
 
@@ -2450,60 +2568,7 @@ Number.isInteger(25) // true
 Number.isInteger(25.0) // true
 ```
 
-### Math对象的扩展
 
-##### Math.trunc()
-
-```js
-//1.
-//Math.trunc方法用于去除一个数的小数部分，返回整数部分。
-Math.trunc(4.1) // 4
-Math.trunc(4.9) // 4
-Math.trunc(-4.1) // -4
-Math.trunc(-4.9) // -4
-Math.trunc(-0.1234) // -0
-//对于非数值，Math.trunc内部使用Number方法将其先转为数值。
-Math.trunc('123.456') // 123
-Math.trunc(true) //1
-Math.trunc(false) // 0
-Math.trunc(null) // 0
-//对于空值和无法截取整数的值，返回NaN。
-Math.trunc(NaN);      // NaN
-Math.trunc('foo');    // NaN
-Math.trunc();         // NaN
-Math.trunc(undefined) // NaN
-```
-
-##### Math.sign()
-
-`Math.sign`方法用来判断一个数到底是正数、负数、还是零。
-
-它会返回五种值。
-
-- 参数为正数，返回+1；
-- 参数为负数，返回-1；
-- 参数为0，返回0；
-- 参数为-0，返回-0;
-- 其他值，返回NaN。
-
-```js
-Math.sign('')  // 0
-Math.sign(true)  // +1
-Math.sign(false)  // 0
-Math.sign(null)  // 0
-Math.sign('9')  // +1
-Math.sign('foo')  // NaN
-Math.sign()  // NaN
-Math.sign(undefined)  // NaN
-```
-
-##### Math.cbrt()
-
-方法用于计算一个数的立方根。对于非数值，Math.cbrt()方法内部也是先使用Number()方法将其转为数值。
-
-##### Math.logn()
-
-`Math.log2(x)`返回以 2 为底的`x`的对数。如果`x`小于 0，则返回 NaN。
 
 ### 数组的扩展
 
@@ -2668,6 +2733,16 @@ Array.prototype.copyWithin(target, start = 0, end = this.length)
 // 将3号位复制到0号位
 [1, 2, 3, 4, 5].copyWithin(0, 3, 4)
 // [4, 2, 3, 4, 5]
+```
+
+##### indexOf和lastIndexOf
+
+indexOf(arr[i],[index] ) 从位置index查找arr[i]在数组中的位置，只找第一个匹配的，如果不存在，则返回-1。
+
+```
+var array = ["a", "b", {c:1}];
+//嵌套数组中查找对象，不行
+console.log(array.indexOf({c:1},0)) //-1
 ```
 
 #### find和findIndex
@@ -3352,169 +3427,6 @@ person.secondName = "newliming";
 console.log(person.firstName, person.secondName); //newliming Nicholas
 console.log(person.sayName()); //Nicholas
 console.log(Object.getOwnPropertyNames(person)); //[ 'firstName', 'sayName', 'secondName' ]
-```
-
-#### 属性的遍历
-
-```js
-const a = { a: 1 };
-Object.setPrototypeOf(a, { b: 2 });
-console.log(a, Object.getPrototypeOf(a), a.b);
-
-for (let val in a) {
-  console.log(val);
-}
-console.log(Object.keys(a));
-
-Object.defineProperty(a, "b", { enumerable: false });
-for (let val in a) {
-  console.log(val);
-}
-```
-
-##### for...in
-
-`for...in`循环遍历对象自身的和**继承**的可枚举属性（不含Symbol属性）。
-
-##### Object.keys()
-
-ES5引入了`Object.keys`方法，返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键名。
-
-```javascript
-var obj = { foo: "bar", baz: 42 };
-Object.keys(obj)
-// ["foo", "baz"]
-```
-
-目前，ES7有一个[提案](https://github.com/tc39/proposal-object-values-entries)，引入了跟`Object.keys`配套的`Object.values`和`Object.entries`。
-
-```javascript
-let {keys, values, entries} = Object;
-let obj = { a: 1, b: 2, c: 3 };
-
-for (let key of keys(obj)) {
-  console.log(key); // 'a', 'b', 'c'
-}
-
-for (let value of values(obj)) {
-  console.log(value); // 1, 2, 3
-}
-
-for (let [key, value] of entries(obj)) {
-  console.log([key, value]); // ['a', 1], ['b', 2], ['c', 3]
-}
-```
-
-##### Object.values()
-
-`Object.values`方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值。
-
-```javascript
-var obj = { foo: "bar", baz: 42 };
-Object.values(obj)
-// ["bar", 42]
-```
-
-返回数组的成员顺序，与本章的《属性的遍历》部分介绍的排列规则一致。
-
-```javascript
-var obj = { 100: 'a', 2: 'b', 7: 'c' };
-Object.values(obj)
-// ["b", "c", "a"]
-```
-
-上面代码中，属性名为数值的属性，是按照数值大小，从小到大遍历的，因此返回的顺序是`b`、`c`、`a`。
-
-`Object.values`只返回对象自身的可遍历属性。
-
-```javascript
-var obj = Object.create({}, {p: {value: 42}});
-Object.values(obj) // []
-```
-
-上面代码中，`Object.create`方法的第二个参数添加的对象属性（属性`p`），如果不显式声明，默认是不可遍历的。`Object.values`不会返回这个属性。
-
-`Object.values`会过滤属性名为Symbol值的属性。
-
-```javascript
-Object.values({ [Symbol()]: 123, foo: 'abc' });
-// ['abc']
-```
-
-如果`Object.values`方法的参数是一个字符串，会返回各个字符组成的一个数组。
-
-```javascript
-Object.values('foo')
-// ['f', 'o', 'o']
-```
-
-上面代码中，字符串会先转成一个类似数组的对象。字符串的每个字符，就是该对象的一个属性。因此，`Object.values`返回每个属性的键值，就是各个字符组成的一个数组。
-
-如果参数不是对象，`Object.values`会先将其转为对象。由于数值和布尔值的包装对象，都不会为实例添加非继承的属性。所以，`Object.values`会返回空数组。
-
-```javascript
-Object.values(42) // []
-Object.values(true) // []
-```
-
-##### Object.entries
-
-`Object.entries`方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值对数组。
-
-```javascript
-var obj = { foo: 'bar', baz: 42 };
-console.log(Object.entries(obj));
-// [ ["foo", "bar"], ["baz", 42] ]
-```
-
-除了返回值不一样，该方法的行为与`Object.values`基本一致。
-
-如果原对象的属性名是一个Symbol值，该属性会被省略。
-
-```javascript
-Object.entries({ [Symbol()]: 123, foo: 'abc' });
-// [ [ 'foo', 'abc' ] ]
-```
-
-上面代码中，原对象有两个属性，`Object.entries`只输出属性名非Symbol值的属性。将来可能会有`Reflect.ownEntries()`方法，返回对象自身的所有属性。
-
-`Object.entries`的基本用途是遍历对象的属性。
-
-```javascript
-let obj = { one: 1, two: 2 };
-for (let [k, v] of Object.entries(obj)) {
-  console.log(`${JSON.stringify(k)}: ${JSON.stringify(v)}`);
-}
-// "one": 1
-// "two": 2
-```
-
-`Object.entries`方法的一个用处是，将对象转为真正的`Map`结构。
-
-```javascript
-var obj = { foo: 'bar', baz: 42 };
-var map = new Map(Object.entries(obj));
-map // Map { foo: "bar", baz: 42 }
-```
-
-自己实现`Object.entries`方法，非常简单。
-
-```javascript
-// Generator函数的版本
-function* entries(obj) {
-  for (let key of Object.keys(obj)) {
-    yield [key, obj[key]];
-  }
-}
-
-// 非Generator函数的版本
-function entries(obj) {
-  let arr = [];
-  for (let key of Object.keys(obj)) {
-    arr.push([key, obj[key]]);
-  }
-  return arr;
-}
 ```
 
 #### 方法
@@ -5676,7 +5588,7 @@ A.test(o2.__proto__) // true
 
   JS 语言不可以隐式调用 super，而要交给开发者？因为 JS 是弱类型的，**super 调用时的传参没法自动预判**
 
-- 机制：调用super时父类的构造函数`constructor`先运行一次，然后默认返回父类实例对象（即`this`），最后将实例对象this赋给子类
+- 机制：调用super表示调用父类的构造函数constructor，然后默认返回父类实例对象（即`this`），最后将实例对象this赋给子类
 
 ```js
 class Animal {
@@ -7421,13 +7333,27 @@ list.forEach((value, key) => {
 
 #### 简介
 
-JS的对象有个小问题，就是**键必须是字符串**。但实际上Number或者其他数据类型作为键也是非常合理的。为了解决这个问题，最新的ES6规范引入了新的数据类型Map。
+JS的对象有个小问题，就是**键必须是字符串**。但实际上Number或者其他数据类型作为键也是非常合理的。为了解决这个问题，最新的ES6规范引入了新的数据类型Map。注意Map里面也不可以放重复的项。
 
-Map类似于对象，数据结构是一个键值对的结构，但是**“键”的范围不限制于字符串，各种类型的值（包含对象）都可以当作键。**
+**任意类型的键**
+ 无论是对象、函数还是 `NaN`，都可以直接作为键，不再受限于字符串。
 
-Map也可以接受一个数组作为参数，数组的成员是一个个表示键值对的数组。注意Map里面也不可以放重复的项。
+**保留插入顺序**
+ Map 内部记录了键值对的插入顺序，使得迭代时顺序与添加顺序一致。
 
-#### 常用语法
+**内置 size 属性**
+ 直接通过 `map.size` 获取 Map 的容量，无需调用 `Object.keys()` 等方法计算。
+
+**高频操作优化**
+ 在处理大量数据时，Map 的性能往往比 Object 更佳，能提升性能 50%+。
+
+**直接迭代支持**
+ 使用 `for...of` 遍历 Map，无需额外转换，代码更加简洁。
+
+**纯净的键值存储**
+ Map 不继承 `Object.prototype` 上的属性，避免了原型链带来的副作用。
+
+#### 语法
 
 一个key只能对应一个value，多次对一个key放入value，后面的值会把前面的值覆盖掉；初始化Map需要一个**二维数组，**或者直接初始化一个空Map
 
@@ -7435,21 +7361,170 @@ Map也可以接受一个数组作为参数，数组的成员是一个个表示�
 //初始化`Map`需要一个二维数组(请看 Map 数据结构)，或者直接初始化一个空`Map` 
 //let map = new Map();
 let map = new Map([['tom','男']]);
-//添加key和value值
-map.set('Amy','女')
-map.set('liuQi','男')
-
-//是否存在key，存在返回true,反之为false
-map.has('Amy') //true
-map.has('amy') //false
-
-//根据key获取value
-map.get('Amy') //女
-
-//删除 key为Amy的value
-map.delete('Amy')
-map.get('Amy') //undefined  删除成功
 ```
+
+- set
+
+  ```
+  //添加key和value值
+  map.set('Amy','女')
+  map.set('liuQi','男')
+  ```
+
+- get
+
+  ```
+  //根据key获取value
+  map.get('Amy') //女
+  ```
+
+- delete
+
+  ```
+  //删除 key为Amy的value
+  map.delete('Amy')
+  map.get('Amy') //undefined  删除成功
+  ```
+
+- has
+
+  ```
+  //是否存在key，存在返回true,反之为false
+  map.has('Amy') //true
+  map.has('amy') //false
+  ```
+
+- size
+
+  ```
+  console.log(map.size)      // 2，当前 Map 中的键值对数量
+  ```
+
+- 迭代
+
+  ```
+  // 使用 for...of 直接遍历键值对，书写简洁又直观
+  for (const [jedi, title] of map) {
+    console.log(`${jedi}: ${title}`)
+    'tom: 男'
+  	'Amy: 女'
+  	'liuQi: 男'
+  }
+  
+  // 使用 keys() 方法获得键的迭代器，可以按需调用 next() 获取下一个键
+  const forcePowers = map.keys()
+  const nextJedi = forcePowers.next().value
+  console.log(nextJedi) // tom
+  ```
+
+  
+
+### WeakMap
+
+https://juejin.cn/post/7469783515912437811
+
+当 `Map` 在强引用键时，内存管理有时可能会捉襟见肘。`WeakMap` 则利用弱引用解决了这个问题，**一旦没有其他引用指向键对象，垃圾回收器（GC）就会自动将其清理掉**。看看这个例子：
+
+```js
+js 代码解读复制代码let deathStar = { target: 'Alderaan' }
+const weakMap = new WeakMap()
+
+weakMap.set(deathStar, 'operational')
+
+// 当不再需要 deathStar 时，将其置为 null
+deathStar = null // 原力释放！
+// 此时，与 deathStar 关联的键值对会在合适的时机被 GC 回收
+```
+
+WeakMap 的三大原力戒律
+
+1. **键必须是对象**
+    只能使用对象作为键，基本类型（字符串、数字等）不被允许。
+2. **不可遍历**
+    WeakMap 不提供迭代器，因为键可能随时被垃圾回收，保证内存安全。
+3. **无 size 属性**
+    由于键的不确定性，WeakMap 不提供 size 属性，也无法获取所有键值对。
+
+#### 场景
+
+- **处理大量短生命周期数据** → 使用 **WeakMap**
+  （自动内存回收，让你远离手动清理的烦恼）
+- **希望键与对象生命周期绑定** → 使用 **WeakMap**
+  （一旦对象不再使用，相关数据也随之消失）
+- **担心内存泄漏** → 使用 **WeakMap**
+  （自动释放机制为内存保驾护航）
+
+##### 1. 私有属性封装
+
+利用 WeakMap 存储实例的私有数据，避免直接暴露内部实现：
+
+```js
+js 代码解读复制代码const privateData = new WeakMap()
+
+class Jedi {
+  constructor(name) {
+    // 将私有数据与当前实例绑定
+    privateData.set(this, { name })
+  }
+
+  get name() {
+    return privateData.get(this).name
+  }
+}
+```
+
+##### 2. DOM 元素元数据管理
+
+在前端开发中，可以使用 WeakMap 为 DOM 元素关联额外的元数据，而无需担心内存泄漏：
+
+```js
+js 代码解读复制代码const domMetadata = new WeakMap()
+const button = document.querySelector('#deathStarBtn')
+
+domMetadata.set(button, {
+  clickCount: 0,
+  lastClicked: null
+})
+
+button.addEventListener('click', () => {
+  const data = domMetadata.get(button)
+  data.clickCount++
+  data.lastClicked = new Date()
+})
+```
+
+#### Map vs WeakMap
+
+| 特性          | Map                        | WeakMap                          |
+| ------------- | -------------------------- | -------------------------------- |
+| **键类型**    | 任意值                     | 仅对象                           |
+| **垃圾回收**  | 强引用，键不会自动释放     | **弱引用，键一旦无引用自动回收** |
+| **可遍历性**  | 支持迭代                   | 不支持迭代                       |
+| **Size 属性** | 提供 size 属性             | 不提供                           |
+| **性能**      | 部分场景稍慢               | 在垃圾回收方面更高效             |
+| **内存管理**  | 需要手动管理               | 自动释放，防止内存泄漏           |
+| **使用场景**  | 长期存储数据，需遍历键值对 | 临时数据存储，关联对象生命周期   |
+
+### Map和object对比
+
+某些情况下，`Map` 的性能可能比 `Object` 低，但这取决于具体的使用场景。以下是两者的性能对比分析：
+
+##### ✅ `Object` 更优的场景：
+
+1. **键为字符串/数字时**：如果键是简单的字符串或数字，`Object` 的访问速度通常更快。
+2. **小数据量**：当存储的数据量较小时，`Object` 的内存占用更少，初始化和访问也更快。
+
+##### ✅ `Map` 更优的场景：
+
+1. **键类型多样**：`Map` 支持任意类型的键（如对象、函数等），而 `Object` 只能使用字符串或 Symbol。
+2. **频繁增删操作**：在频繁进行增删操作时，`Map` 性能更稳定。
+3. **有序性保障**：`Map` 保证了键值对的插入顺序，而 `Object` 在不同 JS 引擎中可能不一致。
+4. **大数据量处理**：在处理大量数据时，`Map` 的性能优势会逐渐显现。
+
+##### 🔍 总结建议
+
+- 如果你只需要字符串键且数据量不大，优先使用 `Object`。
+- 如果你需要更复杂的键类型、有序结构或频繁修改数据，推荐使用 `Map`。
 
 ### 区别
 

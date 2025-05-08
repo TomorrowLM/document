@@ -1,4 +1,5 @@
 ---
+
 slug: app
 title: app
 description: app学习
@@ -134,7 +135,7 @@ export default class App extends Component {
 
 ## 项目搭建
 
-package.json 中指定的 [`main`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#main) 文件是 Electron 应用的入口。 这个文件控制 **主程序 (main process)**，它运行在 Node.js 环境里，负责控制您应用的生命周期、显示原生界面、执行特殊操作并管理渲染器进程 (renderer processes)
+package.json 中指定的 [`main`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#main) 文件是 Electron 应用的入口（打包文件）。 这个文件控制 **主程序 (main process)**，它运行在 Node.js 环境里，负责控制您应用的生命周期、显示原生界面、执行特殊操作并管理渲染器进程 (renderer processes)
 
 在 package.json 的 [`scripts`](https://docs.npmjs.com/cli/v7/using-npm/scripts) 字段中添加一个 `start` 命令，内容为 `electron .` 。 这个命令会告诉 Electron 在当前目录下寻找主脚本，并以开发模式运行它。
 
@@ -196,6 +197,8 @@ https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app#%E5%8F%AF%
 
 #### vue.config.js
 
+适合定义**全局**的electron配置
+
 ```
     electronBuilder: {
       nodeIntegration: true,
@@ -245,10 +248,11 @@ https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app#%E5%8F%AF%
 - **安全风险**：虽然 `nodeIntegration` 提供了强大的功能，但它也带来了潜在的安全风险。如果启用了 `nodeIntegration`，恶意代码可能会利用这一点执行任意的本地系统命令或访问文件系统。因此，在生产环境中应谨慎使用，并确保应用的安全性。
 - **与上下文菜单和开发者工具的兼容性**：在某些情况下，启用 `nodeIntegration` 可能会影响 Electron 的上下文菜单和开发者工具的功能。如果你遇到相关问题，可以尝试调整其他相关配置，如 `contextIsolation`。
 
+> 如果没有显式在 `BrowserWindow` 构造函数中设置 `webPreferences/nodeIntegration`，则会使用这个配置。是一种 **全局/默认级别的配置**，适用于开发模式和生产模式下的窗口创建。
+
 ##### preload
 
-- 指定预加载脚本的路径。
-- 预加载脚本运行在渲染进程中，但具有主进程的权限，可用于安全地暴露部分主进程功能给渲染进程。
+指定预加载脚本的路径。
 
 ##### mainProcessFile
 
@@ -287,7 +291,7 @@ https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app#%E5%8F%AF%
 
 #### electron-builder.json
 
-`electron-builder.json` 文件是用于配置 Electron 应用打包和发布行为的 JSON 文件。它定义了如何构建、打包和分发 Electron 应用程序
+`electron-builder.json` 文件相比较于`vue.config.js`中的electronBuilder配置更加细粒化，它能根据不同平台定义了如何构建、打包和分发 Electron 应用程序。
 
 ##### appId
 
@@ -419,8 +423,6 @@ https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app#%E5%8F%AF%
 
 https://www.jianshu.com/p/43e8a2f04422
 
-重点看resource文件夹下的app.asar文件，这个文件就是electron-builder**打包后的应用入口文件**
-
 - **添加files配置项**：**electron-builder配置项files中包含的文件都在`应用程序根目录/resources/app.asar/`目录下**。
 
   ```
@@ -432,18 +434,26 @@ https://www.jianshu.com/p/43e8a2f04422
   }
   ```
 
-- 它们的作用就是打包额外的文件
+- 打包额外的文件
 
-  > 配置`extraFiles`后，**electron-builder会在打包时将`extraFiles`中指定的文件复制到打包后应用程序的`根目录下(Windows/Linux)`，或者`Content目录下(MacOS)`**
-  >
-  > 配置`extraResources`后，**electron-builder会在打包时将`extraResources`中指定的文件复制到打包后应用程序的`根目录/resources文件夹下(Windows)`，或者`Content/resources文件夹下(MacOS)`**
+  `extraFiles` 和 `extraResources` 是两个用于指定额外文件复制的配置项
+  
+  - extraFiles`extraFiles`为额外文件
 
-  -  extraFiles`extraFiles`为额外文件
+    配置`extraFiles`后，**electron-builder会在打包时将`extraFiles`中指定的文件复制到打包后应用程序的`根目录下(Windows/Linux)`，或者`Content目录下(MacOS)`**
+  
+    -  适用场景：
+       - 需要在启动时直接访问的可执行文件、脚本、依赖库等。
+       - 比如一些启动脚本、批处理文件、第三方依赖等。
+  
   - extraResources`extraResources`为额外资源
+  
+    配置`extraResources`后，**electron-builder会在打包时将`extraResources`中指定的文件复制到打包后应用程序的“资源目录”`根目录/resources文件夹下(Windows)`，或者`Content/resources文件夹下(MacOS)`**
+  
+    -  适用场景：放置只读资源文件，如：数据库模板、配置文件、图标、证书等。
+  
 
-  > 比如有这么一个需求：在用户没有网络时，为用户提供某个静态文件的下载；那就必须将这个静态文件打包进应用程序，用户下载时使用electron主进程的node程序读取这个文件返回给用户。
-
-#### 安装包放置
+### 安装包放置
 
 ##### 服务器
 
@@ -547,51 +557,11 @@ chrome 和 chromium 用户界面几乎一摸一样，但是还是有一些差异
 
 ## Main
 
-### BrowserWindow
-
-在 Electron 中，每个窗口展示一个页面，后者可以来自本地的 HTML，也可以来自远程 URL
-
-```js
-const { app, BrowserWindow } = require('electron')
-
-const createWindow = () => {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600
-  })
-
-  win.loadFile('index.html')//将您的页面加载到新的 BrowserWindow 实例
-}
-
-app.whenReady().then(() => {
-  createWindow()
-})
-```
-
-- [app](https://www.electronjs.org/zh/docs/latest/api/app)，它着您应用程序的事件生命周期。
-- [BrowserWindow](https://www.electronjs.org/zh/docs/latest/api/browser-window)，它负责创建和管理应用窗口。
-
-> Electron 的许多核心模块都是 Node.js 的[事件触发器](https://nodejs.org/api/events.html#events)，遵循 Node.js 的异步事件驱动架构。 app 模块就是其中一个。
->
-> 在 Electron 中，只有在 app 模块的 [`ready`](https://www.electronjs.org/zh/docs/latest/api/app#event-ready) 事件触发后才能创建 BrowserWindows 实例。 您可以通过使用 [`app.whenReady()`](https://www.electronjs.org/zh/docs/latest/api/app#appwhenready) API 来监听此事件，并在其成功后调用 `createWindow()` 方法。
-
-### webPreferences
-
-#### contextIsolation
-
-`contextIsolation`定义上下文隔离
-
-在一般的我们的前端项目中，渲染html页面的js中是运行在浏览器环境中的，而在Electron中，我们会发现Node中模块在其中也可以使用。（同时需要配置`nodeIntegration`为`true`）这样的话，在一个复杂项目中，就可以造成污染，重名等问题。
-
-于是Electron特意增加了上下文隔离这一概念。开启上下文隔离的条件是`contextIsolation`属性设置为`true`
-
-一旦开启该条件，渲染进程无法引入Electron和Node的各种模块。因此，如果想在其中使用，需要配置preload.js，使用`contextBridge`（上下文桥，这个名字不错）来暴露全局接口到渲染页面的脚本中
-
-
-
-使用 `contextBridge` 和 `preload`：通过 `contextBridge` 和 `preload` 机制，可以安全地将部分 Electron API 暴露给渲染进程，而无需开启 `nodeIntegration`。**这种方式更安全，能够限制渲染进程的权限，并减少潜在的安全风险。你可以在主进程中使用** `contextBridge.exposeInMainWorld` 方法将需要的 Electron API 暴露给渲染进程，然后在渲染进程中使用 `window.api` 来访问这些 API。
+Electron 的主进程是一个拥有着完全操作系统访问权限的 Node.js 环境。 除了 [Electron 模组](https://www.electronjs.org/zh/docs/latest/api/app) 之外，您也可以访问 [Node.js 内置模块](https://nodejs.org/dist/latest/docs/api/) 和所有通过 npm 安装的包。
 
 ### app
+
+Electron 的许多核心模块都是 Node.js 的[事件触发器](https://nodejs.org/api/events.html#events)，遵循 Node.js 的异步事件驱动架构。 app 模块就是其中一个。在 Electron 中，只有在 app 模块的 [`ready`](https://www.electronjs.org/zh/docs/latest/api/app#event-ready) 事件触发后才能创建 BrowserWindows 实例。 您可以通过使用 [`app.whenReady()`](https://www.electronjs.org/zh/docs/latest/api/app#appwhenready) API 来监听此事件，并在其成功后调用 `createWindow()` 方法。
 
 #### 关闭所有窗口时退出应用
 
@@ -617,13 +587,68 @@ app.whenReady().then(() => {
 })
 ```
 
+### BrowserWindow
+
+[BrowserWindow](https://www.electronjs.org/zh/docs/latest/api/browser-window)，它负责创建和管理应用窗口。每个窗口展示一个页面，后者可以来自本地的 HTML，也可以来自远程 URL
+
+```js
+const { app, BrowserWindow } = require('electron')
+
+const createWindow = () => {
+  const win = new BrowserWindow({
+    width: 800,
+    height: 600
+  })
+
+  win.loadFile('index.html')//将您的页面加载到新的 BrowserWindow 实例
+}
+
+app.whenReady().then(() => {
+  createWindow()
+})
+```
+
+#### webPreferences
+
+##### nodeIntegration
+
+- **含义**：是否允许在渲染进程中使用 Node.js API（如 `require`, `process`, `fs` 等）。
+- **默认值**：`false`（Electron 5+ 开始默认关闭）
+- 效果：
+  - 如果为 `true`，渲染进程可以直接访问 Node.js。
+  - 如果为 `false`，渲染进程无法直接使用 Node.js 功能。
+
+**可以根据需要为每个窗口单独设置不同的 `webPreferences`，实现更细粒度的安全控制或功能支持。**
+
+##### contextIsolation
+
+- **含义**：是否启用上下文隔离，将预加载脚本和网页内容运行在不同的 JavaScript 上下文中。
+- **默认值**：`true`（推荐开启）
+- 效果：
+  - **即使启用了 `nodeIntegration`，网页中的代码也无法直接访问 Node.js 模块。**
+  - 预加载脚本可以访问 Node.js，但网页中不能直接访问这些模块。
+
+```
+webPreferences: {
+  nodeIntegration: false, //node集成
+  contextIsolation: true,
+  webSecurity: false, //允许跨域
+  preload: path.join(__dirname, 'preload.js')
+},
+```
+
+在preload使用 `contextBridge` ，可以安全地将部分 Electron API 暴露给渲染进程，而无需开启 `nodeIntegration`。这种方式更安全，能够限制渲染进程的权限，并减少潜在的安全风险。你可以在主进程中使用 `contextBridge.exposeInMainWorld` 方法将需要的 Electron API 暴露给渲染进程，然后在渲染进程中使用 `window.api` 来访问这些 API。
+
 ## preload
 
-Electron 的主进程是一个拥有着完全操作系统访问权限的 Node.js 环境。 除了 [Electron 模组](https://www.electronjs.org/zh/docs/latest/api/app) 之外，您也可以访问 [Node.js 内置模块](https://nodejs.org/dist/latest/docs/api/) 和所有通过 npm 安装的包。 另一方面，出于安全原因，渲染进程默认跑在网页页面上，而并非 Node.js里。为了将 Electron 的不同类型的进程桥接在一起，我们需要使用被称为 **预加载** 的特殊脚本。
+预加载脚本运行在渲染进程中，但它具有访问主进程的权限，可用于**安全地**暴露部分主进程功能给渲染进程。
 
-> BrowserWindow 的预加载脚本运行在具有 HTML DOM 和 Node.js、Electron API 的有限子集访问权限的环境中
-
-**预加载脚本在渲染器加载网页之前注入。** 
+| 阶段           | 描述                                                         |
+| :------------- | :----------------------------------------------------------- |
+| 运行时机       | 在渲染进程初始化时、页面加载前执行                           |
+| 执行环境       | 预加载脚本运行在具有 HTML DOM 和 Node.js、Electron API 的有限子集访问权限的环境中 |
+| 主要用途       | 初始化 IPC 通信、暴露安全接口给前端、注入全局功能            |
+| 是否可重复运行 | 每次窗口加载页面时都会运行一次                               |
 
 ### 渲染器加载时的DOM展示
 
@@ -759,24 +784,6 @@ const information = document.getElementById('info')
 information.innerText = `This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`
 ```
 
-> 虽然预加载脚本与其所附着的渲染器在共享着一个全局 `window` 对象，但您并不能从中直接附加任何变动到 `window` 之上，因为 [`contextIsolation`](https://www.electronjs.org/zh/docs/latest/tutorial/context-isolation) 是默认的。
->
-> 语境隔离（Context Isolation）意味着预加载脚本与渲染器的主要运行环境是隔离开来的，以避免泄漏任何具特权的 API 到您的网页内容代码中。
->
-> preload.js
->
-> ```js
-> window.myAPI = {
->   	desktop: true
-> }
-> ```
->
-> renderer.js
->
-> ```js
-> console.log(window.myAPI)
-> ```
-
 ### 与Typescript一同使用
 
 在这个 `preload.ts` 脚本中：
@@ -815,14 +822,6 @@ window.electronAPI.loadPreferences()
 
 ## IPC进程间通信
 
-> 官方文档：
->
-> [ipcMain](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fipc-main)从主进程到渲染进程的异步通信。`ipcMain` 是一个 [EventEmitter](https://link.juejin.cn/?target=https%3A%2F%2Fnodejs.org%2Fapi%2Fevents.html%23events_class_eventemitter) 的实例。 当在主进程中使用时，它处理从渲染器进程（网页）发送出来的**异步和同步**信息。 从渲染器进程发送的消息将被发送到该模块。
->
-> [ipcRenderer](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fipc-renderer)：从渲染器进程到主进程的异步通信。`ipcRenderer` 是一个 [EventEmitter](https://link.juejin.cn/?target=https%3A%2F%2Fnodejs.org%2Fapi%2Fevents.html%23events_class_eventemitter) 的实例。 你可以使用它提供的一些方法从渲染进程 (web 页面) 发送**同步或异步**的消息到主进程。 也可以接收主进程回复的消息。
->
-> [webContents](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fweb-contents%23contentssendchannel-args)
-
 ### 进程模型
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/94160f9fbbdc4ce0a9bab4e95689f54a.png)
@@ -839,11 +838,73 @@ window.electronAPI.loadPreferences()
 
 - 除此之外还有 GPU 进程、扩展进程等等。
 
-### ipcMain
+### 概念
 
 [ipcMain](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fipc-main)从主进程到渲染进程的异步通信。`ipcMain` 是一个 [EventEmitter](https://link.juejin.cn/?target=https%3A%2F%2Fnodejs.org%2Fapi%2Fevents.html%23events_class_eventemitter) 的实例。 当在主进程中使用时，它处理从渲染器进程（网页）发送出来的**异步和同步**信息。 从渲染器进程发送的消息将被发送到该模块。
 
-- 同步
+[ipcRenderer](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fipc-renderer)：从渲染器进程到主进程的异步通信。`ipcRenderer` 是一个 [EventEmitter](https://link.juejin.cn/?target=https%3A%2F%2Fnodejs.org%2Fapi%2Fevents.html%23events_class_eventemitter) 的实例。 你可以使用它提供的一些方法从渲染进程 (web 页面) 发送**同步或异步**的消息到主进程。 也可以接收主进程回复的消息。
+
+[webContents](https://link.juejin.cn?target=https%3A%2F%2Fwww.electronjs.org%2Fdocs%2Fapi%2Fweb-contents%23contentssendchannel-args)
+
+在 Electron 中，`webContents`、`ipcMain` 和 `ipcRenderer` 是用于进程间通信（IPC）和窗口管理的核心模块，它们分别运行在不同的进程中，并承担不同的职责。
+
+------
+
+#### ✅ 1. `webContents`
+
+- 📍 所属模块：
+
+  - 属于 `BrowserWindow` 实例的属性。
+
+  - 运行在 **主进程** 中。
+
+- 📌 功能说明：
+
+  - 用于控制和操作渲染进程的内容（即页面内容）。
+
+  - 可以执行如加载 URL、执行 JS 脚本、监听页面事件等操作。
+
+- 🧠 常见用途：
+
+  ```
+  tsconst win = new BrowserWindow({ ... });
+  win.webContents.loadURL('https://example.com');
+  win.webContents.send('event-name', data); // 向渲染进程发送事件
+  ```
+
+- 🔁 通信方向：
+  - 主进程 ➜ 渲染进程（单向）
+
+------
+
+#### ✅ 2. `ipcMain`
+
+- 📍 所属模块：
+
+  - 主进程模块。
+
+  - 在主进程中使用。
+
+- 📌 功能说明：
+
+  - **用于监听来自渲染进程的异步和同步消息（通过 `ipcRenderer.send()` 发送）。**
+
+  - 可以响应请求并返回数据给渲染进程。
+
+- 🧠 常见用途：
+
+```
+ts// 主进程
+ipcMain.on('some-event', (event, arg) => {
+  console.log(arg); // 接收到渲染进程发来的消息
+  event.reply('some-reply', 'response data'); // 回复
+});
+```
+
+- 🔁 通信方向：
+  - 渲染进程 ➜ 主进程（双向或单向）
+
+- api
 
   **ipcMain.on(channel, listener)** 主进程监听来自渲染进程的通信，
 
@@ -857,46 +918,79 @@ window.electronAPI.loadPreferences()
 
   **ipcMain.handle(channel, listener)** 主进程的监听函数
 
-  **ipcRenderer.invoke(channel, ...args)** 渲染进程的发送消息的函数
-
   **ipcMain.handleOnce(channel, listener)** 单个执行一次
 
   **ipcMain.removeHandler(channel)**移除监听函数
 
+------
 
+#### ✅ 3. `ipcRenderer`
+
+- 📍 所属模块：
+
+  - 渲染进程模块。
+
+  - 在渲染进程中使用（或在 `preload.js` 中使用）。
+
+- 📌 功能说明：
+  - 用于向主进程发送消息，并可以监听主进程的回复。
+
+- 🧠 常见用途：
 
 ```
-send 和 on
-//主进程
-  ipcMain.on('haha', (event,arg) => {
-    event.reply('heihei','message from main process~')
-  })
+//  preload.js
 
-//渲染进程
-  ipcRenderer.send('haha', '你好啊')
-  ipcRenderer.on('heihei', (event, arg) => {
-        event.reply('heihei','message from main process~') //on 监听事件， send 发送事件，通过 event.reply （只有主进程的event有）可以回复这次通信的另一方
-  })
-  
-  invoke 和 handle
-  这组API跟上面的区别是，invoke执行后返回一个promise，then里可以拿到handle返回的结果
-  async function handleFileOpen () {
-  const { canceled, filePaths } = await dialog.showOpenDialog()
-  if (!canceled) {
-    return filePaths[0]
-  }
-}
-  ipcMain.handle('dialog:openFile', handleFileOpen)
-  
-  btn.addEventListener('click', async () => {
-  const filePath = await window.electronAPI.openFile() //filePaths[0]
-  filePathElement.innerText = filePath
-})
+//渲染进程发送给主进程
+ipcRenderer.send('some-event', 'hello from renderer');
+
+//渲染进程监听主进程
+ipcRenderer.on('some-reply', (event, data) => {
+  console.log('Received:', data);
+});
+```
+
+- 🔁 通信方向：
+  - 渲染进程 ➜ 主进程（双向或单向）
+
+------
+
+#### 🔄 总结对比表
+
+| 模块          | 所属进程 | 使用位置                | 通信方向  | 主要功能                   |
+| :------------ | :------- | :---------------------- | :-------- | :------------------------- |
+| `webContents` | 主进程   | 主进程                  | 主 ➜ 渲染 | 控制窗口内容、发送事件     |
+| `ipcMain`     | 主进程   | 主进程                  | 渲染 ➜ 主 | 监听渲染进程消息、处理逻辑 |
+| `ipcRenderer` | 渲染进程 | 渲染进程 / `preload.js` | 渲染 ➜ 主 | 发送请求、接收主进程响应   |
+
+####  IPC 通信流程
+
+主进程（main.js）
+
+```
+ipcMain.on('get-data', (event) => {
+  event.reply('return-data', { info: 'Hello from main' });
+});
+```
+
+渲染进程 / Preload 脚本
+
+```
+ipcRenderer.send('get-data');
+
+ipcRenderer.on('return-data', (event, data) => {
+  console.log(data.info); // 输出: Hello from main
+});
 ```
 
 
 
 ### 渲染进程->主进程并返回数据
+
+异步的来回通信
+
+**ipcMain.handle(channel, listener)** 主进程的监听函数
+
+**ipcRenderer.invoke(channel, ...args)** 渲染进程的发送消息的函数
 
 ```js
 //preload.js
@@ -1054,13 +1148,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 **主线程** 到 **渲染线程** 通过 `webContents.send` 来发送 --->`ipcRenderer.on` 来监听
 
-
-
 ### Electron 中的消息端口Remote 模块
 
 在渲染进程里如果要使用到 **BrowserWindow** 这些属性的话就必须使用 `remote`，使用 `remote` 模块, 你可以调用 `main` **进程对象的方法**
-
-
 
 ## 配置
 

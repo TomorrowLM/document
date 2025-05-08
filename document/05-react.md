@@ -75,8 +75,6 @@ https://m.html.cn/qa/react/14367.html
 
 https://juejin.cn/post/7285540804734468150#heading-0
 
-React的生命周期分为三个阶段：挂载期、更新期、卸载期。在每个周期中React都提供了一些钩子函数。
-
 生命周期的描述如下：
 
 - 挂载期：一个组件实例初次创建的过程。
@@ -90,6 +88,8 @@ React的生命周期分为三个阶段：挂载期、更新期、卸载期。在
 **组件实例创建阶段的生命周期函数，在组件的一辈子中，只执行一次**；
 
 ### constructor(props)
+
+实例过程中自动调用的方法，在方法内部通过 super 关键字获取来自父组件的 props
 
 通常用于初始化组件的状态和绑定方法。
 
@@ -113,6 +113,8 @@ constructor(props) {
 - 进⾏ajax请求，作者一开始也喜欢在React的willMount函数中进行异步获取数据（认为这可以减少白屏的时间），后来发现其实应该在didMount中进行。
 
 - 可以修改state
+
+### getDerivedStateFromProps（新增）
 
 ### render
 
@@ -148,6 +150,8 @@ componentWillReceiveProps(nextProps){
 );}
 ```
 
+### getDerivedStateFromProps（新增）
+
 ### shouldComponentUpdate
 
 组件是否需要被更新，此时，组件尚未被更新，但是，state 和 props 肯定是最新的。 首次渲染或使用 `forceUpdate()` 时不会调用该方法。 
@@ -163,6 +167,8 @@ shouldComponentUpdate(nextProps, nextState)
 ### render
 
 根据最新的 state 和 props 重新渲染一棵内存中的 虚拟DOM树，当 render 调用完毕，内存中的旧DOM树，已经被新DOM树替换了！**此时页面还是旧的**
+
+### getSnapshotBeforeUpdate
 
 ### componentDidUpdate
 
@@ -220,11 +226,15 @@ componentDidUpdate(prevProps, prevState, snapshot) {
 
 ### 废弃的生命周期
 
-**被废弃的三个函数都是在render之前**，需要详细了解的小伙伴可以阅读以下文章：[为什么废弃react生命周期函数？](https://link.juejin.cn/?target=https%3A%2F%2Fsegmentfault.com%2Fa%2F1190000021272657)
-
 #### 为什么废弃
 
-**fiber算法是异步渲染**，异步的渲染，很可能因为高优先级任务的出现而打断现有任务导致它们就可能执行多次，具体是在`render()`生成虚拟 `dom` 阶段可以打断重来， 这就会导致在dom挂载之前或是被更新之前的所有任务都会重复操作，所以`componentWillMount()`、·`componentWillReceiveProps()` `componentWIllUpdate()`方法可能会执行多次。
+`React`废弃`componentWillMount`和`componentWillReceiveProps`这两个[生命周期方法](https://so.csdn.net/so/search?q=生命周期方法&spm=1001.2101.3001.7020)的原因主要涉及到`React的内部机制变更、性能优化以及未来特性的支持`。以下是对这两个问题的详细解答
+
+- **与Fiber架构的调和过程不兼容**：**fiber算法是异步渲染**，异步的渲染，很可能因为高优先级任务的出现而打断现有任务导致它们就可能执行多次，具体是在`render()`生成虚拟 `dom` 阶段可以打断重来， 这就会导致在dom挂载之前或是被更新之前的所有任务都会重复操作，所以`componentWillMount()`、·`componentWillReceiveProps()` `componentWIllUpdate()`方法可能会执行多次。
+
+- **容易引起混淆和使用不当**：旧版Will生命周期方法在执行异步操作（如数据请求、订阅等）时，**由于不明确的调用时机，可能导致状态更新不一致或副作用不可预测**。这增加了代码的复杂性和出错的可能性，使得开发者难以维护和调试。
+
+  
 
 #### componentWillMount
 
@@ -232,13 +242,15 @@ componentDidUpdate(prevProps, prevState, snapshot) {
 
 > 不推荐使用的原因主要是它的执行时机可能会导致一些问题。具体来说，如果你在`componentWillMount()` 中触发了异步操作，可能会导致在组件卸载前仍然执行未完成的操作，这可能会引发潜在的错误。
 
+#### componentWillUpdate
+
+> 与`componentWillReceiveProps()`类似，这个方法也容易导致状态不一致。
+
 #### componentWillReceiveProps
 
 在老版本的`React`中，如果组件自身的state与其props密切相关的话，我们就会用到`componentWillReceiveProps(nextProps)`。
 
-> 这个生命周期方法被不推荐使用，因为它容易导致状态不一致的问题。在这个方法中，你可以在组件接收新的props之前执行某些操作，但它不适合进行依赖于props的状态更新。
-
-常见的业务场景比如，tabs的激活状态，一般我们会在组件自身内通过state维持，但是当我们从其他页面返回时，想要保持离开之前时的tabs状态，这时我们可以通过props来传递，（**破坏了数据源的单一性**）
+这个生命周期方法被不推荐使用，因为它容易导致状态不一致的问题。常见的业务场景比如，tabs的激活状态，一般我们会在组件自身内通过state维持，但是当我们从其他页面返回时，想要保持离开之前时的tabs状态，这时我们可以通过props来传递，（**破坏了数据源的单一性**）
 
 ```react
 //previous 
@@ -291,17 +303,25 @@ class Child extends Component {
 }
 ```
 
-#### componentWillUpdate
 
-> 与`componentWillReceiveProps()`类似，这个方法也容易导致状态不一致。
 
 ### 新增
 
 #### getDerivedStateFromProps
 
-> **使用getDerivedStateFromProps代替了旧的componentWillReceiveProps及componentWillMount**
+> **使用getDerivedStateFromProps代替了旧的componentWillReceiveProps**
 
-getDerivedStateFromProps是一个静态方法，在挂载和更新阶段时调用，可以返回一个对象来更新状态或者返回null不更新。
+`getDerivedStateFromProps` 是 React 生命周期中的一个静态方法，**主要用于在组件接收到新的 props 时更新 state**。这个方法在组件的初始渲染和后续的每次更新（即每次接收到新的 props 或 state）时都会被调用。
+
+- 使用方式
+  - **静态方法**：这意味着你不能在这个方法中使用 `this` 关键字。它的第一个参数是新的 props，第二个参数是当前的 state。
+  - **不触发副作用**：与`componentDidUpdate()` 不同，`getDerivedStateFromProps()` 不应执行副作用，如发起网络请求。它只用于计算state。
+- **返回值**：`getDerivedStateFromProps` 必须返回一个对象来更新 state，或者返回 `null` 表示不需要更新 state。
+- **作用**：这个方法的主要作用是确保组件的 state 总是与 props 保持一致。这是一个非常罕见的需求，因为通常我们希望 props 只是初始数据来源，而不是 state 的来源。然而，在某些特殊的场景中，可能需要根据 props 的变化来更新 state。
+
+nextProps：与componentWillReceiveProps的nextProps参数相同。即改变后的Props
+
+preState：发生改变前的state中各数据的值。
 
 ```
 class MyComponent extends React.Component { 
@@ -327,23 +347,11 @@ class MyComponent extends React.Component {
 
 ```
 
-特点和使用方式：
-
-**静态方法**：`getDerivedStateFromProps()` 是一个静态方法，因此不能访问实例的this，它只接收两个参数：`nextProps` 和 `prevState`。
-
-**计算新的state**：通常，你可以在这个方法内部根据`nextProps` 和 `prevState` 来计算并返回新的state。这个新的state将在组件更新时应用。
-
-**不触发副作用**：与`componentDidUpdate()` 不同，`getDerivedStateFromProps()` 不应执行副作用，如发起网络请求。它只用于计算state。
-
-**适用于控制组件内部状态**：`getDerivedStateFromProps()` 主要用于控制组件内部的状态，以确保它与外部传入的props保持同步。
-
-
-
 #### getSnapshotBeforeUpdate
 
 > getSnapshotBeforeUpdate代替了旧的componentWillUpdate。
 
-`getSnapshotBeforeUpdate(nextProps,prevState)`：它在组件更新（即将应用新props或state并重新渲染）之前触发。它允许你捕获组件更新前的一些信息（例如，滚动位置），并在组件更新后使用这些信息。
+`getSnapshotBeforeUpdate(nextProps,prevState)`：它在组件更新（即将应用新props或state并重新渲染）之前触发。它允许你**捕获组件更新前**的一些信息（例如，滚动位置），并在组件更新后使用这些信息。
 
 示例中，`getSnapshotBeforeUpdate()` 用于捕获滚动位置，然后在`componentDidUpdate()` 中使用snapshot来恢复滚动位置，以确保用户在滚动列表时不会在更新后失去滚动位置。
 
@@ -552,6 +560,38 @@ CSS Modules 允许使用`:global(.className)`的语法，声明一个全局规�
 
 styled-components是针对React写的一套css-in-js框架，简单来讲就是在js中写css。
 styled-components是一个第三方包，要安装。**Material框架**中的样式也是如此
+
+## ｃｓｓ
+
+常见的 CSS 引入方式有以下：
+
+### 在组件内直接使用
+
+### 组件中引入.css 文件
+
+### 引入.module.css 文件
+
+![image-20250506160420630](img/前端/react/image-20250506160420630.png)
+
+这种方式能够解决局部作用域问题，但也有一定的缺陷：
+
+不方便动态来修改某些样式，依然需要使用内联样式的方式；
+
+
+
+### CSS in JS
+
+CSS-in-JS，是指一种模式，其中 CSS 由 JavaScript 生成而不是在外部文件中定义
+
+此功能并不是 React 的一部分，而是由第三方库提供，例如：
+
+- styled-components 
+- emotion 
+- glamorous
+
+下面主要看看 styled-components 的基本使用
+
+
 
 ## 表单和受控组件
 
@@ -1340,7 +1380,7 @@ componentDidMound() {
 
 在 JavaScript 中，class 的方法默认不会[绑定](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_objects/Function/bind) `this`。如果你忘记绑定 `this.handleClick` 并把它传入了 `onClick`，当你调用这个函数的时候 `this` 的值为 `undefined`。
 
-**绑定this：**
+### 绑定this
 
 - 在constructor中用bind绑定
 
@@ -1365,9 +1405,33 @@ componentDidMound() {
   }
   ```
 
+### 事件顺序
+
+![image-20250506155847800](img/前端/react/image-20250506155847800.png)
+
+```
+原生事件：子元素 DOM 事件监听！
+原生事件：父元素 DOM 事件监听！
+React 事件：子元素事件监听！
+React 事件：父元素事件监听！
+原生事件：document DOM 事件监听！
+```
+
+可以得出以下结论：
+
+- 会先执行原生事件，然后处理 React 事件
+  - 当真实DOM元素触发事件，会冒泡到document对象后，再处理React事件
+  - React所有事件都挂载在document对象上
+
+- 最后真正执行 document 上挂载的事件
+
 ## 错误处理
 
 当渲染过程，生命周期，或子组件的构造函数中抛出错误时，会调用如下方法：
+
+抛出错误后，请使用 static getDerivedStateFromError（）渲染备用 UI，使用 componentDidCatch（）打印错误信息
+
+- try,catch
 
 - static getDerivedStateFromError()
 - componentDidCatch()
@@ -1413,13 +1477,13 @@ React在解析所有的标签的时候，是以标签的首字母来区分的，
 
 ## 状态组件
 
-#### 状态组件对比
+### 状态组件对比
 
 使用 function 创建的组件，叫做【无状态组件】；使用 class 创建的组件，叫做【有状态组件】
 
 有状态组件和无状态组件，最本质的区别：
 
-- 状态管理：有无 state 属性；在 hooks 出来之前，函数组件就是无状态组件，不能保管组件的状态，不像类组件中调用 setState。如果想要管理 state 状态，可以使用 useState
+- 状态管理：有无 state 状态属性；在 hooks 出来之前，函数组件就是无状态组件，不能保管组件的状态，不像类组件中调用 setState。如果想要管理 state 状态，可以使用 useState
   - 使用 function 构造函数创建的组件，内部没有 state 私有数据，只有一个props来接收外界传递过来的数据
 
   - 使用 class创建的组件，内部，除了有 this.props 这个只读属性之外，还有一个 专门用于存放自己私有数据的this.state 属性，这个 state 是可读可写的！
@@ -1428,10 +1492,11 @@ React在解析所有的标签的时候，是以标签的首字母来区分的，
 
 问题来了：什么时候使用 有状态组件，什么时候使用无状态组件呢？？？
 
-    1. 如果一个组件需要存放自己的私有数据，或者需要在组件的不同阶段执行不同的业务逻辑，此时，非常适合用 class 创建出来的有状态组件；
+1. 如果一个组件需要存放自己的私有数据，或者需要在组件的不同阶段执行不同的业务逻辑，此时，非常适合用 class 创建出来的有状态组件；
+
    2. 如果一个组件，只需要根据外界传递过来的 props，渲染固定的页面结构就完事儿了，此时，非常适合使用 function 创建出来的 无状态组件；（使用无状态组件的小小好处： 由于剔除了组件的生命周期，所以，运行速度会相对快一丢丢）
 
-#### class组件
+### class组件
 
 **用class关键字创建出来的组件：“有状态组件”**
 
@@ -1496,7 +1561,7 @@ export default class Hello2 extends React.Component {
 }
 ```
 
-#### 函数组件
+### 函数组件
 
 函数/无状态组件是一个纯函数，它可接受接受参数，并返回react元素。这些都是**没有任何副作用的纯函数**。这些组件没有状态或生命周期方法
 
@@ -1841,6 +1906,10 @@ import { Consumer } from './context'
 ```
 
 当 Provider 的 `value` 值发生变化时，它内部的所有消费组件都会重新渲染。从 Provider 到其内部 consumer 组件（包括 [.contextType](https://zh-hans.reactjs.org/docs/context.html#classcontexttype) 和 [useContext](https://zh-hans.reactjs.org/docs/hooks-reference.html#usecontext)）的传播不受制于  `shouldComponentUpdate` 函数，因此当 consumer 组件在其祖先组件跳过更新的情况下也能更新。 
+
+### 跨级
+
+状态管理器
 
 ## 高阶函数与组件
 

@@ -22,6 +22,22 @@ date: 25-September-2020
 
 https://blog.csdn.net/weixin_45578532/article/details/133785684
 
+- ‌**Vue2中data需要函数return的原因**
+
+  - ‌**数据隔离**‌：
+  
+    不使用return包裹的数据会在项目的全局可见，会造成变量污染；使用return包裹后数据中变量只在当前组件中生效，不会影响其他组件。
+  
+    当一个组件被定义， data 必须声明为返回一个初始数据对象的函数，**因为组件可能被用来创建多个实例。如果 data 仍然是一个纯粹的对象，则所有的实例将共享引用同一个数据对象！**通过提供 data 函数，每次创建一个新实例后，我们能够调用 data 函数，从而返回初始数据的一个全新副本数据对象。
+  
+  - ‌**响应式原理**‌：Vue的核心特性之一是数据的响应式。当data选项中的数据发生变化时，相关的视图会自动更新。这个响应式原理是通过Vue在组件实例化时对data进行劫持和代理来实现的。如果data直接是一个普通对象，Vue无法在实例化时捕获到数据的变化。而通过返回一个函数，**Vue可以在组件实例化时动态执行该函数，并对其返回的对象进行劫持，从而使其成为响应式**
+  
+  
+
+
+
+
+
 vue3 ref 修改没有在页面显示
 
 
@@ -136,6 +152,8 @@ json:{
 ## 指令
 
 ### `v-for` 与虚拟 DOM 
+
+> 通过唯一标识key提高diff效率，识别哪些节点需要被重新渲染，哪些可以复用，哪些被删除
 
 ```
 <ul>
@@ -1823,7 +1841,43 @@ var vm = new Vue({
 </script>
 ```
 
+### 父子组件实例
 
+- `ref`：如果在普通的 DOM 元素上使用，引用指向的就是 DOM 元素；如果用在子组件上，引用就指向组件实例
+- `$parent` / `$children`：访问父 / 子实例
+- **这两种方法的弊端是，无法在跨级或兄弟间通信**。
+
+```js
+// component-a 子组件
+export default {
+  data () {
+    return {
+      title: 'Vue.js'
+    }
+  },
+  methods: {
+    sayHello () {
+      window.alert('Hello');
+    }
+  }
+}
+```
+
+```js
+// 父组件
+<template>
+  <component-a ref="comA"></component-a>
+</template>
+<script>
+  export default {
+    mounted () {
+      const comA = this.$refs.comA;
+      console.log(comA.title);  // Vue.js
+      comA.sayHello();  // 弹窗
+    }
+  }
+</script>
+```
 
 ### 双向绑定:sync 
 
@@ -1935,46 +1989,6 @@ var C={
     }
 };
 ```
-
-### 父子组件实例
-
-- `ref`：如果在普通的 DOM 元素上使用，引用指向的就是 DOM 元素；如果用在子组件上，引用就指向组件实例
-- `$parent` / `$children`：访问父 / 子实例
-- **这两种方法的弊端是，无法在跨级或兄弟间通信**。
-
-```js
-// component-a 子组件
-export default {
-  data () {
-    return {
-      title: 'Vue.js'
-    }
-  },
-  methods: {
-    sayHello () {
-      window.alert('Hello');
-    }
-  }
-}
-```
-
-```js
-// 父组件
-<template>
-  <component-a ref="comA"></component-a>
-</template>
-<script>
-  export default {
-    mounted () {
-      const comA = this.$refs.comA;
-      console.log(comA.title);  // Vue.js
-      comA.sayHello();  // 弹窗
-    }
-  }
-</script>
-```
-
-
 
 
 
@@ -2992,6 +3006,39 @@ methods: {
 
 ## 结构
 
+###  Module
+
+由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
+
+为了解决以上问题，Vuex 允许我们将 store 分割成 **模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割：
+
+```js
+const moduleA = {
+  state: () => ({ ... }),
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... }
+}
+
+const moduleB = {
+  state: () => ({ ... }),
+  mutations: { ... },
+  actions: { ... }
+}
+
+const store = new Vuex.Store({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+
+store.state.a // -> moduleA 的状态
+store.state.b // -> moduleB 的状态
+```
+
+
+
 ### state
 
 由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在 [计算属性](https://cn.vuejs.org/guide/computed.html) 中返回某个状态
@@ -3210,37 +3257,6 @@ store.dispatch({
   type: 'incrementAsync',
   amount: 10
 })
-```
-
-###  Module
-
-由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
-
-为了解决以上问题，Vuex 允许我们将 store 分割成 **模块（module）**。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割：
-
-```js
-const moduleA = {
-  state: () => ({ ... }),
-  mutations: { ... },
-  actions: { ... },
-  getters: { ... }
-}
-
-const moduleB = {
-  state: () => ({ ... }),
-  mutations: { ... },
-  actions: { ... }
-}
-
-const store = new Vuex.Store({
-  modules: {
-    a: moduleA,
-    b: moduleB
-  }
-})
-
-store.state.a // -> moduleA 的状态
-store.state.b // -> moduleB 的状态
 ```
 
 ## vuex 项目
@@ -4359,11 +4375,25 @@ export default class Posts extends Vue {
    - ref 与 reactive
    - watch 与 watchEffect
    - provide 与 inject
-2. 新的内置组件
+
+2. jsx
+
+   **1、灵活性，**JSX允许在JavaScript代码中直接插入任意表达式，这使得它在处理复杂逻辑时更加灵活。例如，条件渲染和循环渲染可以通过JavaScript的标准语法直接实现，而Vue模板则需要使用特定的指令（如`v-if`、`v-for`）来实现‌。
+
+   **2、可读性，**
+
+   **3、组件复用性，**
+
+   JSX可以直接在模板中使用任何JavaScript表达式
+
+   **4、类型检查，**
+
+3. 新的内置组件
    - Fragment 
    - Teleport
    - Suspense
-3. 其他改变
+
+4. 其他改变
 
    - 新的生命周期钩子
    - data 选项应始终被声明为一个函数
@@ -5628,19 +5658,21 @@ const getSonHander=()=>{
 
 #### 2.Teleport
 
-- 什么是 Teleport？—— `Teleport` 是一种能够将我们的 <strong style="color:#DD5145"> 组件 html 结构 </strong> 移动到指定位置的技术。
+https://zhuanlan.zhihu.com/p/608735128
 
-  ```vue
-  <teleport to="移动位置">
-  	<div v-if="isShow" class="mask">
-  		<div class="dialog">
-  			<h3>我是一个弹窗</h3>
-  			<button @click="isShow = false">关闭弹窗</button>
-  		</div>
-  	</div>
-  </teleport>
-  
-  ```
+***它可以将一个组件内部的一部分模板“传送”到该组件的 DOM 结构外层的位置去***
+
+```vue
+<teleport to="移动位置">
+	<div v-if="isShow" class="mask">
+		<div class="dialog">
+			<h3>我是一个弹窗</h3>
+			<button @click="isShow = false">关闭弹窗</button>
+		</div>
+	</div>
+</teleport>
+
+```
 
 #### 3.Suspense
 
@@ -6408,3 +6440,4 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
 采用了空对象初始化的形式，来初始化对象，这样对象中的字段在赋值的时候是 **不存在响应式的**
 
 http://e.betheme.net/article/show-90795.html?action = onClick
+
