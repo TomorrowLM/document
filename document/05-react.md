@@ -561,7 +561,7 @@ CSS Modules 允许使用`:global(.className)`的语法，声明一个全局规�
 styled-components是针对React写的一套css-in-js框架，简单来讲就是在js中写css。
 styled-components是一个第三方包，要安装。**Material框架**中的样式也是如此
 
-## ｃｓｓ
+## css
 
 常见的 CSS 引入方式有以下：
 
@@ -2577,7 +2577,9 @@ hox
 
 ## Redux
 
-Redux是将整个应用状态存储到一个地方，称为store。里面保存一棵状态树(state tree)。组件可以派发(dispatch)行为(action)给store,action发出命令后将state放入reucer加工函数中，返回新的state。其它组件可以通过订阅store中的状态(state)来刷新自己的视图
+Redux 是最传统的状态管理库，强调单一数据源、不可变数据和纯函数更新。使用`dispatch`来触发action，通过reducers处理action并返回新的state。[React-Redux](https://so.csdn.net/so/search?q=React-Redux&spm=1001.2101.3001.7020)提供了与React集成的桥梁。
+
+
 
 <img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/15/16f09a0b5196a2dd~tplv-t2oaga2asx-watermark.awebp" alt="img" style="zoom:50%;" />
 

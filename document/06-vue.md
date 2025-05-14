@@ -6332,7 +6332,106 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
 
 # vue2/3
 
-### 1.全局 API 的转移
+## 迁移
+
+### 准备工作
+
+在迁移之前，你需要做好一些准备工作，确保迁移过程不会中断开发进度。
+
+备份代码：迁移之前，建议先对项目进行完整备份。通过 Git 创建分支，以便在遇到问题时可以回退。
+
+查看依赖：确保项目中所有第三方库和插件都已经更新到支持 Vue 3 的版本。如果有一些库不支持 Vue 3，尝试寻找替代品或等待更新。
+
+审查项目结构：尤其是大型项目，建议先将代码拆分成更小的模块。这样可以避免一次性迁移带来的复杂性。小规模的迁移更容易管理和调试。
+
+### 迁移配置和构建工具
+
+Vue 3 对一些构建工具和配置文件也做了一些更改。如果你使用的是 Vue CLI 创建的项目，更新配置文件以支持 Vue 3。
+
+更新 vue.config.js（如果使用 Vue CLI）：
+
+Vue 3 不再支持一些 Vue 2 中的配置，确保更新 vue.config.js 文件以符合 Vue 3 的要求。
+
+修改 Babel 配置（如果使用 Babel）：
+
+确保 Babel 配置支持 Vue 3 的新语法和功能。
+
+更新 TypeScript 配置（如果使用 TypeScript）：
+
+如果项目使用 TypeScript，更新 tsconfig.json 文件，使其与 Vue 3 兼容。确保类型检查和代码智能提示正常工作。
+
+### 调整 Vue 实例和生命周期钩子
+
+Vue 实例改动：
+
+在 Vue 3 中，创建 Vue 实例的方法发生了变化。Vue 2 使用 new Vue() 来创建实例，而 Vue 3 则使用 createApp()。
+
+Vue 2 示例：
+
+```
+new Vue({
+  el: '#app',
+  render: h => h(App)
+});
+```
+
+
+Vue 3 示例：
+
+```
+import { createApp } from 'vue';
+import App from './App.vue';
+
+createApp(App).mount('#app');
+```
+
+
+生命周期钩子更改：
+
+Vue 3 中的生命周期钩子有一些更名，例如 beforeDestroy 被更改为 beforeUnmount，destroyed 改为 unmounted。
+
+Vue 2：
+
+```
+export default {
+  beforeDestroy() {
+    console.log('Component is about to be destroyed');
+  },
+  destroyed() {
+    console.log('Component is destroyed');
+  }
+};
+```
+
+
+Vue 3：
+
+```
+export default {
+  beforeUnmount() {
+    console.log('Component is about to unmount');
+  },
+  unmounted() {
+    console.log('Component unmounted');
+  }
+};
+```
+
+自定义事件：Vue 3 中的自定义事件方式有了变化。如果你的项目中大量使用了 $emit，请确保逐个检查，尤其是传递参数的方式和绑定事件的方式。
+
+### 迁移 Vue Router 和 Vuex
+
+Vue 3 使用 Vue Router 4 和 Vuex 4 版本，它们的 API 和 Vue 2 中有所不同。需要逐步将 Vue 2 的路由和状态管理逻辑迁移到 Vue 3
+
+### 迁移到 Composition API（可选）
+
+Vue 3 引入了 Composition API，它能帮助你更加灵活地组织组件逻辑，特别是在复杂项目中，它比 Vue 2 中的 Options API 更加清晰和高效。
+
+你可以逐步将 Vue 2 的 data、computed、methods 等属性迁移到 Vue 3 的 Composition API 中。
+
+
+
+## 1.全局 API 的转移
 
 - Vue 2.x 有许多全局 API 和配置。
 
@@ -6367,7 +6466,7 @@ https://cn.vuejs.org/guide/typescript/composition-api.html
     | Vue.use                   | app.use                                     |
     | Vue.prototype             | app.config.globalProperties                 |
 
-### 2.其他改变
+## 2.其他改变
 
 - data 选项应始终被声明为一个函数。
 
