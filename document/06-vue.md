@@ -2137,6 +2137,8 @@ Vue 实例在被创建时都要经过一系列的初始化过程 ， 编译模�
 
 beforeCreate->watch->created->beforeMount
 
+computed 默认第一次加载的时候就开始监听；watch 默认第一次加载不做监听，如果需要第一次加载做监听，添加 immediate 属性，设置为 true（immediate: true）
+
 ## 初始化阶段
 
 ### beforeCreate
@@ -2589,7 +2591,41 @@ const routes = [
 
 #### 注意
 
-扁平化路由`'/travel/china'`，会没有travel父级节点
+```
+{
+  path: '/company-manage',
+  component: ...,
+  children: [
+    { path: 'three-parties', component: ... }, // 推荐
+    { path: '/company-info-manage', component: ... } // 不推荐
+  ]
+}
+```
+
+访问 /company-manage/three-parties 会渲染第一个子路由
+访问 /company-info-manage 会渲染第二个子路由（注意：不是 /company-manage/company-info-manage）
+
+在 Vue Router（尤其是 vue-router 3.x 及以下）中，子路由（children）下 path 是否带斜杠 /，有很大区别：
+
+1. 不带 /（推荐写法）
+
+- path: 'three-parties'
+
+- 这种写法会自动拼接到父路由 path 后面，形成嵌套路由。
+
+- 例如父路由 /company-manage，子路由 three-parties，最终访问路径就是：/company-manage/three-parties
+
+------
+
+2. 带 /
+
+- path: '/three-parties'
+
+- 这种写法会被当作根路径，不会拼接父路由 path。
+
+- 最终访问路径就是：/three-parties而不是 /company-manage/three-parties
+
+
 
 ```
 // 嵌套路由

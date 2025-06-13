@@ -67,6 +67,8 @@ HashRouter, Route, Link
 
 
 
+
+
 # 组件的生命周期
 
 https://react.docschina.org/docs/react-component.html
@@ -563,13 +565,110 @@ styled-components是一个第三方包，要安装。**Material框架**中的样
 
 ## css
 
-常见的 CSS 引入方式有以下：
+### class动态
 
-### 在组件内直接使用
+#### 方法1：使用内联样式
 
-### 组件中引入.css 文件
+如果你的类名变化是基于某些条件，你可以直接在JSX中使用内联样式，并通过条件表达式来决定是否应用某个样式类。
 
-### 引入.module.css 文件
+```jsx
+const MyComponent = ({ isActive }) => {
+  return (
+    <div style={{ backgroundColor: isActive ? 'green' : 'red' }}>
+      {isActive ? 'Active' : 'Inactive'}
+    </div>
+  );
+};
+```
+
+#### 方法2：使用条件渲染
+
+对于更复杂的类名变化，你可以在JSX中直接使用条件渲染来添加或移除类名。
+
+```jsx
+const MyComponent = ({ isActive }) => {
+  return (
+    <div className={isActive ? 'active' : 'inactive'}>
+      {isActive ? 'Active' : 'Inactive'}
+    </div>
+  );
+};
+```
+
+#### 方法3：使用`classnames`库
+
+`classnames`库可以帮助你更方便地处理多个条件，尤其是当你有多个类名需要基于多个条件变化时。首先，你需要安装`classnames`：
+
+```bash
+npm install classnames
+```
+
+然后在你的组件中使用它：
+
+```jsx
+import classNames from 'classnames';
+ 
+const MyComponent = ({ isActive, hasError }) => {
+  return (
+    <div className={classNames({
+      'active': isActive,
+      'error': hasError,
+      'default': !(isActive || hasError) // 默认类名，当没有其他类名激活时使用
+    })}>
+      {isActive ? 'Active' : hasError ? 'Error' : 'Default'}
+    </div>
+  );
+};
+```
+
+#### 方法4：使用模板字符串动态生成类名
+
+如果你需要根据更复杂的逻辑动态生成类名，你可以使用ES6的模板字符串功能。
+
+```jsx
+const MyComponent = ({ status }) => {
+  const className = `status-${status}`; // 根据status动态生成类名
+  return (
+    <div className={className}>Status: {status}</div>
+  );
+};
+```
+
+#### 方法5：使用CSS Modules或Styled Components
+
+对于更高级的样式需求，你可以使用CSS Modules或Styled Components来动态地应用样式。这些方法允许你以更组件化的方式处理样式。
+
+#### 使用Styled Components:
+
+首先，安装Styled Components：
+
+```bash
+npm install styled-components
+```
+
+然后，你可以这样使用它：
+
+```jsx
+import styled from 'styled-components';
+ 
+const StatusDiv = styled.div`
+  background-color: ${props => props.isActive ? 'green' : 'red'}; // 动态背景色
+`;
+ 
+const MyComponent = ({ isActive }) => {
+  return (
+    <StatusDiv isActive={isActive}>{isActive ? 'Active' : 'Inactive'}</StatusDiv>
+  );
+};
+```
+
+### CSS 引入方式
+
+#### 在组件内直接使用
+
+#### 组件中引入.css 文件
+
+#### 引入.module.css 文件
 
 ![image-20250506160420630](img/前端/react/image-20250506160420630.png)
 
@@ -579,7 +678,7 @@ styled-components是一个第三方包，要安装。**Material框架**中的样
 
 
 
-### CSS in JS
+#### CSS in JS
 
 CSS-in-JS，是指一种模式，其中 CSS 由 JavaScript 生成而不是在外部文件中定义
 
@@ -2370,7 +2469,7 @@ useEffect(()  =>  {
 
 
 
-### uselayoutEffect
+## uselayoutEffect
 
 https://juejin.cn/post/7462618506350641161
 
