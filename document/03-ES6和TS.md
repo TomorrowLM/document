@@ -419,6 +419,8 @@ function findMost (arr) {
 tempArr1 = tempArr1.filter((item,index) =>{
 	return tempArr1.findIndex(item1 =>item1.id==item.id) == index
 })
+
+a.filter((i,index1)=>{return a.findIndex(k=>{return k.a === i.a}) === index1})
 ```
 
 ```

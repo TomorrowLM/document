@@ -6,7 +6,97 @@ LiMing@ifugle.onaliyun.com
 
 120329Tomorrow@liMing
 
-120329698@TomorrowLi1
+120329698@TomorrowLi2
+
+
+
+## 难点
+
+- ~~vant上传图片有拍摄功能和app有关，钉钉上的就不能拍照~~
+
+- 安全区域
+
+- 为什么弹框要放最外层
+
+  - 使用portal，因为单纯position会受它的上级所有的overflow：hidden影响，而被隐藏
+
+  - 使用portal，默认是注入在根app上的，滚动时候因为它是在外层，所以显示在外层。
+
+    feat: eqa-select防止注入在根app上的，导致父容器滚动，下拉框在外部能看到
+
+    
+
+    <img src="公司/fugle/image-20250801102351901.png" alt="image-20250801102351901" style="zoom:50%;" />
+
+- 组件解耦
+
+  - 企业，场所。提取两种展示的公共组件
+  - 30多个类别，最多8个要素，使用动态组件
+
+- 微信公众号，定位
+
+  - 一直报签名问题
+
+    - 查看接口定位到是给wx.config数据不对，数据层级问题
+
+      ```
+      {
+       "appId": "wx8ff075269fccc068",
+       "timeStamp": 1751686307,
+       "nonceStr": "abcdefg",
+       "signature": "e013209404f27477c3668a0212b60e03dfb3864b",
+       "url": "https://app-test.dingtax.cn/dsb/eqa/?corpId=XNZZ-11489-70&env=dd/",
+       "ticket": "52Tw1_qSfGvjmabRE6VHqRUUT3FXUVVzr4mDgfFMEpcbQjgObqYIxxVN-tKs7KqZksTujLnjOG_lvIQO8E8HxA"
+      }
+      ```
+
+    - 检测签名是否正确
+
+  - 定位问题可能是url的问题（验签只和当前页面有关），去微信开发社区看提问，可能是hash导致的
+
+  - 最后定位使用whistle代理导致的
+
+  
+
+- 在constans.js中对常量进行修改，会导致切换状态或者切换账号时，常量任然会是修改后的值
+
+- ES6 Module 导入的是值的 **引用**，在vue的script外层创建变量，会导致这个变量一直被缓存，切换账号也会存在
+
+  ![image-20250603145747080](img/前端/总结/image-20250603145747080.png)
+
+- 子组件监听props.value,问题原因和解决方案：
+
+  1. 问题原因：
+
+  - company-select 组件期望接收的 value 格式是 { qyList: [], czytList: [], xzfs: 10 }
+
+  - 但在 daily-check-create.vue 中，params.jcqyList 被初始化为空对象 {}
+
+  - 这导致 company-select 组件的 watch:value 无法正确处理数据
+
+  1. 解决方案：
+
+  - 修改了 params.jcqyList 的初始化格式，确保包含所有必要字段
+
+  - 在清空和重置时也使用正确的数据结构
+
+  - 在编辑模式下也确保使用正确的数据结构
+
+- 复制ai生成数据
+
+  ![image-20250716141101805](img/总结/image-20250716141101805.png)
+
+  ![image-20250716141026554](img/总结/image-20250716141026554.png)
+
+- 11
+
+  ![image-20250716153828301](img/总结/image-20250716153828301.png)
+
+  ![image-20250716151707424](img/总结/image-20250716151707424.png)
+
+优化
+
+![image-20250624202058575](img/总结/image-20250624202058575.png)
 
 
 
@@ -165,7 +255,13 @@ https://blog.csdn.net/yuleiming21/article/details/134165195
 
 - 公共组件不能分清移动端还是pc
 
+- 公共枚举很少
+
 - ｖａｎｔ必须单独引用，form校验不执行
+
+- 格式化，lint检测
+
+- axios提示，默认报错会弹窗，导致重复弹窗
 
 - 下拉框前端维护
 

@@ -252,7 +252,7 @@ v-if 也是惰性的，如果初始渲染时条件为假，则什么也不做—
 
 ### v-model 和 v-bind
 
-v-bind
+#### v-bind
 
 v-bind是单向绑定，用于将Vue实例中的数据与DOM元素的属性进行绑定。它只能将数据从Vue实例流向DOM元素，而不能反向流动。v-bind可以绑定任何类型的属性，如class、style、href等。使用v-bind时，可以省略v-bind，直接使用简写形式“:”，例
 
@@ -268,7 +268,41 @@ v-bind是单向绑定，用于将Vue实例中的数据与DOM元素的属性进�
 <div :id></div>
 ```
 
-v-model
+父组件可以向子组件中传递ui组件的规定的属性，而不需要一个一个定义props
+
+```
+      <SearchPicker
+          v-model="value"
+          title="单位名称"
+          class="dw-select"
+          ref="companySelect"
+          :filedProps="{
+            label: 'nsrmc',
+            value: 'nsrmc',
+          }"
+          :getData="getCompanyInfo"
+          @confirm="handleCompanySelect"
+          v-bind="{ 'input-align': 'right' }"
+        />
+```
+
+子组件
+
+    <van-field
+      v-model="fieldText"
+      :label="label"
+      :placeholder="placeholder"
+      :rules="rules"
+      :required="required"
+      readonly
+      right-icon="arrow"
+      @click="openPicker"
+      v-bind="$attrs"
+    />
+
+
+
+#### v-model
 
 v-model是双向绑定，不仅可以将数据从Vue实例流向DOM元素，还可以将用户输入的数据从DOM元素流回Vue实例。v-model主要用于表单控件，如`<input>`、`<select>`、`<textarea>`等，用于实现数据的双向绑定。当用户在这些控件中输入数据时，这些数据会实时更新到Vue实例中，反之亦然‌。
 
@@ -1049,6 +1083,48 @@ vm.$watch('a', function (newValue, oldValue) {
 
 当前组件接收到的 props 对象。Vue 实例代理了对其 props 对象 property 的访问。
 
+### $attrs
+
+获取v-bind属性
+
+### $slots
+
+用来访问被[插槽分发](https://v2.cn.vuejs.org/v2/guide/components.html#通过插槽分发内容)的内容。每个[具名插槽](https://v2.cn.vuejs.org/v2/guide/components-slots.html#具名插槽)有其相应的 property (例如：`v-slot:foo` 中的内容将会在 `vm.$slots.foo` 中被找到)。`default` property 包括了所有没有被包含在具名插槽中的节点，或 `v-slot:default` 的内容。
+
+请注意插槽**不是**响应性的。如果你需要一个组件可以在被传入的数据发生变化时重渲染，我们建议改变策略，依赖诸如 `props` 或 `data` 等响应性实例选项。
+
+**注意：**`v-slot:foo` 在 2.6 以上的版本才支持。对于之前的版本，你可以使用[废弃了的语法](https://v2.cn.vuejs.org/v2/guide/components-slots.html#废弃了的语法)。
+
+在使用[渲染函数](https://v2.cn.vuejs.org/v2/guide/render-function.html)书写一个组件时，访问 `vm.$slots` 最有帮助。
+
+```
+<blog-post>
+  <template v-slot:header>
+    <h1>About Me</h1>
+  </template>
+
+  <p>Here's some page content, which will be included in vm.$slots.default, because it's not inside a named slot.</p>
+
+  <template v-slot:footer>
+    <p>Copyright 2016 Evan You</p>
+  </template>
+
+  <p>If I have some content down here, it will also be included in vm.$slots.default.</p>.
+</blog-post>
+Vue.component('blog-post', {
+  render: function (createElement) {
+    var header = this.$slots.header
+    var body   = this.$slots.default
+    var footer = this.$slots.footer
+    return createElement('div', [
+      createElement('header', header),
+      createElement('main', body),
+      createElement('footer', footer)
+    ])
+  }
+})
+```
+
 ### vm.$el
 
 获取 Vue 实例挂载的元素节点
@@ -1353,6 +1429,10 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
 </navigation-link>
 ```
 
+#### 带有 slot attribute 的具名插槽（自 2.6.0 起被废弃）
+
+https://v2.cn.vuejs.org/v2/guide/components-slots.html#%E5%BA%9F%E5%BC%83%E4%BA%86%E7%9A%84%E8%AF%AD%E6%B3%95
+
 #### 具名插槽
 
 有时我们需要多个插槽。例如对于一个带有如下模板的 `<base-layout>` 组件：
@@ -1468,6 +1548,8 @@ Vue 实现了一套内容分发的 API，这套 API 的设计灵感源自 [Web C
   {{ user.firstName }}
 </current-user>
 ```
+
+
 
 #### 动态插槽
 
@@ -1950,45 +2032,92 @@ Event.$on('msg',function(msg){　 接收数据，第一个参数是数据的名�
 ```
 
 ```js
-//准备一个空的实例对象
-var Event=new Vue();
-var A={
-    template:`
-                    <div>
-                        <span>我是A组件</span> -> {{a}}
-                        <input type="button" value="把A数据给C" @click="send">
-                    </div>
-            `,
-    methods:{
-        send(){
-            Event.$emit('a-msg',this.a);
-        }
-    },
-    data(){
-        return {
-            a:'我是a数据'
-        }
-    }
+//封装全局 Event Bus
+import Vue from 'vue';
+ 
+// 创建 Vue 实例作为事件总线
+const EventBus = new Vue();
+ 
+/**
+ * 封装事件触发方法
+ * @param {string} eventName - 事件名称
+ * @param {any} payload - 传递的数据
+ */
+export const emitEvent = (eventName, payload) => {
+  try {
+    EventBus.$emit(eventName, payload);
+  } catch (error) {
+    // 错误捕获
+    console.error(`[EventBus Error] 触发事件 ${eventName} 失败:`, error);
+  }
 };
-var C={
-    template:`
-                <div>
-                    <h3>我是C组件</h3>
-                    <span>接收过来的A的数据为: {{a}}</span>
-                </div>
-            `,
-    data(){
-        return {
-            a:''
-        }
-    },
-    mounted(){
-        //var _this=this;
-        Event.$on('a-msg',function(a){
-            this.a=a;
-        }.bind(this));
-    }
+ 
+/**
+ * 封装事件监听方法
+ * @param {string} eventName - 事件名称
+ * @param {Function} callback - 回调函数
+ */
+export const listenEvent = (eventName, callback) => {
+  EventBus.$on(eventName, callback);
 };
+ 
+/**
+ * 移除事件监听
+ * @param {string} eventName - 事件名称
+ * @param {Function} [callback] - 可选，指定要移除的回调函数
+ */
+export const removeEvent = (eventName, callback) => {
+  if (callback) {
+    EventBus.$off(eventName, callback);
+  } else {
+    EventBus.$off(eventName);
+  }
+};
+ 
+// 挂载到 Vue 原型（可选）
+EventBus.install = (Vue) => {
+  Vue.prototype.$eventBus = EventBus;
+};
+ 
+export default EventBus;
+```
+
+在 main.js 中挂载到 Vue 原型
+
+```
+// main.js
+import Vue from 'vue';
+import App from './App.vue';
+import EventBus from './utils/EventBus';
+ 
+// 挂载到全局，组件内可通过 this.$eventBus 访问
+Vue.use(EventBus);
+ 
+new Vue({
+  render: h => h(App),
+}).$mount('#app');
+```
+
+发送事件的组件（ComponentSender.vue）
+
+```
+<template>
+  <button @click="sendMessage">发送全局消息</button>
+</template>
+ 
+<script>
+import { emitEvent } from '@/utils/EventBus';
+ 
+export default {
+  methods: {
+    sendMessage() {
+      // 发送事件（两种方式均可）
+      emitEvent('global-message', { text: 'Hello from Sender' }); // 方式1：直接调用
+      this.$eventBus.$emit('global-message', { text: 'Hello via Prototype' }); // 方式2：通过原型
+    }
+  }
+}
+</script>
 ```
 
 
