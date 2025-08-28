@@ -7363,10 +7363,14 @@ JS的对象有个小问题，就是**键必须是字符串**。但实际上Numbe
  在处理大量数据时，Map 的性能往往比 Object 更佳，能提升性能 50%+。
 
 **直接迭代支持**
- 使用 `for...of` 遍历 Map，无需额外转换，代码更加简洁。
+使用 `for...of` 遍历 Map，无需额外转换，代码更加简洁。
+
+```
+const a = new Map([['b',1]]);for([i,k] of a){console.log(i)} //b
+```
 
 **纯净的键值存储**
- Map 不继承 `Object.prototype` 上的属性，避免了原型链带来的副作用。
+Map 不继承 `Object.prototype` 上的属性，避免了原型链带来的副作用。
 
 #### 语法
 
@@ -8091,7 +8095,7 @@ console.log(objProxy.name);
 
 TypeScript 是一门基于 JavaScript 拓展的语言，它是 JavaScript 的超集，并且给 JavaScript 添加了静态类型检查系统。TypeScript 能让我们在开发时发现程序中类型定义不一致的地方，及时消除隐藏的风险，大大增强了代码的可读性以及可维护性。
 
-### TypeScript编译
+## TypeScript编译
 
 https://zhuanlan.zhihu.com/p/45898674
 
@@ -8372,52 +8376,7 @@ type Meth = keyof typeof HttpMethod; // "Get" | "Post"
 
 
 
-### `instanceof`类型保护
 
-*`instanceof`类型保护*是通过构造函数来细化类型的一种方式。 比如，我们借鉴一下之前字符串填充的例子：
-
-```ts
-interface Padder {
-    getPaddingString(): string
-}
-
-class SpaceRepeatingPadder implements Padder {
-    constructor(private numSpaces: number) { }
-    getPaddingString() {
-        return Array(this.numSpaces + 1).join(" ");
-    }
-}
-
-class StringPadder implements Padder {
-    constructor(private value: string) { }
-    getPaddingString() {
-        return this.value;
-    }
-}
-
-function getRandomPadder() {
-    return Math.random() < 0.5 ?
-        new SpaceRepeatingPadder(4) :
-        new StringPadder("  ");
-}
-
-// 类型为SpaceRepeatingPadder | StringPadder
-let padder: Padder = getRandomPadder();
-
-if (padder instanceof SpaceRepeatingPadder) {
-    padder; // 类型细化为'SpaceRepeatingPadder'
-}
-if (padder instanceof StringPadder) {
-    padder; // 类型细化为'StringPadder'
-}
-```
-
-`instanceof`的右侧要求是一个构造函数，TypeScript将细化为：
-
-1. 此构造函数的 `prototype`属性的类型，如果它的类型不为 `any`的话
-2. 构造签名所返回的类型的联合
-
-以此顺序。
 
 ### InstanceType 
 
@@ -8830,13 +8789,16 @@ TypeScript 3.4 引入了一种新的字面量构造方式，也称为 const 断�
 ```ts
 let x = "hello" as const;
 type X = typeof x; // type X = "hello"
-let y:X='hello';
+let x1:X='hello';
+x1='world';
 
 let y = [10, 20] as const;
 type Y = typeof y; // type Y = readonly [10, 20]
+y[0] = 20;
 
 let z = { text: "hello" } as const;
 type Z = typeof z; // let z: { readonly text: "hello"; }
+z.text = "world";
 ```
 
 #### 类型断言的用途
@@ -9064,9 +9026,48 @@ a = ro; // 类型 "readonly number[]" 为 "readonly"，不能分配给可变类�
 a = ro as number[];
 ```
 
-**`readonly` vs `const`**
+##### **`readonly` vs `const`**
 
 最简单判断该用`readonly`还是`const`的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 `const`，若做为属性则使用`readonly`。
+
+| 特性          | `const`              | `readonly`                           |
+| :------------ | :------------------- | :----------------------------------- |
+| **适用对象**  | 变量                 | 属性/成员                            |
+| **作用范围**  | 阻止变量重新赋值     | 阻止属性重新赋值                     |
+| **运行时**    | 是（JavaScript特性） | 否（仅TypeScript编译时检查）         |
+| **数组/对象** | 内容可修改           | 内容不可修改（使用`readonly`修饰时） |
+| **位置**      | 变量声明             | 类/接口/类型别名中的属性             |
+
+```
+const PI = 3.14;
+PI = 3.14159; // 错误：无法分配到 "PI"，因为它是常数
+
+const arr = [1, 2, 3];
+arr.push(4); // 允许 - 修改数组内容
+arr = [5, 6]; // 错误 - 不能重新赋值
+```
+
+```
+interface Point {
+  readonly x: number;
+  readonly y: number;
+}
+
+let p: Point = { x: 10, y: 20 };
+p.x = 5; // 错误：无法分配到 "x"，因为它是只读属性
+
+class Person {
+  readonly name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+const person = new Person("Alice");
+person.name = "Bob"; // 错误
+```
+
+
 
 #### 额外的属性检查
 
@@ -9122,14 +9123,12 @@ let mySquare = createSquare({ colour: "red", width: 100 });
   interface StringArray {
     // key 的类型为 number ，一般都代表是数组
     // 限制 value 的类型为 string
-  
-  [index:number]:string
-  
+  	[index:number]:string
   }
   let arr:StringArray = ['aaa','bbb'];
   console.log(arr);
   ```
-
+  
 - 字符串索引——约束对象
 
   ```
@@ -9199,7 +9198,7 @@ myFunc('1',2)
 
 接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
 
-##### implements实现类接口
+##### implements约束类
 
 在 TypeScript 中，`implements` 是一个关键字，**用于类声明中，表示该类需要遵循某个接口（`interface`）的结构**。通过 `implements`，可以确保类实现接口中定义的所有属性和方法。
 
@@ -9294,9 +9293,9 @@ myFunc('1',2)
     b.alert()
     ```
 
-  - 
+    
 
-##### extends继承类接口
+#### extends继承接口
 
 接口可以继承接口，下例中，我们使用 `extends` 使 `LightableAlarm` 继承 `Alarm：`
 
@@ -9326,64 +9325,6 @@ class A implements LightableAlarm {
 
 let c = new A();
 ```
-
-##### 接口继承类
-
-接口也可以继承类：
-
-```ts
-class Point {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-  point() {
-
-  }
-}
-
-interface Point3d extends Point {
-  z: number;
-}
-
-let point3d: Point3d = {
-  x: 1,
-  y: 2,
-  z: 3,
-  point: function () {
-    console.log(this.x)
-  }
-};
-point3d.point()
-```
-
-为什么 TypeScript 会支持接口继承类呢？
-
-实际上，当我们在声明 `class Point` 时，除了会创建一个名为 `Point` 的类之外，同时也创建了一个名为 `Point` 的类型（实例的类型）。
-
-所以我们既可以将 `Point` 当做一个类来用（使用 `new Point` 创建它的实例）,也可以将 `Point` 当做一个类型来用（使用 `: Point` 表示参数的类型）
-
-#### 继承接口
-
-和类一样，接口也可以相互继承。 这让我们能够从一个接口里复制成员到另一个接口里，可以更灵活地将接口分割到可重用的模块里。
-
-```ts
-interface Shape {
-    color: string;
-}
-
-interface SquareSquare extends Shape {
-    sideLength: number;
-}
-
-const square ={} as SquareSquare;
-square.color = "blue";
-square.sideLength = 10;
-```
-
-一个接口可以继承多个接口，创建出多个接口的合成接口。
 
 ```ts
 interface Shape {
@@ -10043,7 +9984,7 @@ function reverse(x: number | string): number | string {
 
 泛型的目的在于：
 
-1. **类型安全**：**泛型可以在编译/调用时检查类型，避免运行时的类型错误。**
+1. **类型安全：若对形参没有申明类型，函数传参时，是无法预测参数是否能通过ts校验的**
 
    例如，在一个函数中接收一个参数，然后将其添加到一个数组中，若不考虑类型：
 
@@ -10072,39 +10013,32 @@ function reverse(x: number | string): number | string {
    console.log(correctResult); 
    ```
 
-2. **提升代码复用性**：泛型使得函数、类或接口可以适用于多种类型，而不需要为每种类型单独定义。
+2. **提升代码复用性和灵活性**：
 
-   写一个函数来返回传入数组的第一个元素：
+   - 泛型允许在定义时不指定具体的类型，而是在使用时再指定类型。
+   - 泛型使得函数、类或接口可以适用于多种类型
+   - 可以适应更多的场景，不需要为每种类型单独定义。
 
    ```
+   //这样代码就会存在大量重复
    function getFirstElementOfNumberArray(arr: number[]): number {
      return arr[0];
    }
-   
    function getFirstElementOfStringArray(arr: string[]): string {
      return arr[0];
    }
+   // 使用泛型函数
+   function identity<T>(value: T): T {
+     return value;
+   }
+   const num = identity<number>(42); // T 被推断为 number
+   const str = identity<string>("Hello"); // T 被推断为 string
+   
+   console.log(num); // 输出: 42
+   console.log(str); // 输出: Hello
    ```
 
-   这样代码就会存在大量重复
-
-3. **提高代码的灵活性**：
-
-   - 泛型允许在定义时不指定具体的类型，而是在使用时再指定类型。
-   - 这样可以适应更多的场景，而不需要为每种类型重复编写代码。
-
-```js
-function identity<T>(value: T): T {
-  return value;
-}
-
-// 使用泛型函数
-const num = identity<number>(42); // T 被推断为 number
-const str = identity<string>("Hello"); // T 被推断为 string
-
-console.log(num); // 输出: 42
-console.log(str); // 输出: Hello
-```
+   
 
 ### 使用
 
@@ -10129,8 +10063,6 @@ console.log(num); // 输出: 42
 
 console.log(str); // 输出: Hello
 ```
-
-
 
 - 解释：
   - `T` 是一个类型参数，表示函数可以接受任意类型。
