@@ -5,13 +5,13 @@
 
 # 目标
 
-| 周次      | 目标                                          | 核心内容                                                     | 推荐资源                                                     |
-| :-------- | :-------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| 第 1 周   | 建立正确认知                                  | Agent 三要素（思考 + 工具 + 记忆）；CoT/ReAct 基础推理范式；Token、流式输出、结构化 Prompt 规范 | Andrew Ng《AI Agent》公开课 / 李宏毅《Agent 发展脉络》       |
+| 周次      | 目标                             | 核心内容                                                                       | 推荐资源                                                        |
+| :------ | :----------------------------- | :------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| 第 1 周   | 建立正确认知                         | Agent 三要素（思考 + 工具 + 记忆）；CoT/ReAct 基础推理范式；Token、流式输出、结构化 Prompt 规范          | Andrew Ng《AI Agent》公开课 / 李宏毅《Agent 发展脉络》                    |
 | 第 2 周   | 跑通带可视化 UI 的最简 Agent（前端特色 Demo） | LangChain JS / Vercel AI SDK Hello World；Next.js 流式对话；前端渲染 Agent 思考、工具调用状态 | Vercel AI SDK 官方文档、LangChain JS 中文教程 + B 站 "肖立新"AI Agent 系列 |
-| 第 3-4 周 | 掌握双栈主流 Agent 框架（Python+JS）          | Python：LangGraph、CrewAI；JS：LangChain JS、Vercel AI SDK；记忆、工具、基础 RAG 集成 | LangGraph 官方文档、CrewAI 中文文档                          |
-| 第 5-6 周 | 做出能用的 Agent                              | 自动周报/竞品搜集/简历助手                                   | 选 1-2 个真实需求改造                                        |
-| 第 7 周+  | 进阶自由探索：复杂推理 + 多智能体 + 工程部署  | Plan-and-Execute 任务规划、多智能体协作；AutoGen、MetaGPT；Docker 打包、云端部署、密钥安全、日志监控 | AutoGen、MetaGPT 等                                          |
+| 第 3-4 周 | 掌握双栈主流 Agent 框架（Python+JS）     | Python：LangGraph、CrewAI；JS：LangChain JS、Vercel AI SDK；记忆、工具、基础 RAG 集成      | LangGraph 官方文档、CrewAI 中文文档                                  |
+| 第 5-6 周 | 做出能用的 Agent                    | 自动周报/竞品搜集/简历助手                                                             | 选 1-2 个真实需求改造                                               |
+| 第 7 周+  | 进阶自由探索：复杂推理 + 多智能体 + 工程部署      | Plan-and-Execute 任务规划、多智能体协作；AutoGen、MetaGPT；Docker 打包、云端部署、密钥安全、日志监控      | AutoGen、MetaGPT 等                                           |
 
 
 
@@ -19,104 +19,13 @@
 
 # python
 
-## 字符串
+## API
 
-- **第一种：普通字符串** [02:03](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=123)
+### print
 
-  - 使用单引号或双引号括起字符串内容。
-  - 示例：`print("Hello")` 或 `print('World')`
+`flush=True` 用于**立即刷新标准输出缓冲区**，让 `print(text)` 的内容及时显示到终端。
 
-- **第二种：原始字符串** [02:29](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=149)
-
-  - 使用前缀 `r` 表示原始字符串。
-  - 不将反斜杠视为转义字符。
-  - 示例：`print(r"C:\new\text.txt")` 输出 `C:\new\text.txt`
-  - 应用于路径、正则表达式等需要保留反斜杠的场景。
-
-- **第三种：三引号多行字符串** [05:13](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=313)
-
-  - 使用三个单引号或双引号括起内容。
-
-  - 支持换行、包含引号。
-
-  - 示例：
-
-    ```python
-    print('''一二三
-    四五六''')
-    ```
-
-  - 可用于多行文本、文档字符串（docstring）。
-
-- **第四种：格式化字符串（f-string）** [07:39](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=459)
-
-  - 使用前缀 `f` 或 `F`。
-
-  - 在字符串中使用花括号 `{}` 插入变量或表达式。
-
-  - 示例：
-
-    python
-
-    ```python
-    name = "Tom"
-    print(f"Hello, {name}")
-    ```
-
-  - 常用于动态输出信息，提升代码可读性。
-
-- **第五种：Unicode字符串** [13:14](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=794)
-
-  - 使用前缀 `u` 表示Unicode字符串。
-  - 示例：`u"你好"`
-  - 用于处理非ASCII字符，避免文件编码问题。
-  - 推荐配合标准库如 `codecs` 使用。
-
-- **第六种：字节串（bytes）** [15:54](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=954)
-
-  - 使用前缀 `b` 表示字节串。
-
-  - 示例：`b"hello"`
-
-  - 表示二进制数据。
-
-  - 常用于网络传输、文件操作中字节流处理。
-
-  - 示例操作：
-
-    python
-
-    ```python
-    data = b"hello"
-    decoded = data.decode("utf-8")
-    encoded = decoded.encode("utf-8")
-    ```
-
-- **Python与Java、JavaScript字符串对比** [18:12](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=1092)
-
-  - **定义方式**
-    - Python：支持单引号、双引号、三引号。
-    - Java：字符串用双引号表示，字符用单引号。
-    - JavaScript：单引号、双引号均可，反斜杠用于换行。
-  - **不可变性**
-    - Python 和 Java 的字符串对象不可变，修改会创建新对象。
-    - JavaScript 同样不可变。
-    - Vue.js 等框架中变量可变，但不是字符串本身的特性。
-  - **字符串方法**
-    - Python 提供丰富内置方法（如 `split`, `replace`, `join` 等）。
-    - Java 和 JavaScript 方法类似，但命名和参数略有不同。
-    - 示例对比：
-      - Python: `s.split()`
-      - Java: `s.split("\\s+")`
-      - JavaScript: `s.split(/\s+/)`
-  - **格式化支持**
-    - Python 有 f-string。
-    - Java 使用 `String.format()` 或 `Formatter`类。
-    - JavaScript 使用模板字符串（反引号 + `${}`）。
-  - **多行支持**
-    - Python 使用三引号。
-    - JavaScript 使用反引号（`）。
-    - Java 需手动拼接或使用 `\n`。
+在异步流式输出中，如果不设置 `flush=True`，多个分片可能会先积存在缓冲区，直到缓冲区满或程序结束才显示；设置后每次收到模型输出就立即打印。
 
 ## 编码
 
@@ -316,86 +225,957 @@ with open('data.bin', 'rb') as file:
 **核心记忆**：`str` 在内存，`bytes` 在 IO，两者间转换永远显式传 `encoding`。
 *（内容由AI生成，仅供参考）*
 
-## 异常
+## 数据类型
+
+### 字符串
+
+#### 一、Python 字符串的六种类型
+
+Python 通过不同前缀和引号区分六种字符串字面量。
+
+##### 1. 普通字符串
+
+使用单引号或双引号括起，最基础的类型。
+
+```python
+print("Hello")
+print('World')
+```
+
+- 单引号和双引号完全等价，可互相嵌套避免转义：`"It's ok"` 或 `'He said "Hi"'`
+- 反斜杠 `\` 转义：`\n`（换行）、`\t`（制表符）、`\\`（反斜杠本身）
+
+##### 2. 原始字符串（`r` 前缀）
+
+前缀 `r` / `R`，不将反斜杠视为转义字符。
+
+```python
+print(r"C:\new\text.txt")   # C:\new\text.txt
+print("C:\\new\\text.txt")  # 普通字符串需双写反斜杠
+```
+
+- 用于**文件路径**和**正则表达式**等需要保留反斜杠的场景
+- 注意：不能以单个反斜杠结尾（`r"abc\"` 报错）
+
+```python
+import re
+pattern = r"\d+\.\d+"   # 比 "\\d+\\.\\d+" 清晰得多
+```
+
+##### 3. 三引号多行字符串
+
+三个单引号 `'''` 或三个双引号 `"""`，支持换行和任意引号。
+
+```python
+s = '''一二三
+四五六'''
+print(s)
+# 一二三
+# 四五六
+```
+
+**用途：** 多行文本、文档字符串（docstring）
+
+```python
+def greet(name):
+    """向指定的人打招呼。"""
+    return f"Hello, {name}"
+```
+
+##### 4. Unicode 字符串（`u` 前缀）
+
+前缀 `u` 表示 Unicode 字符串。
+
+```python
+s = u"你好"
+```
+
+- Python 3 中所有字符串**默认就是 Unicode**，`u` 前缀可省略（兼容 Python 2 保留）
+
+##### 5. 字节串（`b` 前缀）
+
+前缀 `b` 表示 bytes，即二进制数据。
+
+```python
+data = b"hello"
+print(type(data))   # <class 'bytes'>
+print(data[0])       # 104（ASCII 码值，不是字符）
+```
+
+编解码：
+
+```python
+data = b"hello"
+decoded = data.decode("utf-8")   # bytes → str
+encoded = decoded.encode("utf-8") # str → bytes
+```
+
+常用于**网络传输**、**文件二进制操作**、**序列化**。
+
+##### 6. 格式化字符串（`f` 前缀，f-string）
+
+前缀 `f` / `F`，花括号 `{}` 中直接嵌入变量或表达式。详见下文"格式化方式"。
+
+```python
+name = "Tom"
+print(f"Hello, {name}")   # Hello, Tom
+```
+
+---
+
+#### 二、字符串的不可变性
+
+Python 字符串是**不可变对象**，一旦创建就不能修改。任何"修改"操作都创建新字符串。
+
+```python
+s = "hello"
+s = s + " world"   # 看似修改，实际创建了新字符串
+s[0] = "H"          # TypeError: 'str' object does not support item assignment
+```
+
+---
+
+#### 三、常用字符串方法
+
+| 方法 | 作用 | 示例 |
+|------|------|------|
+| `s.split(sep)` | 分割 | `"a,b,c".split(",")` → `['a','b','c']` |
+| `s.join(iter)` | 拼接 | `",".join(['a','b'])` → `"a,b"` |
+| `s.strip()` | 去两端空白 | `" hi ".strip()` → `"hi"` |
+| `s.replace(old, new)` | 替换 | `"abc".replace("b","x")` → `"axc"` |
+| `s.find(sub)` | 查找位置 | `"hello".find("l")` → `2` |
+| `s.startswith(p)` | 以...开头 | `"hello".startswith("he")` → `True` |
+| `s.endswith(p)` | 以...结尾 | `"hello".endswith("lo")` → `True` |
+| `s.upper()` / `s.lower()` | 大小写 | `"Hi".lower()` → `"hi"` |
+| `s.isdigit()` | 是否全数字 | `"123".isdigit()` → `True` |
+| `len(s)` | 长度 | `len("abc")` → `3` |
+
+---
+
+#### 四、格式化方式
+
+##### % 格式化（旧式，C 风格）
+
+**语法：** `"格式化字符串" % (值1, 值2, ...)`
+
+| 占位符 | 含义 |
+|--------|------|
+| `%s` | 字符串（自动调用 `str()`） |
+| `%d` | 十进制整数 |
+| `%f` | 浮点数 |
+| `%x` | 十六进制整数 |
+| `%r` | 原始表示（`repr()`） |
+| `%%` | 百分号本身 |
+
+```python
+name, age, score = "张三", 25, 92.5
+print("姓名：%s" % name)                       # 姓名：张三
+print("姓名：%s，年龄：%d" % (name, age))       # 姓名：张三，年龄：25
+print("分数：%.2f" % score)                     # 分数：92.50
+
+data = {"name": "张三", "age": 25}
+print("姓名：%(name)s，年龄：%(age)d" % data)   # 字典方式
+```
+
+**缺点：** 类型不匹配易报错、需严格对应位置、可读性差，已不推荐。
+
+##### str.format()（新式）
+
+Python 2.6+，更灵活。
+
+**语法：**
+
+```python
+"{} {}".format(值1, 值2)           # 按位置
+"{0} {1}".format(值1, 值2)         # 按索引（可重复）
+"{key}".format(key=值)             # 按关键字
+name, age = "张三", 25
+print("姓名：{}，年龄：{}".format(name, age))
+print("{0} 今年 {1} 岁，{0} 来自北京".format(name, age))
+print("姓名：{name}，年龄：{age}".format(name="张三", age=25))
+
+# 解包字典
+data = {"name": "张三", "age": 25}
+print("姓名：{name}，年龄：{age}".format(**data))
+```
+
+**格式规范（`:` 后面）：**
+
+```python
+print("{:.2f}".format(3.14159))          # 3.14（浮点精度）
+print("{:>10}".format("hello"))          # '     hello'（右对齐）
+print("{:*^10}".format("hello"))         # '**hello***'（填充+居中）
+print("{:,}".format(1234567))            # 1,234,567（千位分隔）
+print("{:.1%}".format(0.852))            # 85.2%（百分比）
+print("{:b}".format(10))                 # 1010（二进制）
+
+from datetime import datetime
+print("{:%Y-%m-%d %H:%M:%S}".format(datetime.now()))
+```
+
+##### f-string
+
+Python 3.6+，六种类型之一，最简洁高效。
+
+```python
+name, age = "张三", 25
+print(f"姓名：{name}，年龄：{age}")          # 直接嵌入变量
+print(f"明年 {name} {age + 1} 岁")          # 嵌入表达式
+print(f"姓名大写：{name.upper()}")           # 调用函数
+
+# 格式规范（同 format()）
+pi = 3.14159
+print(f"π ≈ {pi:.2f}")                      # π ≈ 3.14
+print(f"|{'hello':>10}|")                    # |     hello|
+print(f"{1234567:,}")                        # 1,234,567
+
+# 等号调试（Python 3.8+）
+x, y = 10, 20
+print(f"{x + y = }")                         # x + y = 30
+
+# 多行 f-string
+s = f"""姓名：{name}
+年龄：{age}"""
+```
+
+---
+
+##### 三种格式化方式对比
+
+| 特性 | `%s` | `format()` | `f-string` |
+|------|------|-----------|------------|
+| Python 版本 | 所有 | 2.6+ | 3.6+ |
+| 可读性 | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| 性能 | 慢 | 中等 | 最快 |
+| 表达式支持 | ❌ | ❌ | ✅ |
+| 推荐程度 | 不推荐 | 兼容旧版 | ⭐ 首选 |
+
+**选择建议：**
+
+- **新项目**：优先 `f-string`
+- **兼容 Python 3.5-**：用 `format()`
+- **运行时动态模板**：用 `format()` 或 `Template`
+- **日志模块**：用 `%s`（`logging` 推荐惰性求值）
+
+## 基础
+
+### 字符串
+
+- **第一种：普通字符串** [02:03](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=123)
+
+  - 使用单引号或双引号括起字符串内容。
+  - 示例：`print("Hello")` 或 `print('World')`
+
+- **第二种：原始字符串** [02:29](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=149)
+
+  - 使用前缀 `r` 表示原始字符串。
+  - 不将反斜杠视为转义字符。
+  - 示例：`print(r"C:\new\text.txt")` 输出 `C:\new\text.txt`
+  - 应用于路径、正则表达式等需要保留反斜杠的场景。
+
+- **第三种：三引号多行字符串** [05:13](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=313)
+
+  - 使用三个单引号或双引号括起内容。
+
+  - 支持换行、包含引号。
+
+    ```python
+  print('''一二三
+    四五六''')
+    ```
+  
+  - 可用于多行文本、文档字符串（docstring）。
+
+- **第四种：格式化字符串（f-string）** [07:39](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=459)
+
+  - 使用前缀 `f` 或 `F`。
+
+  - 在字符串中使用花括号 `{}` 插入变量或表达式。
+
+    ```python
+    name = "Tom"
+    print(f"Hello, {name}")
+    ```
+  
+  - 常用于动态输出信息，提升代码可读性。
+  
+- **第五种：Unicode字符串** [13:14](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=794)
+
+  - 使用前缀 `u` 表示Unicode字符串。
+  - 示例：`u"你好"`
+  - 用于处理非ASCII字符，避免文件编码问题。
+  - 推荐配合标准库如 `codecs` 使用。
+
+- **第六种：字节串（bytes）** [15:54](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=954)
+
+  - 使用前缀 `b` 表示字节串。
+
+  - 示例：`b"hello"`
+
+  - 表示二进制数据。
+
+  - 常用于网络传输、文件操作中字节流处理。
+
+    ```python
+    data = b"hello"
+    decoded = data.decode("utf-8")
+    encoded = decoded.encode("utf-8")
+    ```
+  
+- **Python与Java、JavaScript字符串对比** [18:12](https://b.quark.cn/apps/5AZ7aRopS/routes/mofb35Rkb?debug=0&fid=ef717e6f379b473b81a6def3c9cbf6c1#?seek_t=1092)
+
+  - **定义方式**
+    - Python：支持单引号、双引号、三引号。
+    - Java：字符串用双引号表示，字符用单引号。
+    - JavaScript：单引号、双引号均可，反斜杠用于换行。
+  - **不可变性**
+    - Python 和 Java 的字符串对象不可变，修改会创建新对象。
+    - JavaScript 同样不可变。
+    - Vue.js 等框架中变量可变，但不是字符串本身的特性。
+  - **字符串方法**
+    - Python 提供丰富内置方法（如 `split`, `replace`, `join` 等）。
+    - Java 和 JavaScript 方法类似，但命名和参数略有不同。
+    - 示例对比：
+      - Python: `s.split()`
+      - Java: `s.split("\\s+")`
+      - JavaScript: `s.split(/\s+/)`
+  - **格式化支持**
+    - Python 有 f-string。
+    - Java 使用 `String.format()` 或 `Formatter`类。
+    - JavaScript 使用模板字符串（反引号 + `${}`）。
+  - **多行支持**
+    - Python 使用三引号。
+    - JavaScript 使用反引号（`）。
+    - Java 需手动拼接或使用 `\n`。
+
+### json
+
+ `json.dumps()` 将 Python 字典转为 JSON 字符串，`ensure_ascii=False` 用于保留中文，不将中文转换成 `\u4f60\u597d`。这个结果随后交给 SSE 响应组件发送给前端。
+
+### 异常
 
 ![image-20260802140015021](img/python/image-20260802140015021.png)
 
-## 异步
+### 模块化
 
-await 和 yield 本质是两种完全不同的机制，但都能让函数"暂停再恢复"，所以容易被混淆。核心区别一句话：**yield 造迭代器/生成器，await 等待协程完成**。
+#### 一、模块
 
-**一句话记忆：yield = "我暂停，给你一个值"；await = "我暂停，等你给我一个值"。**
-
-### 对比表
-
-| 维度           | yield                                                        | await                                                        |
-| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 所属概念       | 生成器（Generator）                                          | 协程（Coroutine）                                            |
-| 定义函数       | `def`（返回生成器）                                          | `async def`（返回协程）                                      |
-| **调用后得到** | 生成器对象（`<generator object>`），不执行函数体             | 协程对象，不立即执行                                         |
-| **触发执行**   | [next()](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) / `for` 循环迭代 | `await` / [asyncio.run()](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) / `gather()` |
-| 暂停/恢复      | 把值"吐出去"给调用方，恢复时可能收到新值（`send`）           | 等待另一个可等待对象完成，不向调用方传值                     |
-| 核心用途       | 惰性生成序列、流式处理、内存友好                             | 异步 IO、并发、非阻塞等待                                    |
-| 数据流向       | 双向（可 `yield` 出去，也可 `send` 进来）                    | 单向（只"取回"结果）                                         |
-| 暂停时机       | 每次 [next()](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html)/迭代时，主动让出控制权 | 遇到 IO 等待时让出事件循环                                   |
-| **消费方式**   | [next(gen)](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) 或 [for x in gen](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) | `await coro()` 取返回值                                      |
-| **是否阻塞**   | 不阻塞，但仍是同步执行                                       | 不阻塞，挂起时让出事件循环                                   |
-| **可重复使用** | 一次性：迭代完再迭代为空 `[]`                                | 每次 `await` 都需新协程对象                                  |
-| **能否组合**   | 可嵌套、可管道（`for` 接力）                                 | 可 `gather`、可 `await` 链式调用                             |
-
-### 代码对比
-
-**yield：惰性生成序列**
-
-python![复制](data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M13.3965%201.16699C14.1902%201.16726%2014.834%201.81172%2014.834%202.60547V10.7305C14.8337%2011.524%2014.19%2012.1677%2013.3965%2012.168H12.167V13.3965C12.1669%2014.1902%2011.5231%2014.8337%2010.7295%2014.834H2.60449C1.81062%2014.834%201.16608%2014.1903%201.16602%2013.3965V5.27148C1.16602%204.47758%201.81058%203.83398%202.60449%203.83398H3.83398V2.60547C3.83398%201.81156%204.47758%201.16699%205.27148%201.16699H13.3965ZM2.60449%204.83398C2.36287%204.83398%202.16699%205.02986%202.16699%205.27148V13.3965C2.16706%2013.6381%202.36291%2013.834%202.60449%2013.834H10.7295C10.9709%2013.8337%2011.1669%2013.6379%2011.167%2013.3965V5.27148C11.167%205.03002%2010.9709%204.83425%2010.7295%204.83398H2.60449ZM5.27148%202.16797C5.02986%202.16797%204.83398%202.36384%204.83398%202.60547V3.83398H10.7295C11.5232%203.83425%2012.167%204.47774%2012.167%205.27148V11.168H13.3965C13.6377%2011.1677%2013.8337%2010.9717%2013.834%2010.7305V2.60547C13.834%202.36401%2013.6379%202.16823%2013.3965%202.16797H5.27148Z'%20fill='black'%20fill-opacity='0.5'/%3e%3c/svg%3e)
+模块就是一个 `.py` 文件，用于组织和复用代码。
 
 ```python
-def countdown(n):
-    while n > 0:
-        yield n          # 吐出一个值，函数暂停
-        n -= 1
-
-g = countdown(3)
-print(next(g))  # 3
-print(next(g))  # 2
+# math_utils.py
+def add(a, b):
+  return a + b
 ```
 
-**g生成器对象（generator object）,生成器对象是可迭代的（iterable），可以直接放进 `for` 循环**
+导入模块：
 
-**await：等待异步结果**
+```python
+import math_utils
 
-python![复制](data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M13.3965%201.16699C14.1902%201.16726%2014.834%201.81172%2014.834%202.60547V10.7305C14.8337%2011.524%2014.19%2012.1677%2013.3965%2012.168H12.167V13.3965C12.1669%2014.1902%2011.5231%2014.8337%2010.7295%2014.834H2.60449C1.81062%2014.834%201.16608%2014.1903%201.16602%2013.3965V5.27148C1.16602%204.47758%201.81058%203.83398%202.60449%203.83398H3.83398V2.60547C3.83398%201.81156%204.47758%201.16699%205.27148%201.16699H13.3965ZM2.60449%204.83398C2.36287%204.83398%202.16699%205.02986%202.16699%205.27148V13.3965C2.16706%2013.6381%202.36291%2013.834%202.60449%2013.834H10.7295C10.9709%2013.8337%2011.1669%2013.6379%2011.167%2013.3965V5.27148C11.167%205.03002%2010.9709%204.83425%2010.7295%204.83398H2.60449ZM5.27148%202.16797C5.02986%202.16797%204.83398%202.36384%204.83398%202.60547V3.83398H10.7295C11.5232%203.83425%2012.167%204.47774%2012.167%205.27148V11.168H13.3965C13.6377%2011.1677%2013.8337%2010.9717%2013.834%2010.7305V2.60547C13.834%202.36401%2013.6379%202.16823%2013.3965%202.16797H5.27148Z'%20fill='black'%20fill-opacity='0.5'/%3e%3c/svg%3e)
+math_utils.add(1, 2)
+```
+
+导入指定内容：
+
+```python
+from math_utils import add
+
+add(1, 2)
+```
+
+使用别名：
+
+```python
+import math_utils as mu
+```
+
+不建议使用：
+
+```python
+from math_utils import *
+```
+
+因为名称来源不清晰，可能覆盖已有变量。
+
+#### 二、包
+
+包是用于组织多个模块的目录：
+
+```text
+app/
+├── __init__.py
+├── user.py
+└── order/
+  ├── __init__.py
+  └── service.py
+```
+
+- `user.py`：模块
+- `order`：子包
+- `service.py`：子包中的模块
+
+包的作用是按功能划分代码，形成清晰的目录结构。
+
+#### 三、`__init__.py`
+
+`__init__.py` 是包的初始化文件，主要用于：
+
+- 标记目录为 Python 包
+- 执行包初始化代码
+- 统一导出公共对象
+- 简化导入路径
+
+例如：
+
+```python
+# user/__init__.py
+from .service import create_user
+
+__all__ = ["create_user"]
+```
+
+外部可以直接导入：
+
+```python
+from user import create_user
+```
+
+而不必写：
+
+```python
+from user.service import create_user
+```
+
+现代 Python 在部分场景下允许没有 `__init__.py` 的命名空间包，但普通项目通常仍然保留该文件。
+
+#### 四、导入方式
+
+##### 1. 绝对导入
+
+从项目顶层路径开始：
+
+```python
+from app.core.config import settings
+```
+
+##### 2. 相对导入
+
+以当前包为基准：
+
+```python
+from .service import create_user
+from ..core.config import settings
+```
+
+- `.`：当前包
+- `..`：上一级包
+
+相对导入通常要求代码处于包环境中，直接运行文件可能出现导入错误。
+
+#### 五、直接运行和被导入
+
+`__name__` 可以区分模块是被直接运行，还是被其他模块导入：
+
+```python
+def main():
+  print("程序启动")
+
+
+if __name__ == "__main__":
+  main()
+```
+
+- 直接运行文件：`__name__ == "__main__"`
+- 被导入：`__name__` 通常是模块名
+
+这样可以避免模块被导入时自动执行启动逻辑。
+
+#### 六、模块化原则
+
+- **单一职责**：一个模块主要负责一类功能
+- **高内聚**：模块内部代码相互关联
+- **低耦合**：模块之间减少不必要的依赖
+- **信息隐藏**：只暴露必要的公共接口
+- **依赖接口**：调用方不依赖具体实现细节
+
+示例：
+
+```text
+user_model.py       # 数据结构
+user_service.py     # 业务逻辑
+user_repository.py  # 数据访问
+```
+
+#### 七、`pyproject.toml` 的关系
+
+`__init__.py` 负责 Python 包的组织和导出；`pyproject.toml` 负责项目构建、依赖和打包配置。
+
+例如：
+
+```toml
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+include = ["api*", "core*", "models*"]
+```
+
+- `py-modules`：指定独立的 Python 文件
+- `packages.find`：指定需要打包的包
+
+#### 八、核心关系
+
+```text
+.py 文件       → 模块
+模块目录       → 包
+__init__.py    → 包入口和导出位置
+import         → 导入模块或包
+pyproject.toml → 构建和打包配置
+```
+
+一句话理解：
+
+> 模块是文件，包是目录，`__init__.py` 负责包的入口和导出，模块化负责让代码清晰、复用和易维护。
+
+## 垃圾回收机制
+
+```mermaid
+flowchart LR
+    subgraph Stack["当前栈帧"]
+        A["变量名 a"]
+        B["变量名 b"]
+    end
+
+    subgraph Heap["堆中的对象"]
+        L1["列表对象 L1<br/>[1, 2, L2]"]
+        L2["列表对象 L2<br/>[3, 4, L1]"]
+        I1["整数对象 1"]
+        I2["整数对象 2"]
+        I3["整数对象 3"]
+        I4["整数对象 4"]
+    end
+
+    A --> L1
+    B --> L2
+
+    L1 --> I1
+    L1 --> I2
+    L1 --> L2
+
+    L2 --> I3
+    L2 --> I4
+    L2 --> L1
+```
+
+上面是**循环引用**之内存泄漏问题，a,b相互引用，即使del a/b，引用计数任然不为0
+
+### del
+
+`del` 删除的是变量名和引用，不是强制销毁对象。
+
+### 标记清除
+
+标记清除用于处理**循环引用**。
+
+假设：
+
+```
+a = [1, 2]
+b = [3, 4]
+a.append(b)
+b.append(a)
+```
+
+引用关系：
+
+```
+a ──> b
+↑     │
+└─────┘
+```
+
+执行：
+
+```
+del a
+del b
+```
+
+变量名虽然被删除了，但两个列表仍然互相引用。
+
+标记清除会：
+
+1. 从程序仍然可访问的对象开始标记；
+2. 找出无法从程序根对象访问到的对象；
+3. 清除这些不可达对象。
+
+因此这个循环引用最终会被回收。
+
+------
+
+### 分代回收
+
+分代回收的思想是：
+
+> 对象存活时间越长，越可能继续存活。
+
+Python 会把对象分成不同“代”：
+
+新对象 → 年轻代
+
+存活一段时间 → 老年代
+
+垃圾回收时：
+
+- 年轻代：经常检查；
+- 老年代：较少检查；
+- 存活越久的对象，检查频率越低。
+
+这样可以减少每次扫描所有对象的开销。
+
+------
+
+### 和引用计数的关系
+
+CPython 主要结合三种机制：
+
+```
+引用计数：及时回收普通对象
+标记清除：处理循环引用
+分代回收：提高循环引用检查效率
+```
+
+例如：
+
+```
+a = [1, 2]
+b = [3, 4]
+
+a.append(b)
+b.append(a)
+
+del a
+del b
+```
+
+`del` 后，循环引用使引用计数没有归零；之后由循环垃圾回收器发现这两个对象已经无法从程序访问，并将它们回收。可以手动触发回收：
+
+```
+import gc
+gc.collect()
+# `gc.collect()` 的返回值表示本次回收的对象数量：
+count = gc.collect()
+print(count)
+```
+
+
+
+## 异步与事件循环
+
+### 异步基础
+
+#### 同步与异步
+
+同步执行时，当前任务必须完成后，程序才能继续执行后面的任务。异步执行时，任务遇到网络请求、文件读写等 I/O 等待，可以暂时让出执行权，由事件循环执行其他任务。
+
+异步主要解决的是 I/O 等待期间的并发问题，并不等于创建多个线程。
+
+#### `async` 的作用
+
+`async` 用于定义异步函数：
+
+```python
+async def get_answer():
+	return "天空是蓝色的"
+```
+
+调用异步函数时，得到的是协程对象；函数体通常要由事件循环调度执行。
+
+#### `await` 的作用
+
+`await` 用于等待一个可等待对象完成：
+
+```python
+async def chat():
+	response = await get_answer()
+	return response
+```
+
+等待期间，当前异步任务暂停，事件循环可以执行其他任务。
+
+### 事件循环
+
+#### 什么是事件循环
+
+事件循环负责管理和调度异步任务。它会不断检查任务是否可以继续执行：
+
+```text
+执行任务
+	↓
+遇到 await，等待 I/O
+	↓
+切换到其他任务
+	↓
+I/O 完成后恢复原任务
+```
+
+#### 事件循环与线程的关系
+
+常见关系如下：
+
+```text
+线程
+	└── 事件循环
+				└── 异步任务
+							└── async 函数
+```
+
+事件循环通常运行在线程中，一个线程可以通过协作式调度运行多个异步任务。异步任务之间通过 `await` 主动让出执行权。
+
+#### `asyncio.run()` 的作用
+
+`asyncio.run()` 适合在普通同步脚本的入口启动异步程序：
+
+```python
+asyncio.run(main())
+```
+
+它会在当前线程中创建事件循环，运行 `main()`，结束后关闭事件循环。它通常不会创建新线程。
+
+#### 普通脚本如何运行异步代码
+
+普通脚本一般没有正在运行的事件循环，因此需要手动启动：
 
 ```python
 import asyncio
 
-async def fetch():
-    await asyncio.sleep(1)   # 挂起自己，把控制权交回事件循环
-    return "done"
-
 async def main():
-    result = await fetch()   # 等待协程完成，拿到返回值
-    print(result)
+		print("开始执行")
+
+asyncio.run(main())
 ```
 
-### 一个容易混淆的点
+#### FastAPI 如何管理事件循环
 
-两者可以**组合使用**——async def 里也能写 yield，得到的是**异步生成器**：
+FastAPI 运行在 Uvicorn、Hypercorn 等 ASGI 服务器中。ASGI 服务器负责启动和管理事件循环，并将异步请求处理函数交给事件循环执行。
 
-python![复制](data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%3e%3cpath%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M13.3965%201.16699C14.1902%201.16726%2014.834%201.81172%2014.834%202.60547V10.7305C14.8337%2011.524%2014.19%2012.1677%2013.3965%2012.168H12.167V13.3965C12.1669%2014.1902%2011.5231%2014.8337%2010.7295%2014.834H2.60449C1.81062%2014.834%201.16608%2014.1903%201.16602%2013.3965V5.27148C1.16602%204.47758%201.81058%203.83398%202.60449%203.83398H3.83398V2.60547C3.83398%201.81156%204.47758%201.16699%205.27148%201.16699H13.3965ZM2.60449%204.83398C2.36287%204.83398%202.16699%205.02986%202.16699%205.27148V13.3965C2.16706%2013.6381%202.36291%2013.834%202.60449%2013.834H10.7295C10.9709%2013.8337%2011.1669%2013.6379%2011.167%2013.3965V5.27148C11.167%205.03002%2010.9709%204.83425%2010.7295%204.83398H2.60449ZM5.27148%202.16797C5.02986%202.16797%204.83398%202.36384%204.83398%202.60547V3.83398H10.7295C11.5232%203.83425%2012.167%204.47774%2012.167%205.27148V11.168H13.3965C13.6377%2011.1677%2013.8337%2010.9717%2013.834%2010.7305V2.60547C13.834%202.36401%2013.6379%202.16823%2013.3965%202.16797H5.27148Z'%20fill='black'%20fill-opacity='0.5'/%3e%3c/svg%3e)
+因此，FastAPI 异步路由中不需要再次调用 `asyncio.run()`。
+
+### 异步函数与异步生成器
+
+#### `async def`
+
+`async def` 定义异步函数。函数内部可以使用 `await`，调用它会产生协程对象。
+
+#### `async for`
+
+`async for` 用于遍历异步迭代器：
 
 ```python
-async def async_counter(n):
-    for i in range(n):
-        await asyncio.sleep(0.1)  # 异步等待
-        yield i                    # 异步产出
+async for chunk in model.astream("天空是什么颜色？"):
+	print(chunk.content)
 ```
 
-这时它既是协程（能 await）又是生成器（能 async for 迭代），两者不冲突。
+每次获取下一个元素时，都可能发生异步等待。
 
-## json
+#### `async def` + `yield`
 
- `json.dumps()` 将 Python 字典转为 JSON 字符串，`ensure_ascii=False` 用于保留中文，不将中文转换成 `\u4f60\u597d`。这个结果随后交给 SSE 响应组件发送给前端。
+异步函数中使用 `yield`，就会形成异步生成器：
+
+```python
+async def event_generator():
+	yield {"event": "started"}
+	yield {"event": "finished"}
+```
+
+它不会一次性返回全部数据，而是可以逐个产生结果。
+
+#### 异步任务的暂停与恢复
+
+当异步任务执行到 `await` 或等待异步迭代器数据时，事件循环可以暂停它；条件满足后，再从暂停位置继续执行。
+
+这种切换通常发生在同一个线程中，不等于创建新的线程。
+
+### FastAPI 异步执行流程
+
+#### ASGI 服务器与 Uvicorn
+
+ASGI 是 Python 异步 Web 应用与服务器之间的接口规范，Uvicorn 是常用的 ASGI 服务器实现。
+
+```text
+Uvicorn Worker
+	└── 事件循环
+				└── FastAPI 请求任务
+```
+
+#### 异步路由
+
+```python
+@router.post("/stream")
+async def chat_stream(req: ChatRequest):
+		result = await service.chat(req.message)
+		return result
+```
+
+请求到达后，ASGI 服务器会在已有事件循环中调度 `chat_stream()`。
+
+#### 为什么不需要 `asyncio.run()`
+
+因为 Uvicorn 已经启动了事件循环。在正在运行的事件循环中再次调用 `asyncio.run()`，可能产生事件循环嵌套错误。
+
+#### 阻塞代码对事件循环的影响
+
+如果异步函数中直接执行耗时的同步阻塞代码，事件循环会被卡住，其他异步任务也无法及时运行。阻塞任务应根据情况放入线程池或进程池。
+
+## LangChain 流式调用
+
+### LangChain 调用方式
+
+#### `invoke()`
+
+同步调用模型，并等待完整结果：
+
+```python
+response = model.invoke(messages)
+print(response.content)
+```
+
+它通常会发起一次模型请求，返回一个完整的 `AIMessage`。
+
+#### `ainvoke()`
+
+异步调用模型，并等待完整结果：
+
+```python
+response = await model.ainvoke(messages)
+```
+
+它仍然是一次性返回完整结果，但调用方式可以融入异步程序。
+
+#### `stream()`
+
+同步流式调用，模型生成内容时逐块返回：
+
+```python
+for chunk in model.stream(messages):
+		print(chunk.content, end="")
+```
+
+#### `astream()`
+
+异步流式调用，需要使用 `async for`：
+
+```python
+async for chunk in model.astream(messages):
+		print(chunk.content, end="")
+```
+
+#### 完整响应与流式响应的区别
+
+```text
+invoke / ainvoke
+	请求 → 等待 → 返回完整响应
+
+stream / astream
+	请求 → 返回片段 → 返回片段 → 返回片段 → 完成
+```
+
+`invoke()` 与 `stream()` 的区别是返回时机；`ainvoke()` 与 `astream()` 的区别是是否使用异步流式迭代。
+
+## SSE 流式接口
+
+### SSE 基础
+
+#### SSE 是什么
+
+SSE（Server-Sent Events）是一种由服务器向客户端持续推送文本事件的机制。客户端建立连接后，服务器可以不断发送事件，直到流结束或连接断开。
+
+#### `EventSourceResponse`
+
+`EventSourceResponse` 将生成器产生的事件转换成 `text/event-stream` 响应，并按照 SSE 格式持续发送给客户端。
+
+```
+ # EventSourceResponse 是 sse-starlette 提供的 SSE（Server-Sent Events）流式响应类。
+    # 它会持续读取迭代器产生的数据，并通过 HTTP text/event-stream 响应逐条发送给客户端。
+    return EventSourceResponse(
+        stream_chat_events(
+            message=req.message,
+            model=req.model,
+            conversation_id=req.conversation_id,
+            client_request_id=req.client_request_id,
+        ),
+        sep="\n",
+    )
+```
+
+
+
+#### 服务端如何持续推送事件
+
+服务端可以使用生成器逐个产生事件：
+
+```python
+async def event_generator():
+	async for event in stream_chat_events():
+		yield event
+```
+
+#### 客户端如何接收事件
+
+客户端保持 HTTP 连接，并在收到新的 SSE 事件时触发处理逻辑。与普通 HTTP 请求等待完整响应不同，SSE 可以及时显示服务端已经生成的内容。
+
+### FastAPI SSE 实现
+
+#### `event_generator()`
+
+`event_generator()` 是异步生成器，负责包装底层事件流，并在流结束或连接断开时执行清理逻辑。
+
+#### `stream_chat_events()`
+
+`stream_chat_events()` 负责产生聊天过程中的事件，例如创建流、开始消息、输出内容和结束消息。
+
+#### `async for` 获取事件
+
+```python
+async for event in stream_chat_events(...):
+		yield event
+```
+
+路由不会一次性等待全部事件，而是异步获取一个、转发一个。
+
+#### `yield event` 发送事件
+
+`yield event` 将当前事件交给 `EventSourceResponse`。响应对象再将它编码为 SSE 数据并发送给客户端。
+
+#### `finally` 执行清理逻辑
+
+```python
+finally:
+		await idempotency_store.mark_completed(request_id)
+```
+
+无论流正常结束、发生异常还是客户端断开，只要生成器被关闭，就会执行 `finally` 中的清理逻辑。
+
+完整关系如下：
+
+```text
+客户端请求
+	↓
+FastAPI 异步路由
+	↓
+EventSourceResponse
+	↓
+event_generator()
+	↓
+async for 获取事件
+	↓
+yield event
+	↓
+SSE 推送给客户端
+```
+
+
 
 ## 装饰器
 
@@ -483,52 +1263,37 @@ print(a_function_requiring_decoration.__name__)
 - **性能测试**：统计函数执行的耗时。
 - **缓存数据**：保存函数的返回结果，避免重复计算（如 `functools.lru_cache`）。
 
-## sse
+## 项目搭建和配置
 
-### EventSourceResponse
+### 项目初始化
 
-```
- # EventSourceResponse 是 sse-starlette 提供的 SSE（Server-Sent Events）流式响应类。
-    # 它会持续读取迭代器产生的数据，并通过 HTTP text/event-stream 响应逐条发送给客户端。
-    return EventSourceResponse(
-        stream_chat_events(
-            message=req.message,
-            model=req.model,
-            conversation_id=req.conversation_id,
-            client_request_id=req.client_request_id,
-        ),
-        sep="\n",
-    )
-```
+uv init
 
-
-
-### sse_event
-
-`sse_event()作用是把事件名称和事件数据转换成 SSE 响应格式：
+通常会生成：
 
 ```
-def sse_event(event: str, data: dict[str, Any]) -> dict[str, str]:
-    return {
-        'event': event,
-        'data': json.dumps(data, ensure_ascii=False),
-    }
+pyproject.toml
+README.md
+.python-version
 ```
 
-例如调用：
+### 同步环境
+
+uv sync
+
+### 添加依赖
 
 ```
-sse_event('answer_delta', {'content': '你好'})
+uv python install 3.11
+\# 将项目默认 Python 固定为 3.11
+uv python pin 3.11
 ```
 
-会返回类似：
+uv add langchain-chroma
 
-```
-{
-  'event': 'answer_delta',
-  'data': '{"content": "你好"}',
-}
-```
+### 运行代码
+
+uv run python main.py
 
 
 
@@ -1154,25 +1919,1036 @@ RAG (Retrieval-Augmented Generation)
 
 # langchain
 
-## 开源库
+## 依赖库
 
 <font style="color:rgb(28, 30, 33);">LangChain 简化了LLM应用程序生命周期的每个阶段：</font>
 
-+ **<font style="color:rgb(28, 30, 33);">开发</font>**<font style="color:rgb(28, 30, 33);">：使用LangChain的开源构建模块和组件构建您的应用程序。利用第三方集成和模板快速启动。</font>
++ **开发：使用LangChain的开源**构建模块和组件**构建您的应用程序。利用第三方集成和模板快速启动。
 + **<font style="color:rgb(28, 30, 33);">生产部署</font>**<font style="color:rgb(28, 30, 33);">：使用</font>[<font style="color:rgb(28, 30, 33);">LangSmith</font>](https://docs.smith.langchain.com/)<font style="color:rgb(28, 30, 33);">检查、监控和评估您的链，以便您可以持续优化并自信地部署。</font>
-+ **<font style="color:rgb(28, 30, 33);">部署</font>**<font style="color:rgb(28, 30, 33);">：使用</font>[<font style="color:rgb(28, 30, 33);">LangServe</font>](http://www.aidoczh.com/langchain/v0.2/docs/langserve/)<font style="color:rgb(28, 30, 33);">将任何链转换为API。</font>
++ **部署使用**：LangServe将任何链转换为API。
 
-<img src="https://cdn.nlark.com/yuque/0/2024/svg/2424104/1722307914551-22224519-abb1-4c70-9a19-dca2f95c805d.svg" style="zoom:50%;" />
+<img src="https://cdn.nlark.com/yuque/0/2024/svg/2424104/1722307914551-22224519-abb1-4c70-9a19-dca2f95c805d.svg" style="zoom: 33%;" />
 
 具体而言，该框架包括以下开源库：
 
-- **langchain-core**：基本抽象和 LangChain 表达语言。
-- langchain-community：第三方集成。
-  - 合作伙伴包（例如 langchain-openai、langchain-anthropic 等）：一些集成已进一步拆分为仅依赖于 langchain-core 的轻量级包。
-- **langchain**：构成应用程序认知架构的链、代理和检索策略。
-- **[langgraph](https://langchain-ai.github.io/langgraph)**：通过将步骤建模为图中的边缘和节点，使用 LLMs 构建稳健且有状态的多参与者应用程序。
-- **[langserve](http://www.aidoczh.com/langchain/v0.2/docs/langserve/)**：将 LangChain 链部署为 REST API。
-- **[LangSmith](https://docs.smith.langchain.com/)**：一个开发平台，可让您调试、测试、评估和监控 LLM 应用程序。
+| 库                      | 一句话作用             | 类比                   | 依赖谁           |
+| ----------------------- | ---------------------- | ---------------------- | ---------------- |
+| **langchain-core**      | 基础零件 + 拼接语法    | 乐高标准积木           | 无（地基）       |
+| **langchain-community** | 第三方接口统一封装     | 转接头超市             | langchain-core   |
+| **langchain-openai 等** | 最常用集成的轻量小包   | 常用转接头单独打包     | langchain-core   |
+| **langchain**           | 现成的链/代理/检索骨架 | 拼好的半成品流水线     | core + community |
+| **langgraph**           | 画流程图式状态机       | 带分支循环的全流程调度 | langchain-core   |
+| **langserve**           | 一键部署成 REST API    | 端上外卖平台           | langchain        |
+| **LangSmith**           | 调试/评估/监控平台     | 行车记录仪 + 仪表盘    | 独立平台         |
+
+## Prompt Templates
+
+### 1. 概念
+
+Prompt Template（提示模板）用于定义如何将固定说明、动态变量和上下文信息组合成模型输入。它将一次性的提示词字符串转变为可复用、可维护的结构。
+
+Prompt Templates 主要包括以下能力：
+
+- 字符串模板：将变量填充到单段文本中
+- 聊天模板：将变量填充到带角色信息的消息列表中
+- 消息占位符：在指定位置插入历史消息或动态消息
+- Few-shot 模板：在当前输入前插入参考示例
+- 示例选择器：从候选示例中动态选择相关内容
+- 输出解析器：将模型输出转换为下游可使用的结构
+
+其中，模板负责组织模型输入，聊天模型负责生成响应，输出解析器负责处理响应。Few-shot Selector 属于 Few-shot 模板的动态示例选择能力。
+
+### 2. 使用场景
+
+Prompt Templates 适用于需要重复使用提示结构、动态替换输入或控制模型上下文的场景：
+
+- 文本生成：根据主题、语气或格式生成内容
+- 聊天问答：区分系统指令、用户问题和对话上下文
+- 历史对话：将历史消息插入当前对话的指定位置
+- 少样本学习：通过参考示例约束模型的任务理解和输出格式
+- 动态选例：从大量示例中选择与当前输入最相关的少量示例
+- 结构化输出：将模型结果转换为字符串、列表或对象
+- 多任务复用：通过变量和模板组合支持不同业务输入
+
+当提示结构简单且只使用一次时，直接使用字符串即可；当提示需要复用、维护、组合或校验时，应优先使用模板。
+
+### 3. API 说明
+
+#### PromptTemplate
+
+用于格式化单个字符串。模板变量必须与调用时传入的数据字段一致。
+
+```python
+from langchain_core.prompts import PromptTemplate
+
+prompt_template = PromptTemplate.from_template(
+    "Tell me a joke about {topic}"
+)
+
+prompt_value = prompt_template.invoke({"topic": "cats"})
+```
+
+#### ChatPromptTemplate
+
+用于格式化消息列表。每条消息包含角色和消息内容，适合聊天模型输入。
+
+```python
+from langchain_core.prompts import ChatPromptTemplate
+
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant"),
+    ("user", "Tell me a joke about {topic}"),
+])
+
+messages = prompt_template.invoke({"topic": "cats"})
+```
+
+调用后会生成系统消息和用户消息，其中用户消息中的 `{topic}` 会被输入参数替换。
+
+#### MessagesPlaceholder
+
+用于在消息模板的指定位置插入一组消息，适合**注入历史对话**、外部上下文或运行时消息。
+
+```python
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+)
+
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant"),
+    MessagesPlaceholder("msgs"),
+])
+```
+
+也可以使用占位符语法：
+
+```python
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant"),
+    ("placeholder", "{msgs}"),
+])
+```
+
+传入的消息列表会按照原有顺序插入占位位置。
+
+#### FewShotPromptTemplate
+
+用于将多个参考示例和当前输入组合成完整提示词。它可以接收固定示例，也可以使用 `example_selector` 动态选择示例。
+
+```python
+prompt = FewShotPromptTemplate(
+    examples=examples,
+    example_prompt=example_prompt,
+    suffix="输入：{input}",
+    input_variables=["input"],
+)
+```
+
+#### SemanticSimilarityExampleSelector
+
+用于根据语义相似度动态选择示例。它依赖 Embedding 模型将文本转换为向量，再通过向量存储执行相似度检索。
+
+```python
+selector = SemanticSimilarityExampleSelector.from_examples(
+    examples=examples,
+    embeddings=embeddings,
+    vectorstore_cls=VectorStore,
+    k=2,
+)
+```
+
+常用参数如下：
+
+| 参数 | 作用 |
+| --- | --- |
+| `examples` | 候选示例集合 |
+| `embeddings` | 文本向量化模型 |
+| `vectorstore_cls` | 向量存储实现 |
+| `k` | 返回的示例数量 |
+
+选择结果通常通过以下方式获取：
+
+```python
+selected_examples = selector.select_examples(
+    {"input": current_input}
+)
+```
+
+#### OutputParser
+
+用于接收模型输出并转换为目标格式。简单文本可以使用 `StrOutputParser`，结构化结果则应根据目标数据类型选择解析器。
+
+```python
+from langchain_core.output_parsers import StrOutputParser
+
+parser = StrOutputParser()
+result = parser.invoke(model_response)
+```
+
+如果模型原生支持函数调用或工具调用，结构化数据通常优先使用模型提供的结构化能力，而不是完全依赖文本解析。
+
+#### API 参数关系
+
+Prompt Template 相关参数通常围绕以下输入组织：
+
+| 参数 | 作用 |
+| --- | --- |
+| `prefix` | 示例或当前输入之前的固定说明 |
+| `suffix` | 示例之后的当前输入格式 |
+| `input_variables` | 模板需要的动态变量 |
+| `examples` | 固定参考示例集合 |
+| `example_selector` | 动态示例选择器 |
+| `example_prompt` | 单个示例的格式模板 |
+| `embeddings` | 文本向量化模型 |
+| `vectorstore_cls` | 向量存储实现 |
+| `k` | 返回的示例数量 |
+
+### 4. 示例
+
+#### 字符串模板
+
+字符串模板适合单段文本输入：
+
+```python
+prompt_template = PromptTemplate.from_template(
+    "请将以下主题总结为三句话：{topic}"
+)
+
+prompt = prompt_template.invoke({"topic": "人工智能"})
+```
+
+#### 聊天模板
+
+聊天模板适合需要角色区分的输入：
+
+```python
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", "你是一名技术助手"),
+    ("user", "请解释：{topic}"),
+])
+
+messages = prompt_template.invoke({"topic": "向量检索"})
+```
+
+#### 历史消息注入
+
+消息占位符适合将历史消息插入指定位置：
+
+```python
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", "你是一名技术助手"),
+    MessagesPlaceholder("history"),
+    ("user", "请继续回答：{question}"),
+])
+```
+
+#### Few-shot 示例
+
+Few-shot 模板适合使用参考案例约束输出：
+
+```python
+examples = [
+    {"input": "退款条件是什么？", "output": "请说明订单状态和退款原因。"},
+    {"input": "如何修改地址？", "output": "请在订单发货前修改地址。"},
+]
+
+example_prompt = PromptTemplate.from_template(
+    "问题：{input}\n回答：{output}"
+)
+
+prompt = FewShotPromptTemplate(
+    examples=examples,
+    example_prompt=example_prompt,
+    suffix="问题：{input}\n回答：",
+    input_variables=["input"],
+)
+```
+
+当示例数量较多时，可以使用选择器动态选例：
+
+```python
+selector = SemanticSimilarityExampleSelector.from_examples(
+    examples=examples,
+    embeddings=embeddings,
+    vectorstore_cls=VectorStore,
+    k=1,
+)
+
+prompt = FewShotPromptTemplate(
+    example_selector=selector,
+    example_prompt=example_prompt,
+    suffix="问题：{input}\n回答：",
+    input_variables=["input"],
+)
+```
+
+#### 输出解析
+
+模型生成响应后，可以通过输出解析器转换为下游需要的格式：
+
+```python
+response = model.invoke(messages)
+result = parser.invoke(response)
+```
+
+### 5. 技术原理
+
+Prompt Template 的处理过程包括：
+
+1. 定义固定文本、消息角色和动态变量。
+2. 接收变量、历史消息或参考示例。
+3. 渲染为字符串提示词或消息列表。
+4. 调用模型并处理模型响应。
+
+Few-shot Selector 的处理过程包括：
+
+```text
+候选示例
+    -> Embedding 向量化
+    -> 写入向量存储
+    -> 当前输入向量化
+    -> 相似度检索
+    -> 选择 Top-K 示例
+    -> 注入 Few-shot 模板
+```
+
+相似度只表示文本在向量空间中的相关程度，不代表示例内容一定正确。示例质量、字段一致性和数据分布会影响最终结果。
+
+### 6. 组件协作与数据流
+
+各组件之间的职责边界如下：
+
+| 组件 | 职责 |
+| --- | --- |
+| `PromptTemplate` | 格式化字符串提示词 |
+| `ChatPromptTemplate` | 格式化角色消息列表 |
+| `MessagesPlaceholder` | 插入动态消息列表 |
+| `FewShotPromptTemplate` | 组合参考示例与当前输入 |
+| `Example Selector` | 选择与当前输入相关的示例 |
+| `Embedding` | 将文本转换为向量 |
+| `Vector Store` | 保存向量并执行相似度检索 |
+| `Chat Model` | 根据最终上下文生成响应 |
+| `Output Parser` | 将响应转换为目标格式 |
+
+完整数据流如下：
+
+```text
+业务输入
+    -> Prompt Template 读取变量
+    -> Selector 选择相关示例
+    -> MessagesPlaceholder 注入历史消息
+    -> 生成字符串或消息列表
+    -> Chat Model 生成响应
+    -> Output Parser 转换结果
+    -> 下游业务使用
+```
+
+组件之间应通过明确的数据结构协作，避免在模板中混入业务查询、向量检索或结果持久化等无关职责。
+
+## Chains(链式调用)
+
+Chains 是 LangChain 中用于将多个步骤组合成一个工作流程的模块。它们允许你定义一系列操作，并将它们链接在一起。比如<font style="color:rgb(28, 30, 33);">在这个Chain中，每次都会调用输出解析器。这个链条的输入类型是语言模型的输出（字符串或消息列表），输出类型是输出解析器的输出（字符串）。</font>
+
+我们可以使用`|" 运算符轻松创建这个Chain。|`<font style="color:rgb(28, 30, 33);"> 运算符在 LangChain 中用于将两个元素组合在一起。</font>
+
+如果我们现在看一下 LangSmith，我们会发现这个链条有两个步骤：首先调用语言模型，然后将其结果传递给输出解析器。我们可以在LangSmith 跟踪 中看到这一点。
+
+[https://smith.langchain.com/public/f1bdf656-2739-42f7-ac7f-0f1dd712322f/r](https://smith.langchain.com/public/f1bdf656-2739-42f7-ac7f-0f1dd712322f/r)
+
+示例代码
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.output_parsers import StrOutputParser
+
+model = ChatOpenAI(model="gpt-4")
+
+messages = [
+    SystemMessage(content="将以下内容从英语翻译成中文"),
+    HumanMessage(content="Let's go for a run"),
+]
+parser = StrOutputParser()
+
+# 使用Chains方式调用
+chain = model | parser  #等于 model.invoke() + parser.invoke()
+response = chain.invoke(messages)
+print(response)
+#我们去跑步吧
+
+```
+
+## LCEL 与 Runnable 接口
+
+```
+组件：具体做事情的对象
+Runnable：组件遵循的统一接口
+invoke / stream：Runnable 接口中定义的调用方法
+LCEL：组合多个 Runnable 组件的方式
+```
+
+### LCEL
+
+LCEL 的英文全称是 LangChain Expression Language，即 LangChain 表达式语言。它是一种声明式语法，用于组合提示模板、聊天模型、输出解析器、检索器和工具等 LangChain 组件。
+
+LCEL 的目标是让同一套链式代码既能用于快速原型，也能直接扩展到生产环境。使用 LCEL 构建的链通常可以获得以下能力：
+
+- **流式输出**：尽早返回第一个输出块，并持续返回增量结果。
+- **异步调用**：同一条链既可以使用同步 API，也可以使用异步 API。
+- **并行执行**：可以并行执行的步骤会被自动调度，以降低整体延迟。
+- **重试与回退**：可以为链或链中的某个步骤配置重试策略和备用方案。
+- **中间结果访问**：可以观察和流式传输链中间步骤的执行结果。
+- **输入输出模式**：根据链的结构推断 Pydantic 模型和 JSON Schema，用于校验输入输出。
+- **LangSmith 追踪**：链中的各个步骤都可以被记录，便于调试和监控。
+- **LangServe 部署**：LCEL 链可以方便地部署为服务接口。
+
+### Runnable
+
+`Runnable` 不是某一个具体的模型或链，而是一套统一的调用协议。只要一个组件实现了 `Runnable`，就可以用相同的方法调用它、组合它，并获取它的输入输出模式。
+
+聊天模型、普通 LLM、提示模板、输出解析器、检索器和工具等组件都可以实现这个协议。因此，LCEL 能够把不同类型的组件连接成一条链，而不需要为每个组件学习完全不同的调用方式。
+
+这里的“组件”可以理解为一个职责明确、可以独立使用或与其他模块组合的功能单元。例如：
+
+- **提示模板**：根据输入变量生成模型需要的提示词。
+- **聊天模型**：接收消息并生成聊天回复。
+- **输出解析器**：将模型返回的文本或消息转换为指定格式。
+- **检索器**：根据问题查找相关文档。
+- **工具**：执行搜索、计算或访问外部系统等具体操作。
+
+#### 案例
+
+组件通常只负责一件事，通过 `Runnable` 提供统一的调用方式，再使用 LCEL 将多个组件连接起来。例如：
+
+```text
+输入 → 提示模板 → 聊天模型 → 输出解析器 → 最终结果
+```
+
+下面以翻译为例，观察三个组件如何协同工作：
+
+```python
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
+prompt = ChatPromptTemplate.from_template("请将以下内容翻译成中文：{text}")
+model = ChatOpenAI(model="gpt-4o-mini")
+parser = StrOutputParser()
+
+chain = prompt | model | parser
+result = chain.invoke({"text": "Apple"})
+
+print(result)  # 苹果
+```
+
+这段代码中的 `prompt`、`model` 和 `parser` 都是组件：
+
+- `prompt` 是提示模板组件，接收字典输入，将 `text` 填入模板后生成模型消息。
+- `model` 是聊天模型组件，接收提示消息并请求模型服务，返回 `AIMessage`。
+- `parser` 是输出解析器组件，接收 `AIMessage`，提取其中的文本内容，返回字符串。
+
+通过 `|`，三个组件被 LCEL 连接成一条链。数据依次经过：
+
+```text
+{"text": "Apple"}
+   ↓
+prompt：生成翻译提示
+   ↓
+model：生成 AIMessage
+   ↓
+parser：提取文本
+   ↓
+"苹果"
+```
+
+每个组件都可以单独调用，也可以组合调用：
+
+```python
+prompt_result = prompt.invoke({"text": "Apple"})
+model_result = model.invoke(prompt_result)
+result = parser.invoke(model_result)
+```
+
+这三次调用与下面的链式调用效果相同：
+
+```python
+result = (prompt | model | parser).invoke({"text": "Apple"})
+```
+
+三者之间的关系如下：
+
+```text
+prompt、model、parser：具体的组件
+          ↓ 遵循
+       Runnable：统一的调用协议
+          ↓ 提供
+invoke、stream、batch 等调用方法
+```
+
+因此，`invoke` 和 `stream` 不是组件本身，而是组件遵循 `Runnable` 规范后提供的调用方法。`model` 是聊天模型组件，`model.invoke(...)` 和 `model.stream(...)` 分别表示以完整结果或流式数据块的方式调用这个组件。
+
+#### API
+
+最常用的同步方法包括：
+
+- `invoke`：调用一次并返回完整结果。
+- `stream`：以数据块的形式流式返回结果。
+- `batch`：对一组输入执行调用。
+
+对应的异步方法包括：
+
+- `ainvoke`：异步调用一次并返回完整结果。
+- `astream`：异步流式返回结果。
+- `abatch`：异步处理一组输入。
+- `astream_log`：流式返回中间步骤和最终结果。
+- `astream_events`：流式返回链执行过程中的事件。
+
+不同组件的输入和输出类型不同：
+
+| 组件       | 输入类型                         | 输出类型      |
+| ---------- | -------------------------------- | ------------- |
+| 提示模板   | 字典                             | `PromptValue` |
+| 聊天模型   | 字符串、消息列表或 `PromptValue` | 聊天消息      |
+| LLM        | 字符串、消息列表或 `PromptValue` | 字符串        |
+| 输出解析器 | LLM 或聊天模型的输出             | 由解析器决定  |
+| 检索器     | 字符串                           | 文档列表      |
+| 工具       | 字符串或字典                     | 由工具决定    |
+
+所有 `Runnable` 都提供输入输出模式：
+
+- `input_schema`：根据组件结构生成的输入 Pydantic 模型。
+- `output_schema`：根据组件结构生成的输出 Pydantic 模型。
+
+#### 自定义
+
+LCEL 中，**Runnable 是可组合的最小执行单元**。自定义实现通常继承 `Runnable[Input, Output]`，至少实现 `invoke()`；框架会默认提供 `batch()`、`ainvoke()` 和非增量 `stream()`。
+
+##### 什么是自定义 Runnable
+
+在 LCEL 中，`Runnable` 是可调用、可组合的执行单元。自定义 Runnable 用于补充框架没有提供的确定性转换，例如给输入增加指令、清洗文本或格式化模型输出。
+
+当前示例中的 `PrefixRunnable` 接收一段文本，并在文本前拼接固定前缀。
+
+##### 输入输出契约
+
+`Runnable[Input, Output]` 使用泛型明确约束输入和输出类型：
+
+```python
+Runnable[str, str]
+```
+
+第一个 `str` 表示输入类型，第二个 `str` 表示输出类型。因此，`PrefixRunnable` 的 `invoke()` 接收字符串，并返回拼接前缀后的字符串。
+
+实现 Runnable 时，`invoke()` 是最基本的调用入口：
+
+```python
+result = runnable.invoke("苹果")
+```
+
+`result` 的类型应与 `Runnable` 声明的输出类型一致。
+
+##### 最小可运行示例
+
+```python
+from typing import Any
+
+from langchain_core.runnables import Runnable, RunnableConfig
+
+
+class PrefixRunnable(Runnable[str, str]):
+    def __init__(self, prefix: str) -> None:
+        self.prefix = prefix
+
+    def invoke(
+        self,
+        input: str,
+        config: RunnableConfig | None = None,
+        **kwargs: Any,
+    ) -> str:
+        return f"{self.prefix}{input}"
+```
+
+`prefix` 是创建对象时传入的固定前缀。`input` 是每次调用时传入的业务文本。`config` 用于接收 Runnable 的运行配置，`invoke()` 返回最终的转换结果。
+
+调用示例：
+
+```python
+runnable = PrefixRunnable("请翻译为英文：")
+result = runnable.invoke("苹果")
+
+print(result)
+```
+
+输出为 `请翻译为英文：苹果`。
+
+##### 接入 LCEL 链
+
+Runnable 可以通过 `|` 组成执行链，前一个节点的输出会传给后一个节点：
+
+```python
+chain = PrefixRunnable("请翻译为英文：") | model | StrOutputParser()
+
+print(chain.invoke("苹果"))
+```
+
+数据依次经过三个节点：
+
+```text
+苹果 → PrefixRunnable → ChatOpenAI → StrOutputParser → 英文翻译结果
+```
+
+`PrefixRunnable` 生成提示文本；`model` 根据提示调用模型；`StrOutputParser` 从模型响应中取出字符串内容。
+
+##### 异步、批处理与流式扩展
+
+只实现 `invoke()` 时，Runnable 已具备最基础的同步调用能力。LangChain 还提供以下调用方式：
+
+| 方法 | 使用场景 |
+| --- | --- |
+| `ainvoke()` | 异步执行单次调用 |
+| `batch()` | 对多个输入进行批量调用 |
+| `stream()` | 按增量持续产出结果 |
+
+当自定义逻辑只是简单的同步转换时，只实现 `invoke()` 即可。只有底层业务本身支持原生异步、批量接口或持续输出时，才需要重写对应方法。
+
+
+
+### `invoke` 与 `stream` 的区别
+
+对于聊天模型，`invoke` 和 `stream` 的输入可以是字符串、消息列表或 `PromptValue`。二者的主要区别是返回时机和返回类型。
+
+| 方法 | 返回形式 | 适用场景 |
+| --- | --- | --- |
+| `invoke` | 一个完整的 `AIMessage` | 普通问答、翻译、需要完整结果的调用 |
+| `stream` | 多个 `AIMessageChunk` | 聊天窗口、打字机效果、长文本生成 |
+
+#### `invoke`
+
+`invoke` 会等待模型生成完成，然后一次性返回完整的消息：
+
+```python
+response = model.invoke(messages)
+print(response.content)
+```
+
+调用过程可以理解为：
+
+```text
+发送请求 → 等待模型生成完成 → 返回完整 AIMessage
+```
+
+#### `stream`
+
+`stream` 返回一个迭代器，需要通过 `for` 循环逐块读取：
+
+```python
+for chunk in model.stream(messages):
+   print(chunk.content, end="", flush=True)
+```
+
+调用过程可以理解为：
+
+```text
+发送请求 → 返回第一个 chunk → 返回后续 chunk → 输出完成
+```
+
+每个 `chunk` 只是最终消息的一部分，例如：
+
+```text
+content='你'
+content='好'
+content='！'
+```
+
+因此，下面的写法只能打印迭代器对象，不能直接得到模型文本：
+
+```python
+response = model.stream(messages)
+print(response)
+```
+
+如果模型或底层接口不支持流式调用，`stream` 可能退化为调用 `invoke`，最终一次性返回完整结果。
+
+### 异步调用
+
+异步方法需要配合 `asyncio` 和 `await` 使用：
+
+```python
+response = await model.ainvoke(messages)
+print(response.content)
+```
+
+异步流式调用示例：
+
+```python
+async for chunk in model.astream(messages):
+   print(chunk.content, end="", flush=True)
+```
+
+### 流式方法的层次
+
+Runnable 接口中的流式方法主要分为两类：
+
+1. `stream` 和 `astream`：流式传输链的**最终输出**。
+2. `astream_events` 和 `astream_log`：流式传输链的**中间步骤、执行事件和最终输出**。
+
+因此，只有需要实时显示最终文本时，通常使用 `stream` 或 `astream`；需要观察提示模板、检索器、模型和解析器等中间步骤时，则使用 `astream_events` 或 `astream_log`。
+
+## 事件
+
+<font style="color:rgb(28, 30, 33);">下面是一个参考表，显示各种可运行对象可能发出的一些事件。</font>
+
+当流式传输正确实现时，对于可运行项的输入直到输入流完全消耗后才会知道。这意味着`inputs`通常仅包括`end`事件，而不包括`start`事件。
+
+| 事件                | 名称         | 块                             | 输入                                          | 输出                                            |
+| ------------------- | ------------ | ------------------------------ | --------------------------------------------- | ----------------------------------------------- |
+| on_chat_model_start | [模型名称]   |                                | {"messages": [[SystemMessage, HumanMessage]]} |                                                 |
+| on_chat_model_end   | [模型名称]   |                                | {"messages": [[SystemMessage, HumanMessage]]} | AIMessageChunk(content="hello world")           |
+| on_llm_start        | [模型名称]   |                                | {'input': 'hello'}                            |                                                 |
+| on_llm_stream       | [模型名称]   | 'Hello'                        |                                               |                                                 |
+| on_llm_end          | [模型名称]   |                                | 'Hello human!'                                |                                                 |
+| on_chain_start      | format_docs  |                                |                                               |                                                 |
+| on_chain_stream     | format_docs  | "hello world!, goodbye world!" |                                               |                                                 |
+| on_chain_end        | format_docs  |                                | [Document(...)]                               | "hello world!, goodbye world!"                  |
+| on_tool_start       | some_tool    |                                | {"x": 1, "y": "2"}                            |                                                 |
+| on_tool_end         | some_tool    |                                |                                               | {"x": 1, "y": "2"}                              |
+| on_retriever_start  | [检索器名称] |                                | {"query": "hello"}                            |                                                 |
+| on_retriever_end    | [检索器名称] |                                | {"query": "hello"}                            | [Document(...), ..]                             |
+| on_prompt_start     | [模板名称]   |                                | {"question": "hello"}                         |                                                 |
+| on_prompt_end       | [模板名称]   |                                | {"question": "hello"}                         | ChatPromptValue(messages: [SystemMessage, ...]) |
+
+## 调试
+
+### 为什么需要调试 LangChain
+
+LangChain 的一次请求可能经过模型、提示词、Agent 和工具多个环节。只查看最终答案，无法确认：
+
+- 是否调用了工具；
+- 工具传入了什么参数；
+- Agent 执行了几轮；
+- 错误发生在哪一步。
+
+调试日志可以展示完整执行过程，帮助定位问题。
+
+### 模型、工具、Agent 的关系
+
+```text
+用户问题 → Agent 判断 → 模型决策 → 调用工具 → 模型整理结果 → 最终答案
+```
+
+- **模型**：理解问题并生成回答。
+- **工具**：提供搜索、数据库查询等外部能力。
+- **Agent**：根据任务决定是否调用工具，并组织执行流程。
+
+
+### `verbose` 和 `debug` 的概念与区别
+
+`verbose` 用于输出更详细的普通运行日志：
+
+```python
+from langchain_core.globals import set_verbose
+
+set_verbose(True)
+```
+
+`debug` 用于观察 Agent 图的节点执行、状态更新和流程转换：
+
+```python
+from langchain.agents import create_agent
+
+agent = create_agent(model, tools=tools, debug=True)
+```
+
+| 配置 | 作用范围 | 适用场景 |
+|---|---|---|
+| `set_verbose(True)` | 全局 | 查看模型、链和工具的调用日志 |
+| `set_debug(True)` | 全局 | 调试旧版或全局执行流程 |
+| `debug=True` | 当前 Agent | 调试 LangChain 1.x Agent 图 |
+
+三者都用于调试，但作用范围和输出重点不同，并不完全等价。
+
+### LangSmith 如何监听 LangChain
+
+LangSmith 的接入主要通过环境变量完成，不需要在业务代码中显式调用 `langsmith`：
+
+```dotenv
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=你的 LangSmith API Key
+LANGSMITH_PROJECT=day4-langchain-debug
+```
+
+- `LANGSMITH_TRACING`：开启或关闭自动追踪；
+- `LANGSMITH_API_KEY`：用于 LangSmith 身份认证，不负责单独开启追踪；
+- `LANGSMITH_PROJECT`：指定 trace 归属的项目。
+
+运行 `AgentExecutor.invoke()` 后，LangChain 内部的 Runnable 和 Callback 系统会将 Agent、模型、工具等执行节点交给 LangSmith Tracer，再上传到指定项目：
+
+```text
+AgentExecutor.invoke()
+    ↓
+LangChain Runnable / Callback
+    ↓
+LangSmith Tracer
+    ↓
+LangSmith 项目
+```
+
+脚本需要在创建模型和执行 Agent 之前加载 `.env`：
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[3] / ".env")
+```
+
+这样可以在 LangSmith 控制台查看提示词、模型输入输出、工具参数、工具返回值和 Agent 的完整执行链路。
+
+### 旧版 Agent 与 LangChain 1.x 的演进
+
+旧版 Agent 的结构是：
+
+```text
+ChatPromptTemplate → create_tool_calling_agent → AgentExecutor
+```
+
+旧版通常使用 `input` 调用：
+
+```python
+agent_executor.invoke({"input": "请回答问题"})
+```
+
+#### 提示词模板数据来源
+
+`ChatPromptTemplate.from_messages()` 只是定义消息模板，模板中的变量由不同环节提供：
+
+| 模板变量 | 数据来源 |
+|---|---|
+| `system` | 当前代码中直接写入的系统提示词 |
+| `{input}` | 调用 `invoke()` 时传入的用户问题 |
+| `{chat_history}` | 调用者传入的历史消息；未传入时通常为空 |
+| `{agent_scratchpad}` | `create_tool_calling_agent()` 和 `AgentExecutor` 自动生成的工具调用中间过程 |
+
+例如：
+
+```python
+agent_executor.invoke({
+    "input": "继续刚才的问题",
+    "chat_history": [
+        ("human", "你好"),
+        ("ai", "你好，有什么可以帮你？"),
+    ],
+})
+```
+
+当 Agent 决定调用工具时，工具参数、工具返回结果以及后续推理过程会被写入 `agent_scratchpad`，再交给模型生成最终答案。
+
+在当前 LangChain 1.x 中，旧版 API 从 `langchain.agents` 迁移到了 `langchain_classic.agents`：
+
+```python
+from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+```
+
+新版推荐使用 `create_agent`：
+
+```python
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model,
+    tools=tools,
+    system_prompt="你是一位得力的助手。",
+    debug=True,
+)
+
+response = agent.invoke({
+    "messages": [
+        {"role": "user", "content": "请回答问题"}
+    ]
+})
+```
+
+新版使用 `messages` 输入，并从返回结果的消息列表中读取答案：
+
+```python
+print(response["messages"][-1].content)
+```
+
+### Agent 调试思路
+
+1. **确认环境**：检查 Python 解释器、依赖和环境变量。
+2. **单独测试模型**：确认模型接口和密钥有效。
+3. **单独测试工具**：确认 Tavily 配置和网络正常。
+4. **开启日志**：使用 `set_verbose(True)` 或 `debug=True`。
+5. **观察执行过程**：确认 Agent 是否调用了预期工具。
+6. **检查返回结果**：确认新版结果中存在 `messages`。
+
+不要直接修改多个地方，应先根据日志定位具体失败环节。
+
+## agent
+
+### Agent 的作用
+
+Agent 是一种能够根据用户目标自主决策并执行任务的程序。它通常由模型、工具和执行流程组成：模型负责理解问题与规划下一步动作，工具负责访问外部信息或执行具体操作，Agent 则负责在模型与工具之间循环调度，直到得到最终结果。
+
+在 LangChain 中，Agent 主要用于：
+
+- **理解用户意图**：将自然语言需求转换为可执行任务。
+- **选择和调用工具**：根据任务需要调用搜索、数据库、计算器或自定义函数。
+- **维护执行过程**：保存消息、工具结果和中间状态。
+- **循环处理结果**：根据工具返回内容决定继续调用工具，还是直接生成最终答案。
+- **扩展复杂能力**：通过中间件、结构化输出、持久化和人工审批等机制构建复杂应用。
+
+因此，创建 Agent 的 API 不只是创建一个模型实例，而是负责组装模型、工具、状态和执行逻辑。
+
+### `create_agent`（新版）
+
+#### 作用
+
+`create_agent` 是 LangChain **当前推荐**的 Agent 创建 API，基于 `StateGraph` 构建，内置完整的 Agent 执行循环（模型 ↔ 工具），无需额外的 `AgentExecutor`。
+
+#### 核心能力
+
+| 特性 | 说明 |
+|------|------|
+| **执行循环** | 内置，`StateGraph` 自动管理模型调用 → 工具执行 → 结果返回的循环 |
+| **中间件（Middleware）** | 7 种钩子：`before_agent`、`after_agent`、`before_model`、`after_model`、`wrap_model_call`、`wrap_tool_call`、`awrap_tool_call` |
+| **结构化输出** | 原生 `response_format`，支持 `ToolStrategy`、`ProviderStrategy`、Pydantic 模型 |
+| **流式处理** | `graph.stream()` 原生支持多种流模式 |
+| **状态持久化** | `checkpointer`（单会话）+ `store`（跨会话） |
+| **中断/恢复** | `interrupt_before` / `interrupt_after` 支持人工审批 |
+| **子图嵌套** | 可作为子图嵌入多 Agent 系统 |
+
+#### 基本用法
+
+```python
+from langchain.agents import create_agent
+
+graph = create_agent(
+    model="deepseek:deepseek-chat",
+    tools=[search_tool, calculator_tool],
+    system_prompt="你是一位得力的助手。",
+    middleware=[...],          # 可选：中间件
+    response_format=MySchema,  # 可选：结构化输出
+    checkpointer=...,          # 可选：持久化
+)
+
+# 同步调用
+result = graph.invoke({"messages": [{"role": "user", "content": "你好"}]})
+
+# 流式调用
+for chunk in graph.stream({"messages": [...]}, stream_mode="updates"):
+    print(chunk)
+```
+
+#### 执行流程
+
+```mermaid
+graph TD
+    START --> before_agent["before_agent (可选)"]
+    before_agent --> before_model["before_model (可选)"]
+    before_model --> model["model 节点"]
+    model -->|有 tool_calls| tools["tools 节点"]
+    tools -->|继续循环| before_model
+    model -->|无 tool_calls| after_model["after_model (可选)"]
+    after_model --> after_agent["after_agent (可选)"]
+    after_agent --> END
+```
+
+---
+
+### `create_tool_calling_agent`（旧版）
+
+#### 作用
+
+`create_tool_calling_agent` 是 LangChain **旧版** API，只创建一条 prompt + model + output parser 的 `Runnable` 链，**不包含**执行循环。必须配合 `AgentExecutor` 使用才能完成工具调用和循环。
+
+#### 核心能力
+
+| 特性 | 说明 |
+|------|------|
+| **执行循环** | ❌ 无内置循环，需 `AgentExecutor` 外挂 |
+| **中间件** | ❌ 不支持 |
+| **结构化输出** | ❌ 不支持原生 `response_format` |
+| **流式处理** | 通过 `agent_executor.stream()` |
+| **状态持久化** | 需自行实现 |
+| **中断/恢复** | 不支持 |
+
+#### 基本用法
+
+```python
+from langchain_classic.agents import create_tool_calling_agent, AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "你是一位得力的助手。"),
+    ("placeholder", "{chat_history}"),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}"),
+])
+
+# 只创建 Agent 链（Runnable），不含执行循环
+agent = create_tool_calling_agent(model, tools, prompt)
+
+# 必须用 AgentExecutor 包装才能执行
+agent_executor = AgentExecutor(agent=agent, tools=tools)
+response = agent_executor.invoke({"input": "谁执导了《奥本海默》？"})
+```
+
+#### 执行流程
+
+```mermaid
+graph TD
+    Start["invoke({input})"] --> AgentExecutor
+    AgentExecutor --> Agent["Agent 链 (prompt → model → parser)"]
+    Agent -->|有 tool_calls| AgentExecutor
+    AgentExecutor --> Tools["执行工具"]
+    Tools --> AgentExecutor
+    Agent -->|无 tool_calls| End["返回结果"]
+```
+
+---
+
+### 3. 对比总结
+
+| 维度 | `create_agent`（新） | `create_tool_calling_agent`（旧） |
+|------|---------------------|----------------------------------|
+| **所属包** | `langchain.agents` | `langchain_classic.agents` |
+| **执行循环** | ✅ 内置 StateGraph | ❌ 需 AgentExecutor |
+| **中间件** | ✅ 7 种钩子 | ❌ 不支持 |
+| **结构化输出** | ✅ response_format | ❌ 不支持 |
+| **流式处理** | `graph.stream()` | `agent_executor.stream()` |
+| **状态持久化** | checkpointer + store | 需自行实现 |
+| **多 Agent** | 可作为子图 | 不支持 |
+| **复杂度** | 较高（概念多） | 较低（上手快） |
+| **推荐度** | ⭐⭐⭐⭐⭐ | ⭐⭐（维护模式） |
+
+---
+
+### 4. 迁移建议
+
+如果你正在使用旧版 `create_tool_calling_agent`，建议迁移到 `create_agent`：
+
+```python
+# 旧版写法
+agent = create_tool_calling_agent(model, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools)
+result = agent_executor.invoke({"input": "..."})
+
+# 新版写法
+graph = create_agent(
+    model=model,
+    tools=tools,
+    system_prompt="你是一位得力的助手。",
+)
+result = graph.invoke({"messages": [{"role": "user", "content": "..."}]})
+```
+
+关键变化：
+- 输入格式从 `{"input": "..."}` 变为 `{"messages": [{"role": "user", "content": "..."}]}`
+- 不再需要 `ChatPromptTemplate` 和 `AgentExecutor`
+- 系统提示词直接通过 `system_prompt` 参数传入
 
 
 
